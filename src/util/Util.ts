@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, EquipmentType, Patrons, Scenario } from '../../constants';
+import { AbilityType, EquipmentType, Scenario } from '../../constants';
 import { AbilityData } from '../data/Abilities';
 import { computeFOV } from './Fov';
 
@@ -42,15 +42,13 @@ export const isWeapon = (abil:AbilityType) => {
     if(a) return a.slot===EquipmentType.Weapon
 }
 
-export const getNewEncounter = (map:Scenario, player:PlayerCharacter):Encounter => {
-    if(player) player.currentStatus = null
+export const getNewEncounter = (map:Scenario):Encounter => {
     return {
         id:v4(),
-        playerCharacters: player ? [player] : [],
+        entities: [],
+        activeCharacterId: null,
         map,
-        difficulty:0,
-        lastCharacterAction: null,
-        activeCharacterId: player ? player.id : '',
+        unitActionQueue: [],
         eventLog: []
     }
 }
@@ -60,7 +58,6 @@ export const getNewAccount = (email:string, id:string):UserAccount => {
         id,
         email,
         name: 'New Player',
-        characters: [],
         encounterId: '',
         completedMissionIds: []
     } 
@@ -201,18 +198,9 @@ export const getCircle = (cx: number, cy: number, r: number, topology?:number) =
     return result;
 }
 
-export const getPatronsOfCharacter = (char:PlayerCharacter) => {
-    if(char) return Patrons.filter((p,i)=>hasPatronAbility(i, char)).map(p=>p.type)
-    else return []
-}
-    
+export const getNextChar = (characters:Array<RCUnit>) => characters.sort((a,b)=>a.turnCounter > b.turnCounter ? 1 : -1)[0]
 
-export const hasPatronAbility = (i:number, char:PlayerCharacter) => {
-    let p = Patrons[i]
-    return char.abilities.find(a=>p.abilityPool.includes(a.type))
-}
-
-export const getNextChar = (characters:Array<PlayerCharacter>) => characters.sort((a,b)=>a.currentStatus.turnCounter > b.currentStatus.turnCounter ? 1 : -1)[0]
+export const canPassTerrainType = (unit:RCUnit, terrainIndex:number) => true
 
 export const getNewAbilities = (abils:Array<AbilityType>):Array<Ability> => {
     return abils.map(a=>{
@@ -224,10 +212,10 @@ export const getNewAbilities = (abils:Array<AbilityType>):Array<Ability> => {
     })
 }
 
-export const getSightMap = (npc:PlayerCharacter, map:Phaser.Tilemaps.Tilemap) => {
+export const getSightMap = (x,y,radius, map:Phaser.Tilemaps.Tilemap) => {
     let sightArray = []
-    for(var i=npc.sight; i>0; i--){
-        sightArray = sightArray.concat(getCircle(npc.currentStatus.tileX, npc.currentStatus.tileY, i))
+    for(var i=radius; i>0; i--){
+        sightArray = sightArray.concat(getCircle(x, y, i))
     }
-    return computeFOV(npc.currentStatus.tileX, npc.currentStatus.tileY, npc.sight, sightArray, map)
+    return computeFOV(x, y, radius, sightArray, map)
 }

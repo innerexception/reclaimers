@@ -1,21 +1,21 @@
 export const Schemas = {
     Collections: {
         Encounters: {
-            collectionName: 'encounters',
+            collectionName: 'rc-encounters',
             fields: {
                 id: 'id',
-                characterStates: 'characterStates',
+                entities: 'entities',
                 map: 'map',
                 difficulty: 'difficulty'
             }
         },
         Accounts: {
-            collectionName: 'accounts',
+            collectionName: 'rc-accounts',
             fields: {
                 id:'id',
-                characters:'characters',
                 email:'email',
-                encounterId: 'encounterId'
+                encounterId: 'encounterId',
+                completedMissionIds: 'completedMissionIds'
             }
         }
     }

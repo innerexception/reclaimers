@@ -1,6 +1,5 @@
 import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles'
-import { Icons, IconNames } from '../../assets/Assets';
 import Tooltip from 'rc-tooltip'
 import { getAbilityDescription, isPassive, isWeapon } from './Util';
 import { AbilityType, WeaponBackground } from '../../constants';
@@ -82,7 +81,7 @@ export const ProgressBar = (value:number, max:number, bg:string) =>
     </div>
 
 export const CssIcon = (spriteIndex:number, scale:number) => {
-    let backgroundImage = 'url('+require('../../assets/dcss_tileset_full.png')
+    let backgroundImage = 'url('+require('../../assets/OverworldTileset_v03.png')
     let sheetWidth = 64
     const h = 32*scale
     return (

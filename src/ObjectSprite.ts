@@ -1,22 +1,16 @@
 import { Scene, GameObjects } from "phaser";
 import { FONT_DEFAULT, StatusEffectData } from '../constants'
 
-export default class CharacterSprite extends GameObjects.Sprite {
+export default class ObjectSprite extends GameObjects.Sprite {
 
     characterId: string
     reticle: GameObjects.Image
     status: Array<GameObjects.Image>
 
-    constructor(scene:Scene,x:number,y:number, frame:number, character:RCUnit){
+    constructor(scene:Scene,x:number,y:number, frame:number, id:string){
         super(scene, x,y, 'sprites', frame)
-        
-        this.characterId = character.id
+        this.characterId = id
         this.status = []
-        character.statusEffect.forEach((s,i)=>{
-            if(!this.status.find(st=>+st.frame.name === s.type) && !StatusEffectData[s.type].isPassive)
-                this.status.push(this.scene.add.image(x+8-(i*5), y-16, 'sprites', s.type).setScale(0.5).setDepth(4))
-        })
-        
         this.setInteractive()
         scene.add.existing(this)
     }

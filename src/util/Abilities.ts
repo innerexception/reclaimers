@@ -4,28 +4,28 @@ import Network from "../../firebase/Network"
 import CharacterSprite from "../CharacterSprite"
 import { getNextChar } from "./Util"
 
-export const resolveAbility = (encounter:Encounter, targetingAbility:AbilityData, targetList:Array<string>, sprites:Array<CharacterSprite>, caster:PlayerCharacter) => {
-    encounter.playerCharacters.forEach(c=>{
+export const resolveAbility = (encounter:Encounter, targetingAbility:AbilityData, targetList:Array<string>, sprites:Array<CharacterSprite>, caster:RCUnit) => {
+    encounter.entities.forEach(c=>{
         if(targetList.includes(c.id)){
             encounter.eventLog.push(caster.name+' used '+targetingAbility.title+' on '+c.name)
             targetingAbility.statusEffects.forEach(e=>{
                 c = applyStatusEffect(c, e)
                 encounter.eventLog.push(c.name+' is affected by '+StatusEffectData[e].title)
             })
-            c.currentStatus.hp -= targetingAbility.damage
+            c.hp -= targetingAbility.damage
         }
-        c.currentStatus.turnCounter -= c.speed
+        c.turnCounter -= c.speed
     })
     return encounter
 }
 
-export const resolveStatusEffects = (c:PlayerCharacter, sprite:CharacterSprite) => {
+export const resolveStatusEffects = (c:RCUnit, sprite:CharacterSprite) => {
     c.statusEffect.forEach(status=>{
         switch(status.type){
             case StatusEffect.Poison:
             //Higher poison levels cause more damage
             const dmg = Math.max(0, Math.round(c.statusEffect.filter(s=>s.type===StatusEffect.Poison).length * 0.5) - 2)
-            c.currentStatus.hp-=dmg
+            c.hp-=dmg
             sprite.floatDamage(dmg, 'green')
             break
         }
@@ -40,7 +40,7 @@ export const resolveStatusEffects = (c:PlayerCharacter, sprite:CharacterSprite) 
     return c
 }
 
-export const applyStatusEffect = (character:PlayerCharacter, effect:StatusEffect) => {
+export const applyStatusEffect = (character:RCUnit, effect:StatusEffect) => {
     switch(effect){
         case StatusEffect.Fear:
             //Prevented by fear immunity passives
@@ -63,28 +63,28 @@ export const applyStatusEffect = (character:PlayerCharacter, effect:StatusEffect
 
 export const networkExecuteCharacterMove = (characterId:string, path:Array<Tuple>) => {
     let encounter = store.getState().activeEncounter
-    encounter.lastCharacterAction = {
+    encounter.unitActionQueue.push({
         characterId,
         path,
         type: AbilityType.Move, 
         completedByPlayers: []
-    }
-    const nextChar = getNextChar(encounter.playerCharacters)
+    })
+    const nextChar = getNextChar(encounter.entities)
     encounter.activeCharacterId = nextChar.id
-    encounter.playerCharacters.forEach(c=>{if(c.id === nextChar.id) c.currentStatus.turnCounter = MAX_TURN_TIMER})
+    encounter.entities.forEach(c=>{if(c.id === nextChar.id) c.turnCounter = MAX_TURN_TIMER})
     Network.upsertMatch(encounter)
 }
 
 export const networkExecuteCharacterAbility = (characterId:string, targetingData:AbilityTargetingData) => {
     let encounter = store.getState().activeEncounter
-    encounter.lastCharacterAction = {
+    encounter.unitActionQueue.push({
         characterId,
         selectedTargetIds: targetingData.selectedTargetIds, 
         type: targetingData.type, 
         completedByPlayers: []
-    }
-    const nextChar = getNextChar(encounter.playerCharacters)
+    })
+    const nextChar = getNextChar(encounter.entities)
     encounter.activeCharacterId = nextChar.id
-    encounter.playerCharacters.forEach(c=>{if(c.id === nextChar.id) c.currentStatus.turnCounter = MAX_TURN_TIMER})
+    encounter.entities.forEach(c=>{if(c.id === nextChar.id) c.turnCounter = MAX_TURN_TIMER})
     Network.upsertMatch(encounter)
 }

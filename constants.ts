@@ -56,25 +56,29 @@ export const StatusEffectData = {
     }
 }
 
-export enum NPCType {
-    Jeeves=4983,MasterP=4868,Timmy=3791,ViperSpawn=4006,ViperBoss=3848
+export enum RCObjectType {
+    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Town3=90,Fog=87
+}
+
+export enum RCUnitType {
+    
 }
 
 export enum Modal {
-    Login, Matchmaking, CharacterCreation, Jobs, EncounterLobby, CharacterInfo, Inventory, Intro
+    Login, Matchmaking, BotCreation, Jobs, EncounterLobby, CharacterInfo, Inventory, Intro, BotSpawn, Menu
 }
 
 export enum Scenario {
-    Tutorial="Tutorial",Hub='Hub',Vipers='Vipers',Stonevault='Stonevault',Patrons='Patrons'
+    Tutorial="Tutorial",Hub='Hub'
 }
 
 export const Scenarios = [
-    Scenario.Vipers, Scenario.Stonevault
+    Scenario.Tutorial
 ]
 
 export enum UIReducerActions {
     SHOW_MODAL, HIDE_MODAL, LOGIN_SUCCESS, LOGOUT, LOGIN_PENDING, LOGIN_FAILED,
-    ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY, NEW_CHARACTER,
+    ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
     START_MOVE,CLEAR_ABILITY
 }
 

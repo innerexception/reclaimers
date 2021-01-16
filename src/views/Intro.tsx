@@ -2,10 +2,10 @@ import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles';
 import { AbilityCard, Button } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { Modal, NPCType, Patron, Patrons, StatusEffect } from '../../constants';
-import { v4 } from 'uuid';
-import { onHideModal, onShowModal, onUpdateAccount } from '../uiManager/Thunks';
+import { Modal, Scenario, Scenarios } from '../../constants';
+import { onCreateEncounter, onHideModal } from '../uiManager/Thunks';
 import Footer from '../components/Footer';
+import { getNewEncounter } from '../util/Util';
 
 interface Props {
     onlineAccount?: UserAccount
@@ -23,7 +23,11 @@ export default class Intro extends React.Component<Props> {
                     <h2>Welcome</h2>
                     <h5>Copyright 2068 TechnoSerf LLC</h5>
                     <hr/>
-                    {Button(true, ()=>onShowModal(Modal.CharacterCreation), 'Close')}
+                    <div>
+                        {Button(true, ()=>onCreateEncounter(getNewEncounter(Scenario.Tutorial), this.props.onlineAccount.id), 'Practice')}
+                        {Scenarios.map(s=>Button(true, ()=>onCreateEncounter(getNewEncounter(s), this.props.onlineAccount.id), 'Mission '+s))}
+                    </div>
+                    {Button(true, onHideModal, 'Quit')}
                 </div>
                 <Footer/>
             </div>

@@ -100,8 +100,8 @@ class Provider {
         if(this.unsub){
             this.unsub()
             this.unsub = null
-            match.playerCharacters = match.playerCharacters.filter(p=>p.id !== playerId)
-            if(match.playerCharacters.filter(c=>c.ownerId).length > 0) this.upsertMatch(match)
+            match.entities = match.entities.filter(p=>p.id !== playerId)
+            if(match.entities.filter(c=>c.ownerId).length > 0) this.upsertMatch(match)
             else this.deleteMatch(match.id)
         }
     }

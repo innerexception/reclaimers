@@ -26,7 +26,7 @@ export default class Jobs extends React.Component<Props> {
                         {/* {getAccountMissions(this.props.onlineAccount).map(m=><div onClick={()=>this.setState({selectedMission:m})}>{m.title}</div>)}
                         {Button(true, ()=>onCreateEncounter(this.state.selectedMission), 'Accept')} */}
                     </div>
-                    {Button(true, ()=>onShowModal(Modal.CharacterCreation), 'Create Companion')}
+                    {Button(true, ()=>onShowModal(Modal.BotCreation), 'Create Companion')}
                 </div>
             </div>
         )

@@ -101,10 +101,3 @@ export const onUpdateAccount = (account:UserAccount) => {
     })
 }
 
-export const onNewCharacter = (character:PlayerCharacter) => {
-    dispatch({
-        type: UIReducerActions.NEW_CHARACTER,
-        character
-    })
-}
-

@@ -16,20 +16,24 @@ interface UnitMove {
     route: Array<Tuple>
 }
 
-interface PlayerCharacter extends BasePCData {
+interface RCUnit extends BasePCData {
     id:string
     ownerId?:string
     abilities: Array<Ability>
-    currentStatus?: CharacterState
+    hp:number
+    moves:number
+    turnCounter: number
+    tileX: number
+    tileY: number
 }
 
-interface NPCData extends BasePCData {
+interface RCUnitData extends BasePCData {
     abilityTypes: Array<import('./constants').AbilityType>
 }
 
 interface BasePCData {
     name: string
-    avatarIndex: import('./constants').NPCType
+    avatarIndex: import('./constants').RCUnitType
     maxHp: number
     maxMoves: number
     speed: number
@@ -42,14 +46,6 @@ interface StatusEffectState {
     type: import('./constants').StatusEffect
     duration?: number
     casterId?: string
-}
-
-interface CharacterState {
-    hp:number
-    moves:number
-    turnCounter: number
-    tileX: number
-    tileY: number
 }
 
 interface Ability {
@@ -87,18 +83,19 @@ interface AbilityTargetingData {
 
 interface Encounter {
     id:string
-    playerCharacters: Array<PlayerCharacter>
+    entities: Array<RCUnit>
     map: import('./constants').Scenario
-    difficulty:number
-    activeCharacterId: string
+    activeCharacterId:string
     eventLog: Array<string>
-    lastCharacterAction: { 
-        characterId:string
-        selectedTargetIds?: Array<string>, 
-        type: import('./constants').AbilityType, 
-        completedByPlayers: Array<string> 
-        path?: Array<Tuple>
-    }
+    unitActionQueue: Array<UnitCommand>
+}
+
+interface UnitCommand {
+    characterId:string
+    selectedTargetIds?: Array<string>, 
+    type: import('./constants').AbilityType, 
+    completedByPlayers: Array<string> 
+    path?: Array<Tuple>
 }
 
 interface ModalState {

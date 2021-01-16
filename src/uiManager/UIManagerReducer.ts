@@ -1,5 +1,4 @@
 import { Modal, Scenario, UIReducerActions } from '../../constants';
-import { Encounters } from '../../encounters';
 import Network from '../../firebase/Network';
 import { getNewEncounter } from '../util/Util';
 
@@ -16,18 +15,12 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, loginInProgress: true }
         case UIReducerActions.LOGIN_SUCCESS:
             let account = action.user as UserAccount
-            let hub = getNewEncounter(Scenario.Hub, account.characters[0])
-            if(account.characters[0]) hub.playerCharacters.push(account.characters[0])
-            return { ...state, loginInProgress:false, onlineAccount: account, modalState: account.characters.length > 0 ? null : { modal: Modal.Intro }, activeEncounter: hub, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: hub }}
+            let hub = getNewEncounter(Scenario.Hub)
+            return { ...state, loginInProgress:false, onlineAccount: account, modalState: { modal: Modal.Intro }, activeEncounter: hub, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: hub }}
         case UIReducerActions.LOGOUT:
             return getInitialState()
         case UIReducerActions.UPDATE_ACCOUNT:
             return { ...state, onlineAccount: {...action.account}}
-        case UIReducerActions.NEW_CHARACTER:
-            state.onlineAccount.characters.push(action.character)
-            Network.upsertAccount(state.onlineAccount)
-            state.activeEncounter.playerCharacters.push(action.character)
-            return { ...state, onlineAccount: {...action.account}, activeEncounter: {...state.activeEncounter}, modalState: null, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: state.activeEncounter } }
         case UIReducerActions.ACTIVATE_ABILITY:
             return { ...state, activeAbility: action.ability, engineEvent: {action: UIReducerActions.ACTIVATE_ABILITY, data: action.ability } }
         case UIReducerActions.CLEAR_ABILITY: 
