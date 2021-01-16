@@ -42,6 +42,13 @@ export const onLoginFailed = () => {
 }
 
 
+export const onSpawnBot = (design:RCUnitData) => {
+    dispatch({
+        type: UIReducerActions.SPAWN_BOT,
+        design
+    })
+}
+
 // export const onLeaveMatch = () => {
 //     let state = store.getState()
 //     Provider.unsubscribeMatch(state.match, state.onlineAccount.uid)

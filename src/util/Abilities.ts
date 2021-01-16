@@ -2,7 +2,6 @@ import { store } from "../../App"
 import { AbilityType, MAX_TURN_TIMER, StatusEffect, StatusEffectData } from "../../constants"
 import Network from "../../firebase/Network"
 import CharacterSprite from "../CharacterSprite"
-import { getNextChar } from "./Util"
 
 export const resolveAbility = (encounter:Encounter, targetingAbility:AbilityData, targetList:Array<string>, sprites:Array<CharacterSprite>, caster:RCUnit) => {
     encounter.entities.forEach(c=>{
@@ -14,7 +13,6 @@ export const resolveAbility = (encounter:Encounter, targetingAbility:AbilityData
             })
             c.hp -= targetingAbility.damage
         }
-        c.turnCounter -= c.speed
     })
     return encounter
 }
@@ -69,9 +67,6 @@ export const networkExecuteCharacterMove = (characterId:string, path:Array<Tuple
         type: AbilityType.Move, 
         completedByPlayers: []
     })
-    const nextChar = getNextChar(encounter.entities)
-    encounter.activeCharacterId = nextChar.id
-    encounter.entities.forEach(c=>{if(c.id === nextChar.id) c.turnCounter = MAX_TURN_TIMER})
     Network.upsertMatch(encounter)
 }
 
@@ -83,8 +78,5 @@ export const networkExecuteCharacterAbility = (characterId:string, targetingData
         type: targetingData.type, 
         completedByPlayers: []
     })
-    const nextChar = getNextChar(encounter.entities)
-    encounter.activeCharacterId = nextChar.id
-    encounter.entities.forEach(c=>{if(c.id === nextChar.id) c.turnCounter = MAX_TURN_TIMER})
     Network.upsertMatch(encounter)
 }

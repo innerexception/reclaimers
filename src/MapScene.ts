@@ -365,58 +365,55 @@ export default class MapScene extends Scene {
         }
     }
 
-    runNPCTurn = (npc:RCUnit) => {
-        //1. Determine if hostile in sight
-        // const characters = store.getState().activeEncounter.entities
+    runBotTurn = (npc:RCUnit) => {
+        const characters = store.getState().activeEncounter.entities
 
-        // const visibilityMap = getSightMap(npc, this.map)
+        const visibilityMap = getSightMap(npc.tileX, npc.tileY, npc.sight, this.map)
         
-        // let seenChars = this.entities.filter(c=>{
-        //     let char = characters.find(ch=>c.characterId === ch.id)
-        //     return char.ownerId && visibilityMap[char.currentStatus.tileX] && visibilityMap[char.currentStatus.tileX][char.currentStatus.tileY]
-        // })
+        let seenChars = this.entities.filter(c=>{
+            let char = characters.find(ch=>c.characterId === ch.id)
+            return char.ownerId && visibilityMap[char.tileX] && visibilityMap[char.tileX][char.tileY]
+        })
 
-        // if(seenChars.length > 0){
-        //     let targetTile = this.map.getTileAtWorldXY(seenChars[0].x, seenChars[0].y, false, undefined, 'ground')
-        //     //2. If cowardly, move away
-        //     if(npc.statusEffect.find(s=>s.type === StatusEffect.Fear)){
-        //         //1. Determine escape point: calculate vector to targetTile
-        //         //2. Invert the vector, move towards this point
-        //     }
-        //     const range = npc.abilities.map(a=>AbilityData.find(ab=>ab.type === a.type).range).sort((a,b)=>a > b ? 1 : -1)[0]
-        //     const encounter = store.getState().activeEncounter
-        //     const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY,encounter)).compute(npc.currentStatus.tileX, npc.currentStatus.tileY)
-        //     path.pop() //Don't move on top of the target
-        //     if(path.length <= range){
-        //         //4. If in range, use an off cooldown ability
-        //         const nextAbil = npc.abilities.find(a=>a.cooldown <= 0 && AbilityData.find(ab=>ab.type === a.type).range <= range)
-        //         if(nextAbil){
-        //             //Collect target list
-        //             networkExecuteCharacterAbility(npc.id, {
-        //                 validTargetIds: [],
-        //                 selectedTargetIds: seenChars.map(c=>c.characterId),
-        //                 type: nextAbil.type
-        //             })
-        //         }
-        //     }
-        //     else {
-        //         //3. Else move within range of longest range ability
-        //         networkExecuteCharacterMove(npc.id, path.slice(0,npc.maxMoves))
-        //     }
-        // }
-        // else {
-        //     //Roam/No action
-        //     let x = Phaser.Math.Between(0,1)
-        //     let y = Phaser.Math.Between(0,1)
-        //     let candidate = {x: x===1 ? npc.currentStatus.tileX-1 : npc.currentStatus.tileX+1, y: y===1 ? npc.currentStatus.tileY-1 : npc.currentStatus.tileY+1}
-        //     let t = this.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-        //     const encounter = store.getState().activeEncounter
-        //     if(t && this.passableTile(t.x, t.y, encounter))
-        //         networkExecuteCharacterMove(npc.id, [candidate])
-        //     else
-        //         networkExecuteCharacterMove(npc.id, [{x:npc.currentStatus.tileX, y: npc.currentStatus.tileY}])
-        // }
-        
+        if(seenChars.length > 0){
+            let targetTile = this.map.getTileAtWorldXY(seenChars[0].x, seenChars[0].y, false, undefined, 'ground')
+            //2. If cowardly, move away
+            if(npc.statusEffect.find(s=>s.type === StatusEffect.Fear)){
+                //1. Determine escape point: calculate vector to targetTile
+                //2. Invert the vector, move towards this point
+            }
+            const range = npc.abilities.map(a=>AbilityData.find(ab=>ab.type === a.type).range).sort((a,b)=>a > b ? 1 : -1)[0]
+            const encounter = store.getState().activeEncounter
+            const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, npc, encounter)).compute(npc.tileX, npc.tileY)
+            if(path.length <= range){
+                //4. If in range, use an off cooldown ability
+                const nextAbil = npc.abilities.find(a=>a.cooldown <= 0 && AbilityData.find(ab=>ab.type === a.type).range <= range)
+                if(nextAbil){
+                    //Collect target list
+                    networkExecuteCharacterAbility(npc.id, {
+                        validTargetIds: [],
+                        selectedTargetIds: seenChars.map(c=>c.characterId),
+                        type: nextAbil.type
+                    })
+                }
+            }
+            else {
+                //3. Else move within range of longest range ability
+                networkExecuteCharacterMove(npc.id, path.slice(0,npc.maxMoves-npc.speed))
+            }
+        }
+        else {
+            //Roam/No action
+            let x = Phaser.Math.Between(0,1)
+            let y = Phaser.Math.Between(0,1)
+            let candidate = {x: x===1 ? npc.tileX-1 : npc.tileX+1, y: y===1 ? npc.tileY-1 : npc.tileY+1}
+            let t = this.map.getTileAt(candidate.x, candidate.y, false, 'ground')
+            const encounter = store.getState().activeEncounter
+            if(t && this.passableTile(t.x, t.y, npc, encounter))
+                networkExecuteCharacterMove(npc.id, [candidate])
+            else
+                networkExecuteCharacterMove(npc.id, [{x:npc.tileX, y: npc.tileY}])
+        }
     }
 
     redrawMap = (match:Encounter) => {

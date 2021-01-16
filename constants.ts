@@ -73,13 +73,12 @@ export enum Scenario {
 }
 
 export const Scenarios = [
-    Scenario.Tutorial
 ]
 
 export enum UIReducerActions {
     SHOW_MODAL, HIDE_MODAL, LOGIN_SUCCESS, LOGOUT, LOGIN_PENDING, LOGIN_FAILED,
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
-    START_MOVE,CLEAR_ABILITY
+    START_MOVE,CLEAR_ABILITY,SPAWN_BOT
 }
 
 export enum Objects {

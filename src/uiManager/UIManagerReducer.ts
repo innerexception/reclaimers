@@ -15,7 +15,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, loginInProgress: true }
         case UIReducerActions.LOGIN_SUCCESS:
             let account = action.user as UserAccount
-            let hub = getNewEncounter(Scenario.Hub)
+            let hub = getNewEncounter(Scenario.Hub, account.id)
             return { ...state, loginInProgress:false, onlineAccount: account, modalState: { modal: Modal.Intro }, activeEncounter: hub, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: hub }}
         case UIReducerActions.LOGOUT:
             return getInitialState()
@@ -32,7 +32,17 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             Network.upsertAccount(onlineAccount)
             return { ...state, activeEncounter: action.match, modalState: null, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
         case UIReducerActions.ENCOUNTER_UPDATED:
-            return { ...state, activeEncounter: action.encounter, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }    
+            return { ...state, activeEncounter: action.encounter, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
+        case UIReducerActions.SPAWN_BOT:
+            state.activeEncounter.players.forEach(p=>{
+                if(p.id === state.onlineAccount.id){
+                    const design = action.design as RCUnitData
+                    design.requiredItems.forEach(i=>{
+                        p.resources[i.type] -= i.amount
+                    })
+                }
+            })
+            return { ...state, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design) }}  
         default:
             return state
     }

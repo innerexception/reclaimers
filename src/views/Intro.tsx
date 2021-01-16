@@ -24,8 +24,8 @@ export default class Intro extends React.Component<Props> {
                     <h5>Copyright 2068 TechnoSerf LLC</h5>
                     <hr/>
                     <div>
-                        {Button(true, ()=>onCreateEncounter(getNewEncounter(Scenario.Tutorial), this.props.onlineAccount.id), 'Practice')}
-                        {Scenarios.map(s=>Button(true, ()=>onCreateEncounter(getNewEncounter(s), this.props.onlineAccount.id), 'Mission '+s))}
+                        {Button(true, ()=>onCreateEncounter(getNewEncounter(Scenario.Tutorial, this.props.onlineAccount.id), this.props.onlineAccount.id), 'Practice')}
+                        {/* {Scenarios.map(s=>Button(true, ()=>onCreateEncounter(getNewEncounter(s), this.props.onlineAccount.id), 'Mission '+s))} */}
                     </div>
                     {Button(true, onHideModal, 'Quit')}
                 </div>

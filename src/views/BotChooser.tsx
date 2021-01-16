@@ -2,7 +2,7 @@ import * as React from 'react'
 import AppStyles from '../../AppStyles';
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onHideModal } from '../uiManager/Thunks';
+import { onHideModal, onSpawnBot } from '../uiManager/Thunks';
 import Footer from '../components/Footer';
 import { canAffordBot } from '../util/Util';
 

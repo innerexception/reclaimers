@@ -26,7 +26,6 @@ export default class CharacterInfo extends React.Component<Props> {
                     <h2>{charDat.name}</h2>
                     <h5>hp: {charDat.hp}</h5>
                     <h5>moves: {charDat.moves}</h5>
-                    <h5>turn: (0=Active) {charDat.turnCounter}</h5>
                     <h5>speed: {charDat.speed}</h5>
                     <h5>status: {Array.from(new Set(charDat.statusEffect.map(s=>s.type))).map(s=>
                         <div style={{display:'flex', alignItems:'flex-end'}}>
