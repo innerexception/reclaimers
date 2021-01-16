@@ -47,6 +47,7 @@ const getInitialState = ():RState => {
         loginInProgress: false,
         activeEncounter: null,
         engineEvent: null,
-        activeAbility: null
+        activeAbility: null,
+        activeCharacterId: ''
     }
 }

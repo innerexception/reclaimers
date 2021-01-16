@@ -2,6 +2,7 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { Modal } from '../constants'
 import Actionbar from './views/Actionbar'
+import BotChooser from './views/BotChooser'
 import CharacterInfo from './views/CharacterInfo'
 import EventLog from './views/EventLog'
 import Intro from './views/Intro'
@@ -27,6 +28,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
             case Modal.Login: return <Login/>
             case Modal.CharacterInfo: return <CharacterInfo characterId={data}/>
             case Modal.Menu: return <Intro/>
+            case Modal.BotSpawn: return <BotChooser/>
         }
     }
 

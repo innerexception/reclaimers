@@ -21,7 +21,7 @@ export enum EquipmentType {
 }
 
 export enum ItemType {
-    SmallFang, SnakeSkin, Dagger=5571, Rags=5201
+    Lithium, Palladium, Titanium, Lead
 }
 
 export enum StatusEffect {
@@ -61,7 +61,7 @@ export enum RCObjectType {
 }
 
 export enum RCUnitType {
-    
+    Scout, LightCompactor
 }
 
 export enum Modal {

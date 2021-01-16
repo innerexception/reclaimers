@@ -22,13 +22,13 @@ interface RCUnit extends BasePCData {
     abilities: Array<Ability>
     hp:number
     moves:number
-    turnCounter: number
     tileX: number
     tileY: number
 }
 
 interface RCUnitData extends BasePCData {
     abilityTypes: Array<import('./constants').AbilityType>
+    requiredItems: Array<{type: import('./constants').ItemType, amount:number}>
 }
 
 interface BasePCData {
@@ -84,13 +84,18 @@ interface AbilityTargetingData {
 interface Encounter {
     id:string
     entities: Array<RCUnit>
+    players: Array<RCPlayerState>
     map: import('./constants').Scenario
-    activeCharacterId:string
     eventLog: Array<string>
-    unitActionQueue: Array<UnitCommand>
+    unitActionQueue: Array<RCUnitCommand>
 }
 
-interface UnitCommand {
+interface RCPlayerState {
+    id:string
+    designs: Array<RCUnitData>
+}
+
+interface RCUnitCommand {
     characterId:string
     selectedTargetIds?: Array<string>, 
     type: import('./constants').AbilityType, 
@@ -109,5 +114,6 @@ interface RState {
     loginInProgress: boolean
     activeEncounter: Encounter
     activeAbility: Ability
+    activeCharacterId: string
     engineEvent: { action: import('./constants').UIReducerActions, data: any }
 }

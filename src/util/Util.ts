@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, EquipmentType, Scenario } from '../../constants';
+import { AbilityType, EquipmentType, ItemType, RCUnitType, Scenario } from '../../constants';
 import { AbilityData } from '../data/Abilities';
 import { computeFOV } from './Fov';
 
@@ -12,11 +12,32 @@ enum FirebaseAuthError {
     BAD_PASSWORD='auth/wrong-password'
 }
 
-export const findValue = (data:Phaser.Data.DataManager, searchKey:string) => {
-    let val
-    Object.keys(data.values).forEach(key=>{if(data.values[key].name===searchKey) val = data.values[key].value })
-    return val
-}
+const defaultDesigns:Array<RCUnitData> = [
+    {
+        name: 'Scout',
+        avatarIndex: RCUnitType.Scout,
+        maxHp: 1,
+        maxMoves: 7,
+        speed: 2,
+        sight: 5,
+        statusEffect: [],
+        inventory: [],
+        abilityTypes: [],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}]
+    },
+    {
+        name: 'Surface Compactor mk.1',
+        avatarIndex: RCUnitType.LightCompactor,
+        maxHp: 1,
+        maxMoves: 1,
+        speed: 2,
+        sight: 2,
+        statusEffect: [],
+        inventory: [],
+        abilityTypes: [],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    }
+]
 
 export const getErrorMessage = (error:string) => {
     switch(error){
@@ -42,14 +63,16 @@ export const isWeapon = (abil:AbilityType) => {
     if(a) return a.slot===EquipmentType.Weapon
 }
 
-export const getNewEncounter = (map:Scenario):Encounter => {
+export const canAffordBot = (design:RCUnitData) => true
+
+export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
     return {
         id:v4(),
         entities: [],
-        activeCharacterId: null,
         map,
         unitActionQueue: [],
-        eventLog: []
+        eventLog: [],
+        players: [{ id: playerId, designs: defaultDesigns}]
     }
 }
 
@@ -197,8 +220,6 @@ export const getCircle = (cx: number, cy: number, r: number, topology?:number) =
 
     return result;
 }
-
-export const getNextChar = (characters:Array<RCUnit>) => characters.sort((a,b)=>a.turnCounter > b.turnCounter ? 1 : -1)[0]
 
 export const canPassTerrainType = (unit:RCUnit, terrainIndex:number) => true
 
