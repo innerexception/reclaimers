@@ -2,7 +2,7 @@ import { Scene, GameObjects, Tilemaps } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
 import { v4 } from "uuid";
-import { AbilityType, MAX_TURN_TIMER, Modal, Objects, Patron, Scenario, StatusEffect, UIReducerActions } from "../constants";
+import { AbilityType, MAX_TURN_TIMER, Modal, Objects, Scenario, StatusEffect, UIReducerActions } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { getCircle, getNewAbilities, getNextChar, getPatronsOfCharacter, getSightMap, setSelectIconPosition } from "./util/Util";
 import { onActivateAbility, onClearActiveAbility, onEncounterUpdated, onShowModal } from "./uiManager/Thunks";
@@ -127,20 +127,6 @@ export default class MapScene extends Scene {
             let shouldFill = encounterData.playerCharacters.filter(c=>!c.ownerId).length === 0
             let patrons = getPatronsOfCharacter(encounterData.playerCharacters.find(c=>c.ownerId === store.getState().onlineAccount.id))
             if(shouldFill){
-                this.map.setLayer('characters').forEachTile(t=>{
-                    if(t.index !== -1){
-                        let npc:PlayerCharacter = {...NPCData[t.index-1], id: v4(), abilities: getNewAbilities(NPCData[t.index-1].abilityTypes)}
-                        npc.currentStatus = {
-                            hp: npc.maxHp,
-                            moves: npc.maxMoves,
-                            tileX: t.x,
-                            tileY: t.y,
-                            turnCounter: MAX_TURN_TIMER
-                        }
-                        this.characters.push(new CharacterSprite(this, t.getCenterX(), t.getCenterY(), npc.avatarIndex, npc))
-                        encounterData.playerCharacters.push(npc)
-                    } 
-                })
                 this.map.setLayer('objects').forEachTile(t=>{
                     if(t.index === Objects.PlayerSpawnPoint) {
                         if(encounterData){
@@ -369,18 +355,6 @@ export default class MapScene extends Scene {
             else if(object){
                 switch(object.index-1){
                     case Objects.Vault: onShowModal(Modal.Inventory)
-                    break
-                    case Patron.Gigi: onShowModal(Modal.Jobs, Patron.Gigi)
-                    break
-                    case Patron.King: onShowModal(Modal.Jobs, Patron.King)
-                    break
-                    case Patron.Machine: onShowModal(Modal.Jobs, Patron.Machine)
-                    break
-                    case Patron.Morne: onShowModal(Modal.Jobs, Patron.Morne)
-                    break
-                    case Patron.Obscura: onShowModal(Modal.Jobs, Patron.Obscura)
-                    break
-                    case Patron.Spritely: onShowModal(Modal.Jobs, Patron.Spritely)
                     break
                 }
             }

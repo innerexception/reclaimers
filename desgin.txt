@@ -1,1 +1,30 @@
 Reclaim the wasteland - robot factorio
+
+Build bots from your inventory of parts
+
+send them out to cleanse the wasteland and return valuable materials they extract
+
+beasts and machines from the old empire prowl the wastes
+
+build a network of point to point charging stations to keep the bots moving
+
+
+-bot parts
+    -Chassis
+    -Cargo space
+    -Weapon hard point
+    -Toxin extractor
+        -Lead
+        -Isotopes
+        -Mercury
+        -Petrochemicals
+        -Biosludge
+    -Battery
+    -Drive system
+    -Sensor suite
+
+1. the pod (planetary ordinance disposal) system lands
+2. 2 basic designs are avilable. send out the scouts and wallE compactors
+3. more components are unlocked when certain resources are discovered, or data caches are found
+4. baddies show up when disturbed
+5. mission is complete when the map has been cleaned
