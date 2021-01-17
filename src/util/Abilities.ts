@@ -64,8 +64,7 @@ export const networkExecuteCharacterMove = (characterId:string, path:Array<Tuple
     encounter.unitActionQueue.push({
         characterId,
         path,
-        type: AbilityType.Move, 
-        completedByPlayers: []
+        type: AbilityType.Move
     })
     Network.upsertMatch(encounter)
 }
@@ -75,8 +74,7 @@ export const networkExecuteCharacterAbility = (characterId:string, targetingData
     encounter.unitActionQueue.push({
         characterId,
         selectedTargetIds: targetingData.selectedTargetIds, 
-        type: targetingData.type, 
-        completedByPlayers: []
+        type: targetingData.type
     })
     Network.upsertMatch(encounter)
 }

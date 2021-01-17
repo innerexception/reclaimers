@@ -22,7 +22,7 @@ const defaultDesigns:Array<RCUnitData> = [
         sight: 5,
         statusEffect: [],
         inventory: [],
-        abilityTypes: [],
+        abilityTypes: [AbilityType.SensorMk1],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}]
     },
     {
@@ -34,7 +34,7 @@ const defaultDesigns:Array<RCUnitData> = [
         sight: 2,
         statusEffect: [],
         inventory: [],
-        abilityTypes: [],
+        abilityTypes: [AbilityType.ExtractorMk1],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 ]

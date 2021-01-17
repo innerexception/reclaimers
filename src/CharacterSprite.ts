@@ -1,7 +1,8 @@
 import { Scene, GameObjects } from "phaser";
 import { store } from "../App";
-import { AbilityType, FONT_DEFAULT, StatusEffectData } from '../constants'
+import { AbilityType, FONT_DEFAULT, RCObjectType, StatusEffectData } from '../constants'
 import MapScene from "./MapScene";
+import { networkExecuteCharacterMove } from "./util/Abilities";
 import AStar from "./util/AStar";
 
 export default class CharacterSprite extends GameObjects.Sprite {
@@ -24,21 +25,36 @@ export default class CharacterSprite extends GameObjects.Sprite {
         this.play(character.avatarIndex.toString())
         this.setInteractive()
         scene.add.existing(this)
-        
-        this.runUnitTick()
+        scene.time.addEvent({
+            delay:1000,
+            callback: this.runUnitTick,
+            repeat:1
+        })
     }
 
     runUnitTick = () => {
         const encounter = store.getState().activeEncounter
         const dat = encounter.entities.find(e=>e.id === this.characterId)
+        let base
+        this.scene.map.setLayer('objects').forEachTile(t=>{
+            if(t.index-1 === RCObjectType.Base)
+                base = t
+        })
 
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
                     //Head towards the fog
-                    const targetTile = (this.scene as MapScene).getVisibleTiles(dat, 'fog').find(t=>t.alpha !== 0)
-                    const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
-                    this.scene.executeCharacterMove(dat.id, path)
+                    const fogTiles = (this.scene as MapScene).getVisibleTiles(dat, 'fog')
+                    const nextVisible = fogTiles.find(t=>t.alpha !== 0)
+                    if(nextVisible){
+                        const path = new AStar(nextVisible.x, nextVisible.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
+                        networkExecuteCharacterMove(dat.id, path)
+                    }
+                    else {
+                        const path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
+                        networkExecuteCharacterMove(dat.id, path)
+                    }
                 break
                 case AbilityType.ExtractorMk1:
                     //Head towards a revealed resource patch that you can extract:

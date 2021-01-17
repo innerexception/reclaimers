@@ -9,8 +9,7 @@ import { onClearActiveAbility, onEncounterUpdated, onShowModal } from "./uiManag
 import { AbilityData } from "./data/Abilities";
 import AStar from "./util/AStar";
 import Network from "../firebase/Network";
-import { resolveAbility, networkExecuteCharacterAbility, networkExecuteCharacterMove, resolveStatusEffects } from "./util/Abilities";
-import ObjectSprite from "./ObjectSprite";
+import { resolveAbility, networkExecuteCharacterAbility, networkExecuteCharacterMove } from "./util/Abilities";
 export default class MapScene extends Scene {
 
     unsubscribeRedux: Function
@@ -23,7 +22,7 @@ export default class MapScene extends Scene {
     unitText: GameObjects.Text
     sounds: Object
     origDragPoint: Phaser.Math.Vector2
-    entities: Array<CharacterSprite|ObjectSprite>
+    entities: Array<CharacterSprite>
     targetingAbility: AbilityTargetingData
 
     constructor(config){
@@ -63,8 +62,7 @@ export default class MapScene extends Scene {
                     uiState.activeEncounter.entities.push(bot)
                     uiState.activeEncounter.unitActionQueue.push({
                         characterId: bot.id,
-                        type: AbilityType.Create, 
-                        completedByPlayers: [],
+                        type: AbilityType.Create,
                         newUnit: bot
                     })
                     Network.upsertMatch(uiState.activeEncounter)
@@ -129,7 +127,6 @@ export default class MapScene extends Scene {
         this.cameras.main.setZoom(2)
         // this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         
-        // const base = this.entities.find(c=>c.characterId === encounterData.entities.find(e=>e.avatarIndex === RCObjectType.Base).id)
         this.map.setLayer('objects').forEachTile(t=>{
             if(t.index-1 === RCObjectType.Base)
                 this.cameras.main.centerOn(t.getCenterX(), t.getCenterY())
@@ -140,9 +137,11 @@ export default class MapScene extends Scene {
     passableTile = (tileX:number, tileY:number, unit:RCUnit, encounter:Encounter) => {
         const tile = this.map.getTileAt(tileX, tileY, false, 'ground')
         if(tile){
-            if(encounter.entities.find(c=>c.tileX === tileX && c.tileY === tileY))
+            if(encounter.entities.find(c=>c.id !== unit.id && c.tileX === tileX && c.tileY === tileY))
                 return false
-            return canPassTerrainType(unit, this.map.getTileAt(tileX, tileY, false, 'terrain').index)
+            const terrain = this.map.getTileAt(tileX, tileY, false, 'terrain')
+            if(terrain) return canPassTerrainType(unit, terrain.index)
+            else return true
         }
         return false
     }
@@ -299,19 +298,19 @@ export default class MapScene extends Scene {
     }
     
     executeCharacterAbility = (targetingData:AbilityTargetingData, casterId:string) => {
-        let encounter = store.getState().activeEncounter
-        const caster = encounter.entities.find(p=>p.id === casterId)
-        targetingData.selectedTargetIds.forEach(id=>{
-            const char = this.entities.find(c=>c.characterId === id)
-            this.effects.get(char.x, char.y, 'sprites').play(targetingData.type.toString())
-        })
-        this.time.addEvent({
-            delay:1000,
-            callback: () => {
-                encounter = resolveAbility(encounter, AbilityData.find(a=>a.type === targetingData.type), targetingData.selectedTargetIds, this.entities, caster)
-                this.nextCharacterTurn(encounter)
-            }
-        })
+        // let encounter = store.getState().activeEncounter
+        // const caster = encounter.entities.find(p=>p.id === casterId)
+        // targetingData.selectedTargetIds.forEach(id=>{
+        //     const char = this.entities.find(c=>c.characterId === id)
+        //     this.effects.get(char.x, char.y, 'sprites').play(targetingData.type.toString())
+        // })
+        // this.time.addEvent({
+        //     delay:1000,
+        //     callback: () => {
+        //         encounter = resolveAbility(encounter, AbilityData.find(a=>a.type === targetingData.type), targetingData.selectedTargetIds, this.entities, caster)
+        //         this.nextCharacterTurn(encounter)
+        //     }
+        // })
     }
 
     executeCharacterMove = (characterId:string, path:Array<Tuple>) => {
@@ -322,16 +321,20 @@ export default class MapScene extends Scene {
         if(target.visible){
             encounter.eventLog.push(activeChar.name+' is moving...')
             this.tweens.timeline({
-                targets: target.status.concat(target),    
+                targets: target,    
                 tweens: path.map(tuple=>{
                     let tile = this.map.getTileAt(tuple.x, tuple.y, false, 'ground')
                     return {
                         x: tile.getCenterX(),
                         y: tile.getCenterY(),
-                        duration: 250
+                        duration: 550
                     }
                 }),
-                onComplete: ()=>this.onCompleteMove(characterId, path)
+                onComplete: ()=>{
+                    const pos = path[path.length-1]
+                    this.carveFogOfWar(activeChar.sight, pos.x, pos.y)
+                    this.onCompleteMove(characterId, path)
+                }
             });
         }
         else {
@@ -347,10 +350,10 @@ export default class MapScene extends Scene {
                 c.tileX = pos.x
                 c.tileY = pos.y
                 c.moves -= path.length
-                onEncounterUpdated(encounter)
                 this.entities.find(e=>e.characterId === characterId).runUnitTick()
             }
         })
+        onEncounterUpdated(encounter)
     }
 
     calcVisibleObjects = (encounter:Encounter) => {
@@ -371,17 +374,26 @@ export default class MapScene extends Scene {
 
     carveFogOfWar = (radius:number, x:number, y:number) => {
         this.map.setLayer('fog')
-        this.map.getTileAt(x, y).index = -1
+        this.map.getTileAt(x, y).alpha = 0
         for(var i=radius; i>0; i--){
             getCircle(x, y, i).forEach(tuple=>{
-                this.map.getTileAt(tuple[0], tuple[1]).alpha = i === radius ? 0.5 : 0
+                let tile = this.map.getTileAt(tuple[0], tuple[1])
+                if(tile) tile.alpha = i === radius ? 0.5 : 0
             })
         }
     }
 
     getVisibleTiles = (unit:RCUnit, layer:string) => {
-        return getSightMap(unit.tileX, unit.tileY, unit.sight, this.map)
-                .map(tuple=>this.map.getTileAt(tuple[0], tuple[1], false, layer))
+        let arry = getSightMap(unit.tileX, unit.tileY, unit.sight, this.map)
+        let tiles = new Array<Tilemaps.Tile>()
+        for(let i=0; i<arry.length;i++){
+            if(arry[i]){
+                for(let j=0; j<arry[i].length;j++){
+                    if(arry[i][j]) tiles.push(this.map.getTileAt(i,j,false,layer))
+                }
+            }
+        }
+        return tiles.filter(t=>t ? true : false)
     }
 
     runBotTurn = (npc:RCUnit) => {
@@ -448,19 +460,18 @@ export default class MapScene extends Scene {
     redrawMap = (match:Encounter) => {
         const myId = store.getState().onlineAccount.id
         match.unitActionQueue.forEach(a=>{
-            if(!a.completedByPlayers.includes(myId)){
-                if(a.type=== AbilityType.Move){
-                    this.executeCharacterMove(a.characterId, a.path)
-                }
-                else if(a.type === AbilityType.Create){
-                    this.spawnUnit(a.newUnit)
-                }
-                else if(a.type === AbilityType.Destroy){
-                    this.destroyUnit(a.characterId)
-                }
-                else this.executeCharacterAbility({...AbilityData.find(a=>a.type===a.type), selectedTargetIds: a.selectedTargetIds, validTargetIds: []}, a.characterId)
+            if(a.type=== AbilityType.Move){
+                this.executeCharacterMove(a.characterId, a.path)
             }
+            else if(a.type === AbilityType.Create){
+                this.spawnUnit(a.newUnit)
+            }
+            else if(a.type === AbilityType.Destroy){
+                this.destroyUnit(a.characterId)
+            }
+            else this.executeCharacterAbility({...AbilityData.find(a=>a.type===a.type), selectedTargetIds: a.selectedTargetIds, validTargetIds: []}, a.characterId)
         })
+        onDeleteCommands()
     }
     
     nextCharacterTurn = (match:Encounter) => {

@@ -100,7 +100,6 @@ interface RCUnitCommand {
     characterId:string
     selectedTargetIds?: Array<string>, 
     type: import('./constants').AbilityType, 
-    completedByPlayers: Array<string> 
     path?: Array<Tuple>
     newUnit?: RCUnit
 }
