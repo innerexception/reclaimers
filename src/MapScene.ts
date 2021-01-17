@@ -9,7 +9,6 @@ import { onClearActiveAbility, onEncounterUpdated, onShowModal } from "./uiManag
 import { AbilityData } from "./data/Abilities";
 import AStar from "./util/AStar";
 import Network from "../firebase/Network";
-import { resolveAbility, networkExecuteCharacterAbility, networkExecuteCharacterMove } from "./util/Abilities";
 export default class MapScene extends Scene {
 
     unsubscribeRedux: Function
@@ -48,9 +47,6 @@ export default class MapScene extends Scene {
                     if(this.initCompleted) this.initMap(engineEvent.data.map)
                     else this.waitForRender()
                 break
-                case UIReducerActions.ENCOUNTER_UPDATED:
-                    this.redrawMap(engineEvent.data)
-                break
                 case UIReducerActions.SPAWN_BOT:
                     let bot = engineEvent.data as RCUnit
                     this.map.setLayer('objects').forEachTile(t=>{
@@ -60,12 +56,8 @@ export default class MapScene extends Scene {
                         }
                     })
                     uiState.activeEncounter.entities.push(bot)
-                    uiState.activeEncounter.unitActionQueue.push({
-                        characterId: bot.id,
-                        type: AbilityType.Create,
-                        newUnit: bot
-                    })
-                    Network.upsertMatch(uiState.activeEncounter)
+                    onEncounterUpdated(uiState.activeEncounter)
+                    this.spawnUnit(bot)
                 break
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
@@ -353,7 +345,6 @@ export default class MapScene extends Scene {
                 this.entities.find(e=>e.characterId === characterId).runUnitTick()
             }
         })
-        onEncounterUpdated(encounter)
     }
 
     calcVisibleObjects = (encounter:Encounter) => {
@@ -396,57 +387,6 @@ export default class MapScene extends Scene {
         return tiles.filter(t=>t ? true : false)
     }
 
-    runBotTurn = (npc:RCUnit) => {
-        const characters = store.getState().activeEncounter.entities
-
-        const visibilityMap = getSightMap(npc.tileX, npc.tileY, npc.sight, this.map)
-        
-        let seenChars = this.entities.filter(c=>{
-            let char = characters.find(ch=>c.characterId === ch.id)
-            return char.ownerId && visibilityMap[char.tileX] && visibilityMap[char.tileX][char.tileY]
-        })
-
-        if(seenChars.length > 0){
-            let targetTile = this.map.getTileAtWorldXY(seenChars[0].x, seenChars[0].y, false, undefined, 'ground')
-            //2. If cowardly, move away
-            if(npc.statusEffect.find(s=>s.type === StatusEffect.Fear)){
-                //1. Determine escape point: calculate vector to targetTile
-                //2. Invert the vector, move towards this point
-            }
-            const range = npc.abilities.map(a=>AbilityData.find(ab=>ab.type === a.type).range).sort((a,b)=>a > b ? 1 : -1)[0]
-            const encounter = store.getState().activeEncounter
-            const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, npc, encounter)).compute(npc.tileX, npc.tileY)
-            if(path.length <= range){
-                //4. If in range, use an off cooldown ability
-                const nextAbil = npc.abilities.find(a=>a.cooldown <= 0 && AbilityData.find(ab=>ab.type === a.type).range <= range)
-                if(nextAbil){
-                    //Collect target list
-                    networkExecuteCharacterAbility(npc.id, {
-                        validTargetIds: [],
-                        selectedTargetIds: seenChars.map(c=>c.characterId),
-                        type: nextAbil.type
-                    })
-                }
-            }
-            else {
-                //3. Else move within range of longest range ability
-                networkExecuteCharacterMove(npc.id, path.slice(0,npc.maxMoves-npc.speed))
-            }
-        }
-        else {
-            //Roam/No action
-            let x = Phaser.Math.Between(0,1)
-            let y = Phaser.Math.Between(0,1)
-            let candidate = {x: x===1 ? npc.tileX-1 : npc.tileX+1, y: y===1 ? npc.tileY-1 : npc.tileY+1}
-            let t = this.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-            const encounter = store.getState().activeEncounter
-            if(t && this.passableTile(t.x, t.y, npc, encounter))
-                networkExecuteCharacterMove(npc.id, [candidate])
-            else
-                networkExecuteCharacterMove(npc.id, [{x:npc.tileX, y: npc.tileY}])
-        }
-    }
-
     spawnUnit = (unit:RCUnit) => {
         let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
         this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), unit.avatarIndex, unit))
@@ -457,39 +397,19 @@ export default class MapScene extends Scene {
         this.entities.splice(i,1)[0].destroy()
     }
 
-    redrawMap = (match:Encounter) => {
-        const myId = store.getState().onlineAccount.id
-        match.unitActionQueue.forEach(a=>{
-            if(a.type=== AbilityType.Move){
-                this.executeCharacterMove(a.characterId, a.path)
-            }
-            else if(a.type === AbilityType.Create){
-                this.spawnUnit(a.newUnit)
-            }
-            else if(a.type === AbilityType.Destroy){
-                this.destroyUnit(a.characterId)
-            }
-            else this.executeCharacterAbility({...AbilityData.find(a=>a.type===a.type), selectedTargetIds: a.selectedTargetIds, validTargetIds: []}, a.characterId)
-        })
-        onDeleteCommands()
-    }
-    
-    nextCharacterTurn = (match:Encounter) => {
-        // match.entities.forEach(c=>{
-        //     if(c.id === match.unitActionQueue.characterId) 
-        //         c = resolveStatusEffects(c, this.entities.find(ch=>ch.characterId===c.id))
-        // })
-        // match.unitActionQueue.completedByPlayers.push(store.getState().onlineAccount.id)
-        // onEncounterUpdated(match)
-        // if(match.unitActionQueue.completedByPlayers.length === match.entities.filter(pc=>pc.ownerId).length){
-        //     //If you are the last to ack, you will run the next game step
-        //     const char = match.entities.find(c=>c.id === match.activeCharacterId)
-        //     if(char.statusEffect.find(s=>s.type===StatusEffect.Stun)){
-        //         return networkExecuteCharacterMove(char.id, [{x:char.currentStatus.tileX, y: char.currentStatus.tileY}])
-        //     }
-        //     else if(!char.ownerId){
-        //         this.runNPCTurn(char)
-        //     }
-        // }
-    }
+    // redrawMap = (match:Encounter) => {
+    //     while(match.unitActionQueue.length > 0){
+    //         const cmd = match.unitActionQueue.pop()
+    //         if(cmd.type=== AbilityType.Move){
+    //             this.executeCharacterMove(cmd)
+    //         }
+    //         else if(cmd.type === AbilityType.Create){
+    //             this.spawnUnit(cmd.newUnit)
+    //         }
+    //         else if(cmd.type === AbilityType.Destroy){
+    //             this.destroyUnit(cmd.characterId)
+    //         }
+    //         else this.executeCharacterAbility({...AbilityData.find(a=>a.type===a.type), selectedTargetIds: a.selectedTargetIds, validTargetIds: []}, a.characterId)
+    //     }
+    // }
 }

@@ -70,7 +70,6 @@ export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
         id:v4(),
         entities: [],
         map,
-        unitActionQueue: [],
         eventLog: [],
         players: [{ id: playerId, designs: defaultDesigns, resources: defaultResources}]
     }

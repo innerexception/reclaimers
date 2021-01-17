@@ -2,7 +2,6 @@ import { Scene, GameObjects } from "phaser";
 import { store } from "../App";
 import { AbilityType, FONT_DEFAULT, RCObjectType, StatusEffectData } from '../constants'
 import MapScene from "./MapScene";
-import { networkExecuteCharacterMove } from "./util/Abilities";
 import AStar from "./util/AStar";
 
 export default class CharacterSprite extends GameObjects.Sprite {
@@ -49,11 +48,11 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     const nextVisible = fogTiles.find(t=>t.alpha !== 0)
                     if(nextVisible){
                         const path = new AStar(nextVisible.x, nextVisible.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
-                        networkExecuteCharacterMove(dat.id, path)
+                        this.scene.executeCharacterMove(dat.id, path)
                     }
                     else {
                         const path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
-                        networkExecuteCharacterMove(dat.id, path)
+                        this.scene.executeCharacterMove(dat.id, path)
                     }
                 break
                 case AbilityType.ExtractorMk1:

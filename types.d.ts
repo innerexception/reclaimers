@@ -87,7 +87,6 @@ interface Encounter {
     players: Array<RCPlayerState>
     map: import('./constants').Scenario
     eventLog: Array<string>
-    unitActionQueue: Array<RCUnitCommand>
 }
 
 interface RCPlayerState {
@@ -97,6 +96,7 @@ interface RCPlayerState {
 }
 
 interface RCUnitCommand {
+    id:string
     characterId:string
     selectedTargetIds?: Array<string>, 
     type: import('./constants').AbilityType, 

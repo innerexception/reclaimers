@@ -1,3 +1,4 @@
+import { v4 } from "uuid"
 import { store } from "../../App"
 import { AbilityType, MAX_TURN_TIMER, StatusEffect, StatusEffectData } from "../../constants"
 import Network from "../../firebase/Network"
@@ -59,22 +60,24 @@ export const applyStatusEffect = (character:RCUnit, effect:StatusEffect) => {
     return character
 }
 
-export const networkExecuteCharacterMove = (characterId:string, path:Array<Tuple>) => {
-    let encounter = store.getState().activeEncounter
-    encounter.unitActionQueue.push({
-        characterId,
-        path,
-        type: AbilityType.Move
-    })
-    Network.upsertMatch(encounter)
-}
+// export const queueCharacterMove = (characterId:string, path:Array<Tuple>) => {
+//     let encounter = store.getState().activeEncounter
+//     encounter.unitActionQueue.push({
+//         id:v4(),
+//         characterId,
+//         path,
+//         type: AbilityType.Move
+//     })
+//     Network.upsertMatch(encounter)
+// }
 
-export const networkExecuteCharacterAbility = (characterId:string, targetingData:AbilityTargetingData) => {
-    let encounter = store.getState().activeEncounter
-    encounter.unitActionQueue.push({
-        characterId,
-        selectedTargetIds: targetingData.selectedTargetIds, 
-        type: targetingData.type
-    })
-    Network.upsertMatch(encounter)
-}
+// export const networkExecuteCharacterAbility = (characterId:string, targetingData:AbilityTargetingData) => {
+//     let encounter = store.getState().activeEncounter
+//     encounter.unitActionQueue.push({
+//         id:v4(),
+//         characterId,
+//         selectedTargetIds: targetingData.selectedTargetIds, 
+//         type: targetingData.type
+//     })
+//     Network.upsertMatch(encounter)
+// }
