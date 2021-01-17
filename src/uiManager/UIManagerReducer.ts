@@ -42,7 +42,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
                     })
                 }
             })
-            return { ...state, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design, state.onlineAccount.id) }}  
+            return { ...state, modalState: null, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design, state.onlineAccount.id) }}  
         default:
             return state
     }

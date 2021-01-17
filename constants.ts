@@ -13,7 +13,7 @@ export enum AbilityType {
     Poke=1835,Empty=3258,SteelSkin=1955,Sort=2150,Filter=1839,Oil=1940,Decay=2086,Memories=1970,Balance=2155,Mulch=2164,Charge=1973,Fury=2012,
     Chains=1996,RightfulPlace=2152,Dilletant=2123,Masque=2022,Mirror=1946,Glitter=2037,StunningBeauty=2190,DepecheMode=2200,Fame=2074,ForeverYoung=1984,
     UncoverWeakness=2085,ChangeElements=1852,AncientKnowledge=1969,Fade=1976,Move=2187,BossFang,PoisonFang,
-    Dagger=3146,Rags=2404
+    Dagger=3146,Rags=2404,Destroy,Create
 }
 
 export enum EquipmentType {

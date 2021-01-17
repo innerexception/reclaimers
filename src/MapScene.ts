@@ -61,7 +61,13 @@ export default class MapScene extends Scene {
                         }
                     })
                     uiState.activeEncounter.entities.push(bot)
-                    onEncounterUpdated(uiState.activeEncounter)
+                    uiState.activeEncounter.unitActionQueue.push({
+                        characterId: bot.id,
+                        type: AbilityType.Create, 
+                        completedByPlayers: [],
+                        newUnit: bot
+                    })
+                    Network.upsertMatch(uiState.activeEncounter)
                 break
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
@@ -347,7 +353,6 @@ export default class MapScene extends Scene {
         //     } 
         //     c.turnCounter -= c.speed
         // })
-        // this.nextCharacterTurn(encounter)
     }
 
     calcVisibleObjects = (encounter:Encounter) => {
@@ -427,24 +432,32 @@ export default class MapScene extends Scene {
         }
     }
 
+    spawnUnit = (unit:RCUnit) => {
+        let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
+        this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), unit.avatarIndex, unit))
+    }
+
+    destroyUnit = (unitId:string) => {
+        const i = this.entities.findIndex(u=>u.characterId === unitId)
+        this.entities.splice(i,1)[0].destroy()
+    }
+
     redrawMap = (match:Encounter) => {
-        this.entities.forEach(e=>e.destroy())
-        this.entities = []
-        match.entities.forEach(char=>{
-            let tile = this.map.getTileAt(char.tileX, char.tileY, false, 'ground')
-            this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), char.avatarIndex, char))
-        })
-        this.calcVisibleObjects(match)
-        
+        const myId = store.getState().onlineAccount.id
         match.unitActionQueue.forEach(a=>{
-            if(!a.completedByPlayers.includes(store.getState().onlineAccount.id)){
+            if(!a.completedByPlayers.includes(myId)){
                 if(a.type=== AbilityType.Move){
                     this.executeCharacterMove(a.characterId, a.path)
+                }
+                else if(a.type === AbilityType.Create){
+                    this.spawnUnit(a.newUnit)
+                }
+                else if(a.type === AbilityType.Destroy){
+                    this.destroyUnit(a.characterId)
                 }
                 else this.executeCharacterAbility({...AbilityData.find(a=>a.type===a.type), selectedTargetIds: a.selectedTargetIds, validTargetIds: []}, a.characterId)
             }
         })
-        
     }
     
     nextCharacterTurn = (match:Encounter) => {

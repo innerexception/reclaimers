@@ -102,6 +102,7 @@ interface RCUnitCommand {
     type: import('./constants').AbilityType, 
     completedByPlayers: Array<string> 
     path?: Array<Tuple>
+    newUnit?: RCUnit
 }
 
 interface ModalState {

@@ -8,14 +8,15 @@ export default class CharacterSprite extends GameObjects.Sprite {
     status: Array<GameObjects.Image>
 
     constructor(scene:Scene,x:number,y:number, frame:number, character:RCUnit){
-        super(scene, x,y, 'sprites', frame)
+        super(scene, x,y, 'bot-sprites', frame)
         
         this.characterId = character.id
         this.status = []
-        character.statusEffect.forEach((s,i)=>{
-            if(!this.status.find(st=>+st.frame.name === s.type) && !StatusEffectData[s.type].isPassive)
-                this.status.push(this.scene.add.image(x+8-(i*5), y-16, 'sprites', s.type).setScale(0.5).setDepth(4))
-        })
+        this.setDisplaySize(16,16)
+        // character.statusEffect.forEach((s,i)=>{
+        //     if(!this.status.find(st=>+st.frame.name === s.type) && !StatusEffectData[s.type].isPassive)
+        //         this.status.push(this.scene.add.image(x+8-(i*5), y-16, 'sprites', s.type).setScale(0.5).setDepth(4))
+        // })
         
         this.setInteractive()
         scene.add.existing(this)
