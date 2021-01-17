@@ -1,13 +1,17 @@
 import { Scene, GameObjects } from "phaser";
-import { FONT_DEFAULT, StatusEffectData } from '../constants'
+import { store } from "../App";
+import { AbilityType, FONT_DEFAULT, StatusEffectData } from '../constants'
+import MapScene from "./MapScene";
+import AStar from "./util/AStar";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
     characterId: string
     reticle: GameObjects.Image
     status: Array<GameObjects.Image>
+    scene: MapScene
 
-    constructor(scene:Scene,x:number,y:number, frame:number, character:RCUnit){
+    constructor(scene:MapScene,x:number,y:number, frame:number, character:RCUnit){
         super(scene, x,y, 'bot-sprites', frame)
         
         this.characterId = character.id
@@ -20,6 +24,30 @@ export default class CharacterSprite extends GameObjects.Sprite {
         this.play(character.avatarIndex.toString())
         this.setInteractive()
         scene.add.existing(this)
+        
+        this.runUnitTick()
+    }
+
+    runUnitTick = () => {
+        const encounter = store.getState().activeEncounter
+        const dat = encounter.entities.find(e=>e.id === this.characterId)
+
+        dat.abilities.forEach(a=>{
+            switch(a.type){
+                case AbilityType.SensorMk1:
+                    //Head towards the fog
+                    const targetTile = (this.scene as MapScene).getVisibleTiles(dat, 'fog').find(t=>t.alpha !== 0)
+                    const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
+                    this.scene.executeCharacterMove(dat.id, path)
+                break
+                case AbilityType.ExtractorMk1:
+                    //Head towards a revealed resource patch that you can extract:
+                    //Lead or Titanium
+                    //Extract from soil until full
+                    //Return to base
+                break
+            }
+        })
     }
 
     floatDamage(dmg:number, color:string){

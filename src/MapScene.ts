@@ -317,9 +317,6 @@ export default class MapScene extends Scene {
     executeCharacterMove = (characterId:string, path:Array<Tuple>) => {
         const encounter = store.getState().activeEncounter
         let activeChar = encounter.entities.find(c=>c.id === characterId)
-        if(activeChar.ownerId){
-            this.cameras.main.startFollow(this.entities.find(c=>c.characterId === characterId))
-        }
         
         const target = this.entities.find(c=>c.characterId === characterId)
         if(target.visible){
@@ -334,25 +331,26 @@ export default class MapScene extends Scene {
                         duration: 250
                     }
                 }),
-                onComplete: ()=>this.onCompleteMove(path)
+                onComplete: ()=>this.onCompleteMove(characterId, path)
             });
         }
         else {
-            this.onCompleteMove(path)
+            this.onCompleteMove(characterId, path)
         }
     }
 
-    onCompleteMove = (path:Array<Tuple>)=> {
-        // let encounter = store.getState().activeEncounter
-        // encounter.entities.forEach(c=>{
-        //     if(c.id === encounter.unitActionQueue.characterId){
-        //         const pos = path[path.length-1]
-        //         c.tileX = pos.x
-        //         c.tileY = pos.y
-        //         c.moves = 0
-        //     } 
-        //     c.turnCounter -= c.speed
-        // })
+    onCompleteMove = (characterId:string, path:Array<Tuple>)=> {
+        let encounter = store.getState().activeEncounter
+        encounter.entities.forEach(c=>{
+            if(c.id === characterId){
+                const pos = path[path.length-1]
+                c.tileX = pos.x
+                c.tileY = pos.y
+                c.moves -= path.length
+                onEncounterUpdated(encounter)
+                this.entities.find(e=>e.characterId === characterId).runUnitTick()
+            }
+        })
     }
 
     calcVisibleObjects = (encounter:Encounter) => {
@@ -379,6 +377,11 @@ export default class MapScene extends Scene {
                 this.map.getTileAt(tuple[0], tuple[1]).alpha = i === radius ? 0.5 : 0
             })
         }
+    }
+
+    getVisibleTiles = (unit:RCUnit, layer:string) => {
+        return getSightMap(unit.tileX, unit.tileY, unit.sight, this.map)
+                .map(tuple=>this.map.getTileAt(tuple[0], tuple[1], false, layer))
     }
 
     runBotTurn = (npc:RCUnit) => {
