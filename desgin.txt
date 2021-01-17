@@ -30,5 +30,5 @@ build a network of point to point charging stations to keep the bots moving
 5. mission is complete when the map has been cleaned
 
 
-3. Deploy a scout bot and see it chew away at the fog areas
-4. Scout must return to recharge after 7 squares
+4. and see the scout ai chew away at the fog areas
+5. Scout must return to recharge after 7 squares

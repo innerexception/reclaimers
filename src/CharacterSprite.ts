@@ -17,7 +17,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         //     if(!this.status.find(st=>+st.frame.name === s.type) && !StatusEffectData[s.type].isPassive)
         //         this.status.push(this.scene.add.image(x+8-(i*5), y-16, 'sprites', s.type).setScale(0.5).setDepth(4))
         // })
-        
+        this.play(character.avatarIndex.toString())
         this.setInteractive()
         scene.add.existing(this)
     }

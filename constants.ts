@@ -61,8 +61,10 @@ export enum RCObjectType {
 }
 
 export enum RCUnitType {
-    Scout, LightCompactor
+    Scout=0, LightCompactor=9
 }
+
+export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor]
 
 export enum Modal {
     Login, Matchmaking, BotCreation, Jobs, EncounterLobby, CharacterInfo, Inventory, Intro, BotSpawn, Menu

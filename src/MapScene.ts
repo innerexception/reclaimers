@@ -2,7 +2,7 @@ import { Scene, GameObjects, Tilemaps } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
 import { v4 } from "uuid";
-import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType } from "../constants";
+import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getSightMap, setSelectIconPosition } from "./util/Util";
 import { onClearActiveAbility, onEncounterUpdated, onShowModal } from "./uiManager/Thunks";
@@ -161,12 +161,12 @@ export default class MapScene extends Scene {
         // }
         
         //TODO: preload all ability animations
-        AbilityData.forEach(a=>{
+        RCUnitTypes.forEach(type=>{
             this.anims.create({
-                key: a.type.toString(),
-                frames: this.anims.generateFrameNumbers('sprites', { start: a.startFrame, end: a.endFrame }),
+                key: type.toString(),
+                frames: this.anims.generateFrameNumbers('bot-sprites', { start: type, end: type+6 }),
                 frameRate: 4,
-                hideOnComplete: true,
+                repeat: -1
             });
         })
         
