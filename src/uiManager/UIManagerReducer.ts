@@ -1,6 +1,6 @@
 import { Modal, Scenario, UIReducerActions } from '../../constants';
 import Network from '../../firebase/Network';
-import { getNewEncounter } from '../util/Util';
+import { getNewEncounter, getUnitFromData } from '../util/Util';
 
 const appReducer = (state = getInitialState(), action:any):RState => {
     state.engineEvent = null
@@ -42,7 +42,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
                     })
                 }
             })
-            return { ...state, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design) }}  
+            return { ...state, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design, state.onlineAccount.id) }}  
         default:
             return state
     }

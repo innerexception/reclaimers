@@ -93,6 +93,7 @@ interface Encounter {
 interface RCPlayerState {
     id:string
     designs: Array<RCUnitData>
+    resources: import('./constants').Resources
 }
 
 interface RCUnitCommand {

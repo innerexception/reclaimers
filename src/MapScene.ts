@@ -52,6 +52,17 @@ export default class MapScene extends Scene {
                 case UIReducerActions.ENCOUNTER_UPDATED:
                     this.redrawMap(engineEvent.data)
                 break
+                case UIReducerActions.SPAWN_BOT:
+                    let bot = engineEvent.data as RCUnit
+                    this.map.setLayer('objects').forEachTile(t=>{
+                        if(t.index-1 === RCObjectType.Base){
+                            bot.tileX = t.x
+                            bot.tileY = t.y+1
+                        }
+                    })
+                    uiState.activeEncounter.entities.push(bot)
+                    onEncounterUpdated(uiState.activeEncounter)
+                break
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
                 break

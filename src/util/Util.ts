@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, EquipmentType, ItemType, RCUnitType, Scenario } from '../../constants';
+import { AbilityType, defaultResources, EquipmentType, ItemType, RCUnitType, Scenario } from '../../constants';
 import { AbilityData } from '../data/Abilities';
 import { computeFOV } from './Fov';
 
@@ -72,7 +72,7 @@ export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
         map,
         unitActionQueue: [],
         eventLog: [],
-        players: [{ id: playerId, designs: defaultDesigns}]
+        players: [{ id: playerId, designs: defaultDesigns, resources: defaultResources}]
     }
 }
 
@@ -239,4 +239,17 @@ export const getSightMap = (x,y,radius, map:Phaser.Tilemaps.Tilemap) => {
         sightArray = sightArray.concat(getCircle(x, y, i))
     }
     return computeFOV(x, y, radius, sightArray, map)
+}
+
+export const getUnitFromData = (data:RCUnitData, ownerId:string):RCUnit => {
+    return {
+        ...data,
+        id:v4(),
+        ownerId,
+        abilities: data.abilityTypes.map(a=>{ return { type: a, cooldown: 0, uses: 0}}),
+        hp: data.maxHp,
+        moves: data.maxMoves,
+        tileX: 0,
+        tileY: 0
+    }
 }

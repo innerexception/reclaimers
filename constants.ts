@@ -72,6 +72,20 @@ export enum Scenario {
     Tutorial="Tutorial",Hub='Hub'
 }
 
+export type Resources = {
+    [ItemType.Lead]: number
+    [ItemType.Lithium]: number
+    [ItemType.Palladium]: number
+    [ItemType.Titanium]: number
+}
+
+export const defaultResources = {
+    [ItemType.Lead]: 0,
+    [ItemType.Lithium]: 0,
+    [ItemType.Palladium]: 0,
+    [ItemType.Titanium]: 0
+}
+
 export const Scenarios = [
 ]
 
