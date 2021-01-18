@@ -105,10 +105,8 @@ export default class MapScene extends Scene {
             this.map.setLayer('fog').forEachTile(t=>{
                 t.index = RCObjectType.Fog+1
             })
-            this.map.setLayer('objects').forEachTile(t=>{
-                if(t.index-1 === RCObjectType.Base)
-                    this.carveFogOfWar(4, t.x, t.y)
-            })
+            let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
+            this.carveFogOfWar(4, base.x, base.y)
             Network.upsertMatch(encounterData)
         }
         else {
@@ -119,10 +117,8 @@ export default class MapScene extends Scene {
         this.cameras.main.setZoom(2)
         // this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         
-        this.map.setLayer('objects').forEachTile(t=>{
-            if(t.index-1 === RCObjectType.Base)
-                this.cameras.main.centerOn(t.getCenterX(), t.getCenterY())
-        })
+        let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
+        this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
         
     }
 
@@ -283,7 +279,7 @@ export default class MapScene extends Scene {
                 }
             }
             else if(GameObjects[0]){
-                onShowModal(Modal.CharacterInfo, (GameObjects[0] as CharacterSprite).characterId)
+                onSelectUnit((GameObjects[0] as CharacterSprite).characterId)
             }
         })
         this.initCompleted = true
@@ -319,7 +315,8 @@ export default class MapScene extends Scene {
                     return {
                         x: tile.getCenterX(),
                         y: tile.getCenterY(),
-                        duration: 550
+                        duration: 1000,
+                        onComplete: ()=>this.carveFogOfWar(activeChar.sight, tile.x, tile.y)
                     }
                 }),
                 onComplete: ()=>{
@@ -336,15 +333,18 @@ export default class MapScene extends Scene {
 
     onCompleteMove = (characterId:string, path:Array<Tuple>)=> {
         let encounter = store.getState().activeEncounter
+        let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
         encounter.entities.forEach(c=>{
             if(c.id === characterId){
                 const pos = path[path.length-1]
                 c.tileX = pos.x
                 c.tileY = pos.y
                 c.moves -= path.length
-                this.entities.find(e=>e.characterId === characterId).runUnitTick()
+                if(base.x===c.tileX && base.y===c.tileY) c.moves = c.maxMoves
             }
         })
+        onEncounterUpdated(encounter)
+        this.entities.find(e=>e.characterId === characterId).runUnitTick()
     }
 
     calcVisibleObjects = (encounter:Encounter) => {

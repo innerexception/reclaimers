@@ -27,7 +27,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
         scene.time.addEvent({
             delay:1000,
             callback: this.runUnitTick,
-            repeat:1
         })
     }
 
@@ -44,15 +43,28 @@ export default class CharacterSprite extends GameObjects.Sprite {
             switch(a.type){
                 case AbilityType.SensorMk1:
                     //Head towards the fog
-                    const fogTiles = (this.scene as MapScene).getVisibleTiles(dat, 'fog')
-                    const nextVisible = fogTiles.find(t=>t.alpha !== 0)
+                    if(dat.moves <= 0){
+                        const path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
+                        return this.scene.executeCharacterMove(dat.id, path)
+                    } 
+                    const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
+                    const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
-                        const path = new AStar(nextVisible.x, nextVisible.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
+                        let path = new AStar(nextVisible.x, nextVisible.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
+                        if(dat.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
                         this.scene.executeCharacterMove(dat.id, path)
                     }
                     else {
-                        const path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
-                        this.scene.executeCharacterMove(dat.id, path)
+                        //Roam
+                        let x = Phaser.Math.Between(0,1)
+                        let y = Phaser.Math.Between(0,1)
+                        let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
+                        let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
+                        const encounter = store.getState().activeEncounter
+                        if(t && this.scene.passableTile(t.x, t.y, dat, encounter))
+                            this.scene.executeCharacterMove(dat.id, [candidate])
+                        else
+                            this.scene.executeCharacterMove(dat.id, [{x:dat.tileX, y: dat.tileY}])
                     }
                 break
                 case AbilityType.ExtractorMk1:
