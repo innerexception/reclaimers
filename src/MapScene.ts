@@ -1,19 +1,18 @@
-import { Scene, GameObjects, Tilemaps } from "phaser";
+import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
 import { v4 } from "uuid";
 import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getSightMap, setSelectIconPosition } from "./util/Util";
-import { onClearActiveAbility, onEncounterUpdated, onShowModal } from "./uiManager/Thunks";
-import { AbilityData } from "./data/Abilities";
+import { onClearActiveAbility, onEncounterUpdated, onSelectUnit, onShowModal } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
-import Network from "../firebase/Network";
 export default class MapScene extends Scene {
 
     unsubscribeRedux: Function
     effects: GameObjects.Group
     selectIcon: GameObjects.Image
+    activeIcon: GameObjects.Image
     selectedTile: Tilemaps.Tile
     map: Tilemaps.Tilemap
     g: GameObjects.Graphics
@@ -23,6 +22,8 @@ export default class MapScene extends Scene {
     origDragPoint: Phaser.Math.Vector2
     entities: Array<CharacterSprite>
     targetingAbility: AbilityTargetingData
+    targetingMove: boolean
+    activeUnit: GameObjects.Sprite
 
     constructor(config){
         super(config)
@@ -61,6 +62,12 @@ export default class MapScene extends Scene {
                 break
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
+                break
+                case UIReducerActions.SELECT_UNIT:
+                    this.activeUnit = this.entities.find(e=>e.characterId === engineEvent.data)
+                break
+                case UIReducerActions.SELECT_DESTINATION:
+                    this.targetingMove = true
                 break
             }
     }
@@ -107,7 +114,6 @@ export default class MapScene extends Scene {
             })
             let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
             this.carveFogOfWar(4, base.x, base.y)
-            Network.upsertMatch(encounterData)
         }
         else {
             //We are loading the prelaunch hub
@@ -141,6 +147,7 @@ export default class MapScene extends Scene {
         this.initMap(Scenario.Hub)
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
+        this.activeIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
         
         // this.sounds = {
         //     border: this.sound.add('border'),
@@ -158,7 +165,7 @@ export default class MapScene extends Scene {
         })
         
         this.add.tween({
-            targets: this.selectIcon,
+            targets: [this.selectIcon, this.activeIcon],
             scale: 0.5,
             duration: 1000,
             repeat: -1,
@@ -179,21 +186,6 @@ export default class MapScene extends Scene {
                 setSelectIconPosition(this, tile)
             }
             else this.selectIcon.setVisible(false)
-            // if(store.getState().activeAbility?.type === AbilityType.Move){
-            //     let terrain = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'terrain')
-            //     let ground = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
-            //     if(gameObjects.length > 0) ground = this.map.getTileAtWorldXY((gameObjects[0] as any).x, (gameObjects[0] as any).y, false, undefined, 'ground')
-            //     if(ground){
-            //         if(this.selectIcon.x !== ground.getCenterX() || this.selectIcon.y !== ground.getCenterY()){
-            //             const state = store.getState()
-            //             let me = state.activeEncounter.entities.find(c=>c.id === state.activeEncounter.activeCharacterId)
-            //             const path = new AStar(ground.x, ground.y, (tileX,tileY)=>this.passableTile(tileX, tileY, me, state.activeEncounter)).compute(me.tileX, me.tileY)
-            //             if(!terrain && path.length > 0 && path.length <= me.maxMoves) this.selectIcon.setTint(0x00ff00) //TODO fix moving direct onto npc squares
-            //             else this.selectIcon.setTint(0xff0000)
-            //             setSelectIconPosition(this, ground)
-            //         }
-            //     }
-            // }
             // else {
             //     let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
             //     if(tile || gameObjects.length > 0){
@@ -233,13 +225,19 @@ export default class MapScene extends Scene {
             if(!state.activeEncounter) return
             let object = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
             //Try perform active action
-            // if(state.activeAbility?.type === AbilityType.Move){
-            //     onClearActiveAbility()
-            //     let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
-            //     let me = state.activeEncounter.entities.find(c=>state.onlineAccount.characters.find(ch=>ch.id===c.id))
-            //     const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, state.activeEncounter)).compute(me.currentStatus.tileX, me.currentStatus.tileY)
-            //     if(path.length > 0 && path.length <= me.maxMoves) networkExecuteCharacterMove(me.id, path)
-            // }
+            if(this.targetingMove){
+                this.targetingMove = false
+                let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
+                
+                const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
+                this.tweens.add({
+                    targets: img,
+                    alpha: 0,
+                    duration: 500,
+                    onComplete: ()=>img.destroy()
+                })
+                this.entities.find(e=>e.characterId === state.selectedUnitId).executeCharacterMove(state.selectedUnitId, targetTile)
+            }
             // else if(this.targetingAbility){
             //     const data = AbilityData.find(a=>a.type === this.targetingAbility.type)
             //     if(data.range === 0){
@@ -274,7 +272,7 @@ export default class MapScene extends Scene {
             // }
             if(object){
                 switch(object.index-1){
-                    case Objects.Vault: onShowModal(Modal.Inventory)
+                    case Objects.Vault: onShowModal(Modal.Menu)
                     break
                 }
             }
@@ -285,6 +283,15 @@ export default class MapScene extends Scene {
         this.initCompleted = true
     }
     
+    getBase = () => {
+        let base
+        this.map.setLayer('objects').forEachTile(t=>{
+            if(t.index-1 === RCObjectType.Base)
+                base = t
+        })
+        return base
+    }
+
     executeCharacterAbility = (targetingData:AbilityTargetingData, casterId:string) => {
         // let encounter = store.getState().activeEncounter
         // const caster = encounter.entities.find(p=>p.id === casterId)
@@ -301,46 +308,15 @@ export default class MapScene extends Scene {
         // })
     }
 
-    executeCharacterMove = (characterId:string, path:Array<Tuple>) => {
-        const encounter = store.getState().activeEncounter
-        let activeChar = encounter.entities.find(c=>c.id === characterId)
-        
-        const target = this.entities.find(c=>c.characterId === characterId)
-        if(target.visible){
-            encounter.eventLog.push(activeChar.name+' is moving...')
-            this.tweens.timeline({
-                targets: target,    
-                tweens: path.map(tuple=>{
-                    let tile = this.map.getTileAt(tuple.x, tuple.y, false, 'ground')
-                    return {
-                        x: tile.getCenterX(),
-                        y: tile.getCenterY(),
-                        duration: 1000,
-                        onComplete: ()=>this.carveFogOfWar(activeChar.sight, tile.x, tile.y)
-                    }
-                }),
-                onComplete: ()=>{
-                    const pos = path[path.length-1]
-                    this.carveFogOfWar(activeChar.sight, pos.x, pos.y)
-                    this.onCompleteMove(characterId, path)
-                }
-            });
-        }
-        else {
-            this.onCompleteMove(characterId, path)
-        }
-    }
-
     onCompleteMove = (characterId:string, path:Array<Tuple>)=> {
         let encounter = store.getState().activeEncounter
-        let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
         encounter.entities.forEach(c=>{
             if(c.id === characterId){
-                const pos = path[path.length-1]
-                c.tileX = pos.x
-                c.tileY = pos.y
-                c.moves -= path.length
-                if(base.x===c.tileX && base.y===c.tileY) c.moves = c.maxMoves
+                let base = this.getBase()
+                if(base.x===c.tileX && base.y===c.tileY){
+                    c.moves = c.maxMoves
+                    encounter.eventLog.push(c.name+' is recharging...')
+                } 
             }
         })
         onEncounterUpdated(encounter)
@@ -397,19 +373,7 @@ export default class MapScene extends Scene {
         this.entities.splice(i,1)[0].destroy()
     }
 
-    // redrawMap = (match:Encounter) => {
-    //     while(match.unitActionQueue.length > 0){
-    //         const cmd = match.unitActionQueue.pop()
-    //         if(cmd.type=== AbilityType.Move){
-    //             this.executeCharacterMove(cmd)
-    //         }
-    //         else if(cmd.type === AbilityType.Create){
-    //             this.spawnUnit(cmd.newUnit)
-    //         }
-    //         else if(cmd.type === AbilityType.Destroy){
-    //             this.destroyUnit(cmd.characterId)
-    //         }
-    //         else this.executeCharacterAbility({...AbilityData.find(a=>a.type===a.type), selectedTargetIds: a.selectedTargetIds, validTargetIds: []}, a.characterId)
-    //     }
-    // }
+    update(){
+        if(this.activeUnit) this.activeIcon.setPosition(this.activeUnit.x, this.activeUnit.y)
+    }
 }

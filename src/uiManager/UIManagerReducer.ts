@@ -1,24 +1,15 @@
 import { Modal, Scenario, UIReducerActions } from '../../constants';
-import Network from '../../firebase/Network';
 import { getNewEncounter, getUnitFromData } from '../util/Util';
 
 const appReducer = (state = getInitialState(), action:any):RState => {
     state.engineEvent = null
     switch (action.type) {
-        case UIReducerActions.LOGIN_FAILED:
-            return { ...state, loginInProgress:false, modalState: {modal:Modal.Login, data:action.message}}
         case UIReducerActions.SHOW_MODAL:
             return { ...state, modalState: { modal: action.modal, data: action.data } }
         case UIReducerActions.HIDE_MODAL:
             return { ...state, modalState: null }
-        case UIReducerActions.LOGIN_PENDING:
-            return { ...state, loginInProgress: true }
-        case UIReducerActions.LOGIN_SUCCESS:
-            let account = action.user as UserAccount
-            let hub = getNewEncounter(Scenario.Hub, account.id)
-            return { ...state, loginInProgress:false, onlineAccount: account, modalState: { modal: Modal.Intro }, activeEncounter: hub, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: hub }}
         case UIReducerActions.LOGOUT:
-            return getInitialState()
+            return {...state, activeEncounter: null, modalState: { modal: Modal.Menu} }
         case UIReducerActions.UPDATE_ACCOUNT:
             return { ...state, onlineAccount: {...action.account}}
         case UIReducerActions.ACTIVATE_ABILITY:
@@ -26,13 +17,15 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.CLEAR_ABILITY: 
             return { ...state, activeAbility: null }
         case UIReducerActions.JOIN_ENCOUNTER:
-            Network.subscribeToEncounter(action.match.id)
             let onlineAccount = state.onlineAccount || action.onlineAccount
             onlineAccount = {...onlineAccount, encounterId: action.match.id}
-            Network.upsertAccount(onlineAccount)
             return { ...state, activeEncounter: action.match, modalState: null, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
         case UIReducerActions.ENCOUNTER_UPDATED:
-            return { ...state, activeEncounter: action.encounter, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
+            return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
+        case UIReducerActions.SELECT_UNIT:
+            return { ...state, selectedUnitId: action.unitId, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unitId } }  
+        case UIReducerActions.SELECT_DESTINATION:
+            return { ...state, engineEvent: { action: UIReducerActions.SELECT_DESTINATION, data:null } }  
         case UIReducerActions.SPAWN_BOT:
             state.activeEncounter.players.forEach(p=>{
                 if(p.id === state.onlineAccount.id){
@@ -52,12 +45,11 @@ export default appReducer;
 
 const getInitialState = ():RState => {
     return {
-        modalState: { modal: Modal.Login },
+        modalState: { modal: Modal.Menu },
         onlineAccount: null,
-        loginInProgress: false,
         activeEncounter: null,
         engineEvent: null,
         activeAbility: null,
-        activeCharacterId: ''
+        selectedUnitId: ''
     }
 }

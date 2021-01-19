@@ -1,6 +1,5 @@
 import { dispatch, store } from '../../App';
 import { Modal, Scenario, UIReducerActions } from '../../constants';
-import Network from '../../firebase/Network';
 // const { ipcRenderer } = require('electron');
 
 export const onShowModal = (modal:Modal, data?:any) => {
@@ -65,12 +64,7 @@ export const onJoinEncounter = (match:Encounter, onlineAccount?:UserAccount) => 
     })
 }
 
-export const onCreateEncounter = async (encounter:Encounter, playerId:string) => {
-    const activeEncounter = store.getState().activeEncounter
-    if(activeEncounter) {
-        Network.unsubscribeMatch(activeEncounter, playerId)
-    }
-    await Network.upsertMatch(encounter)
+export const onCreateEncounter = async (encounter:Encounter) => {
     dispatch({
         type: UIReducerActions.JOIN_ENCOUNTER,
         match:encounter
@@ -80,6 +74,19 @@ export const onCreateEncounter = async (encounter:Encounter, playerId:string) =>
 // export const onQuit = () => {
 //     ipcRenderer.send('close')
 // }
+
+export const onSelectUnitDestination = () => {
+    dispatch({
+        type: UIReducerActions.SELECT_DESTINATION
+    })
+}
+
+export const onSelectUnit = (unitId:string) => {
+    dispatch({
+        type: UIReducerActions.SELECT_UNIT,
+        unitId
+    })
+}
 
 export const onEncounterUpdated = (encounter:Encounter) => {
     dispatch({

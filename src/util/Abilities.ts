@@ -1,7 +1,6 @@
 import { v4 } from "uuid"
 import { store } from "../../App"
 import { AbilityType, MAX_TURN_TIMER, StatusEffect, StatusEffectData } from "../../constants"
-import Network from "../../firebase/Network"
 import CharacterSprite from "../CharacterSprite"
 
 export const resolveAbility = (encounter:Encounter, targetingAbility:AbilityData, targetList:Array<string>, sprites:Array<CharacterSprite>, caster:RCUnit) => {
@@ -59,17 +58,6 @@ export const applyStatusEffect = (character:RCUnit, effect:StatusEffect) => {
     }
     return character
 }
-
-// export const queueCharacterMove = (characterId:string, path:Array<Tuple>) => {
-//     let encounter = store.getState().activeEncounter
-//     encounter.unitActionQueue.push({
-//         id:v4(),
-//         characterId,
-//         path,
-//         type: AbilityType.Move
-//     })
-//     Network.upsertMatch(encounter)
-// }
 
 // export const networkExecuteCharacterAbility = (characterId:string, targetingData:AbilityTargetingData) => {
 //     let encounter = store.getState().activeEncounter

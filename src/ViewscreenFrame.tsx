@@ -6,26 +6,26 @@ import BotChooser from './views/BotChooser'
 import CharacterInfo from './views/CharacterInfo'
 import EventLog from './views/EventLog'
 import Intro from './views/Intro'
-import Login from './views/Login'
 import Viewscreen from './Viewscreen'
 
 interface Props {
     modalState?:ModalState
     match?:Encounter
     me?:UserAccount
+    selectedUnitId?:string
 }
 
 @(connect((state: RState) => ({
     modalState: state.modalState,
     me: state.onlineAccount,
-    match: state.activeEncounter
+    match: state.activeEncounter,
+    selectedUnitId: state.selectedUnitId
 })) as any)
 export default class ViewscreenFrame extends React.Component<Props> {
 
     getModal = () => {
         let data = this.props.modalState.data
         switch(this.props.modalState.modal){
-            case Modal.Login: return <Login/>
             case Modal.CharacterInfo: return <CharacterInfo characterId={data}/>
             case Modal.Menu: return <Intro/>
             case Modal.BotSpawn: return <BotChooser/>
@@ -39,6 +39,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
                 <div style={{display:'flex', flexDirection:'column',alignItems:'center', width:'100%', maxWidth:'1200px'}}>
                     <Viewscreen/>
                     <div style={{position:'absolute', bottom:0, left:0}}>
+                        <CharacterInfo characterId={this.props.selectedUnitId}/>
                         <Actionbar/>
                         {this.props.match && <EventLog events={this.props.match.eventLog}/>}
                     </div>

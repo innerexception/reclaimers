@@ -75,12 +75,10 @@ export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
     }
 }
 
-export const getNewAccount = (email:string, id:string):UserAccount => {
+export const getNewAccount = (name:string, id:string):UserAccount => {
     return {
         id,
-        email,
-        name: 'New Player',
-        encounterId: '',
+        name,
         completedMissionIds: []
     } 
 }

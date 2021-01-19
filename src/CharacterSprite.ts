@@ -1,7 +1,8 @@
-import { Scene, GameObjects } from "phaser";
+import { Scene, GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
 import { AbilityType, FONT_DEFAULT, RCObjectType, StatusEffectData } from '../constants'
 import MapScene from "./MapScene";
+import { onEncounterUpdated } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 
 export default class CharacterSprite extends GameObjects.Sprite {
@@ -10,6 +11,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
     reticle: GameObjects.Image
     status: Array<GameObjects.Image>
     scene: MapScene
+    currentMove: Tweens.Timeline
 
     constructor(scene:MapScene,x:number,y:number, frame:number, character:RCUnit){
         super(scene, x,y, 'bot-sprites', frame)
@@ -33,26 +35,18 @@ export default class CharacterSprite extends GameObjects.Sprite {
     runUnitTick = () => {
         const encounter = store.getState().activeEncounter
         const dat = encounter.entities.find(e=>e.id === this.characterId)
-        let base
-        this.scene.map.setLayer('objects').forEachTile(t=>{
-            if(t.index-1 === RCObjectType.Base)
-                base = t
-        })
-
+        
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
                     //Head towards the fog
                     if(dat.moves <= 0){
-                        const path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
-                        return this.scene.executeCharacterMove(dat.id, path)
+                        return this.executeCharacterMove(dat.id, this.scene.getBase())
                     } 
                     const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
-                        let path = new AStar(nextVisible.x, nextVisible.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
-                        if(dat.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat, encounter)).compute(dat.tileX, dat.tileY)
-                        this.scene.executeCharacterMove(dat.id, path)
+                        this.executeCharacterMove(dat.id, nextVisible)
                     }
                     else {
                         //Roam
@@ -60,11 +54,8 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         let y = Phaser.Math.Between(0,1)
                         let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
                         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-                        const encounter = store.getState().activeEncounter
                         if(t && this.scene.passableTile(t.x, t.y, dat, encounter))
-                            this.scene.executeCharacterMove(dat.id, [candidate])
-                        else
-                            this.scene.executeCharacterMove(dat.id, [{x:dat.tileX, y: dat.tileY}])
+                            this.executeCharacterMove(dat.id, t)
                     }
                 break
                 case AbilityType.ExtractorMk1:
@@ -75,6 +66,52 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
             }
         })
+    }
+
+    executeCharacterMove = (characterId:string, targetTile:Tilemaps.Tile) => {
+        const encounter = store.getState().activeEncounter
+        let activeChar = encounter.entities.find(c=>c.id === characterId)
+        const targetSprite = this.scene.entities.find(c=>c.characterId === characterId)
+        const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
+        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar, encounter)).compute(spriteTile.x, spriteTile.y)
+        
+        let base = this.scene.getBase()
+        if(base.x===spriteTile.x && base.y===spriteTile.y){
+            activeChar.moves = activeChar.maxMoves
+            encounter.eventLog.push(activeChar.name+' is recharging...')
+            onEncounterUpdated(encounter)
+        } 
+        if(activeChar.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar, encounter)).compute(spriteTile.x, spriteTile.y)
+                        
+        if(targetSprite.visible){
+            encounter.eventLog.push(activeChar.name+' is moving...')
+            if(this.currentMove) this.currentMove.stop()
+            this.currentMove = this.scene.tweens.timeline({
+                targets: targetSprite,    
+                tweens: path.map(tuple=>{
+                    let tile = this.scene.map.getTileAt(tuple.x, tuple.y, false, 'ground')
+                    return {
+                        x: tile.getCenterX(),
+                        y: tile.getCenterY(),
+                        duration: 1000,
+                        onComplete: ()=>{
+                            const enc = store.getState().activeEncounter
+                            enc.entities.find(e=>e.id === characterId).moves--
+                            onEncounterUpdated(enc)
+                            this.scene.carveFogOfWar(activeChar.sight, tile.x, tile.y)
+                        }
+                    }
+                }),
+                onComplete: ()=>{
+                    const pos = path[path.length-1]
+                    this.scene.carveFogOfWar(activeChar.sight, pos.x, pos.y)
+                    this.scene.onCompleteMove(characterId, path)
+                }
+            });
+        }
+        else {
+            this.scene.onCompleteMove(characterId, path)
+        }
     }
 
     floatDamage(dmg:number, color:string){

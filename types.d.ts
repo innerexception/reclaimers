@@ -1,9 +1,8 @@
 interface UserAccount {
     id:string
-    email:string
     name:string
-    encounterId: string
     completedMissionIds: Array<string>
+    savedMission?: Encounter
 }
 
 interface Tuple {
@@ -112,9 +111,8 @@ interface ModalState {
 interface RState {
     onlineAccount: UserAccount
     modalState: ModalState
-    loginInProgress: boolean
     activeEncounter: Encounter
     activeAbility: Ability
-    activeCharacterId: string
+    selectedUnitId: string
     engineEvent: { action: import('./constants').UIReducerActions, data: any }
 }

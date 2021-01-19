@@ -1,8 +1,8 @@
 import * as React from 'react'
-import AppStyles from '../../AppStyles';
+import AppStyles, { colors } from '../../AppStyles';
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onHideModal } from '../uiManager/Thunks';
+import { onSelectUnitDestination } from '../uiManager/Thunks';
 import { RCUnitType, StatusEffectData } from '../../constants';
 import Footer from '../components/Footer';
 
@@ -19,10 +19,11 @@ interface Props {
 export default class CharacterInfo extends React.Component<Props> {
 
     render(){
-        const charDat = this.props.encounter.entities.find(c=>c.id === this.props.characterId)
+        const charDat = this.props.encounter && this.props.encounter.entities.find(c=>c.id === this.props.characterId)
         return (
-            <div style={{...AppStyles.modal, justifyContent:'space-between'}}>
-                <div style={{width:'85%', height:'85%'}}>
+            <div style={{...styles, width:'250px', minHeight:'200px'}}>
+                {charDat ? 
+                <div>
                     <h2>{charDat.name}</h2>
                     <h5>hp: {charDat.hp}</h5>
                     <h5>moves: {charDat.moves}</h5>
@@ -33,11 +34,18 @@ export default class CharacterInfo extends React.Component<Props> {
                             <h5 style={{marginLeft:'0.5em'}}>{StatusEffectData[s].title}</h5>
                         </div>)}
                     </h5>
-                    <hr/>
-                    {Button(true, onHideModal, 'Ok')}
-                </div>
-                <Footer/>
+                    <div>
+                        {Button(true, onSelectUnitDestination, 'Move')}
+                    </div>
+                </div>: <h4>No Selection</h4>}
             </div>
         )
     }
+}
+
+const styles = {
+    border: '3px inset',
+    borderColor: 'silver',
+    color: colors.lGreen,
+    padding:'5px'
 }
