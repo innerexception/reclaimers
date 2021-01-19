@@ -230,6 +230,11 @@ export default class MapScene extends Scene {
                 let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
                 
                 const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
+                const unit = state.activeEncounter.entities.find(e=>e.id === state.selectedUnitId)
+                const sprite = this.entities.find(e=>e.characterId === state.selectedUnitId)
+                const tile = this.map.getTileAtWorldXY(sprite.x, sprite.y, false, undefined, 'ground')
+                const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, unit, state.activeEncounter)).compute(tile.x, tile.y)
+                if(path.length > unit.moves) img.setTint(0xff0000)        
                 this.tweens.add({
                     targets: img,
                     alpha: 0,
@@ -308,7 +313,7 @@ export default class MapScene extends Scene {
         // })
     }
 
-    onCompleteMove = (characterId:string, path:Array<Tuple>)=> {
+    onCompleteMove = (characterId:string)=> {
         let encounter = store.getState().activeEncounter
         encounter.entities.forEach(c=>{
             if(c.id === characterId){

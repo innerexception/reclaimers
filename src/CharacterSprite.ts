@@ -83,35 +83,30 @@ export default class CharacterSprite extends GameObjects.Sprite {
         } 
         if(activeChar.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar, encounter)).compute(spriteTile.x, spriteTile.y)
                         
-        if(targetSprite.visible){
-            encounter.eventLog.push(activeChar.name+' is moving...')
-            if(this.currentMove) this.currentMove.stop()
-            this.currentMove = this.scene.tweens.timeline({
-                targets: targetSprite,    
-                tweens: path.map(tuple=>{
-                    let tile = this.scene.map.getTileAt(tuple.x, tuple.y, false, 'ground')
-                    return {
-                        x: tile.getCenterX(),
-                        y: tile.getCenterY(),
-                        duration: 1000,
-                        onComplete: ()=>{
-                            const enc = store.getState().activeEncounter
-                            enc.entities.find(e=>e.id === characterId).moves--
-                            onEncounterUpdated(enc)
-                            this.scene.carveFogOfWar(activeChar.sight, tile.x, tile.y)
-                        }
+        encounter.eventLog.push(activeChar.name+' is moving...')
+        if(this.currentMove) this.currentMove.stop()
+        this.currentMove = this.scene.tweens.timeline({
+            targets: targetSprite,    
+            tweens: path.map(tuple=>{
+                let tile = this.scene.map.getTileAt(tuple.x, tuple.y, false, 'ground')
+                return {
+                    x: tile.getCenterX(),
+                    y: tile.getCenterY(),
+                    duration: 1000,
+                    onComplete: ()=>{
+                        const enc = store.getState().activeEncounter
+                        enc.entities.find(e=>e.id === characterId).moves--
+                        onEncounterUpdated(enc)
+                        this.scene.carveFogOfWar(activeChar.sight, tile.x, tile.y)
                     }
-                }),
-                onComplete: ()=>{
-                    const pos = path[path.length-1]
-                    this.scene.carveFogOfWar(activeChar.sight, pos.x, pos.y)
-                    this.scene.onCompleteMove(characterId, path)
                 }
-            });
-        }
-        else {
-            this.scene.onCompleteMove(characterId, path)
-        }
+            }),
+            onComplete: ()=>{
+                const pos = path[path.length-1]
+                this.scene.carveFogOfWar(activeChar.sight, pos.x, pos.y)
+                this.scene.onCompleteMove(characterId)
+            }
+        });
     }
 
     floatDamage(dmg:number, color:string){
