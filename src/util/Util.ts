@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, defaultResources, EquipmentType, ItemType, RCUnitType, Scenario } from '../../constants';
+import { AbilityType, defaultResources, EquipmentType, ItemType, RCUnitType, Scenario, TerrainToxins, TerrainType, Toxins } from '../../constants';
 import { AbilityData } from '../data/Abilities';
 import { computeFOV } from './Fov';
 
@@ -69,6 +69,7 @@ export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
     return {
         id:v4(),
         entities: [],
+        tiles: [],
         map,
         eventLog: [],
         players: [{ id: playerId, designs: defaultDesigns, resources: defaultResources}]
@@ -147,6 +148,11 @@ export const setSelectIconPosition = (scene:MapScene, tile:Tilemaps.Tile) => {
     if(scene.selectIcon.x !== tile.getCenterX() || scene.selectIcon.y !== tile.getCenterY()) 
         scene.selectIcon.setPosition(tile.getCenterX(), tile.getCenterY())
     scene.selectIcon.setVisible(true)
+}
+
+export const getToxinsOfTerrain = (terrain:TerrainType):Array<Toxins> => {
+    const count = Phaser.Math.Between(1, TerrainToxins[terrain].length)
+    return TerrainToxins[terrain].slice(0,count)
 }
 
 export const shuffle = (array:Array<any>) => {

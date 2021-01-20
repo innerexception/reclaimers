@@ -74,6 +74,18 @@ export enum Scenario {
     Tutorial="Tutorial",Hub='Hub'
 }
 
+export enum Toxins {
+    Lead,Benzene,Mercury,Cadmium,Arsenic,Plutonium,Uranium
+}
+
+export enum TerrainType {
+
+}
+
+export const TerrainToxins = {
+    [TerrainType.Something]: [Toxins.Arsenic, Toxins.Benzene]
+}
+
 export type Resources = {
     [ItemType.Lead]: number
     [ItemType.Lithium]: number
@@ -94,7 +106,7 @@ export const Scenarios = [
 export enum UIReducerActions {
     SHOW_MODAL, HIDE_MODAL, LOGIN_SUCCESS, LOGOUT, LOGIN_PENDING, LOGIN_FAILED,
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
-    START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION
+    START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION,TILE_INFO
 }
 
 export enum Objects {

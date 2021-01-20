@@ -40,6 +40,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
                     <Viewscreen/>
                     <div style={{position:'absolute', bottom:0, left:0}}>
                         <CharacterInfo characterId={this.props.selectedUnitId}/>
+                        <TileInfo/>
                         <Actionbar/>
                         {this.props.match && <EventLog events={this.props.match.eventLog}/>}
                     </div>

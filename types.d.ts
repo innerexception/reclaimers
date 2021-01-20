@@ -5,6 +5,10 @@ interface UserAccount {
     savedMission?: Encounter
 }
 
+interface TileInfo {
+    toxins: Array<import('./constants').Toxin>
+}
+
 interface Tuple {
     x:number
     y:number
@@ -83,6 +87,7 @@ interface AbilityTargetingData {
 interface Encounter {
     id:string
     entities: Array<RCUnit>
+    tiles: Array<Array<TileInfo>>
     players: Array<RCPlayerState>
     map: import('./constants').Scenario
     eventLog: Array<string>
@@ -114,5 +119,6 @@ interface RState {
     activeEncounter: Encounter
     activeAbility: Ability
     selectedUnitId: string
+    selectedTile: TileInfo
     engineEvent: { action: import('./constants').UIReducerActions, data: any }
 }

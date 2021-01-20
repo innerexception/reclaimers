@@ -88,6 +88,13 @@ export const onSelectUnit = (unitId:string) => {
     })
 }
 
+export const onShowTileInfo = (tileX:number, tileY:number, explored:boolean) => {
+    dispatch({
+        type: UIReducerActions.TILE_INFO,
+        tileX, tileY, explored
+    })
+}
+
 export const onEncounterUpdated = (encounter:Encounter) => {
     dispatch({
         type: UIReducerActions.ENCOUNTER_UPDATED,

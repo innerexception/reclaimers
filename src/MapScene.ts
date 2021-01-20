@@ -4,8 +4,8 @@ import { defaults } from '../assets/Assets'
 import { v4 } from "uuid";
 import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
 import CharacterSprite from "./CharacterSprite";
-import { canPassTerrainType, getCircle, getSightMap, setSelectIconPosition } from "./util/Util";
-import { onClearActiveAbility, onEncounterUpdated, onSelectUnit, onShowModal } from "./uiManager/Thunks";
+import { canPassTerrainType, getCircle, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
+import { onShowTileInfo, onEncounterUpdated, onSelectUnit, onShowModal } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 export default class MapScene extends Scene {
 
@@ -126,6 +126,14 @@ export default class MapScene extends Scene {
         let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
         
+        //init terrain data
+        let tileData = new Array<Array<TileInfo>>()
+        this.map.setLayer('ground').forEachTile(t=>{
+            if(!tileData[t.x]) tileData[t.x] = []
+            tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index) }
+        })
+        encounterData.tiles = tileData
+        onEncounterUpdated(encounterData)
     }
 
     passableTile = (tileX:number, tileY:number, unit:RCUnit, encounter:Encounter) => {
@@ -180,10 +188,11 @@ export default class MapScene extends Scene {
         this.input.on('pointermove', (event, gameObjects:Array<Phaser.GameObjects.GameObject>) => {
             const encounter = store.getState().activeEncounter
             if(!encounter) return
-            let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
+            let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
             if(tile || gameObjects.length > 0){
                 if(gameObjects.length > 0) tile = this.map.getTileAtWorldXY((gameObjects[0] as any).x, (gameObjects[0] as any).y, false, undefined, 'ground')
                 setSelectIconPosition(this, tile)
+                onShowTileInfo(tile.x, tile.y, tile.alpha !== 1)
             }
             else this.selectIcon.setVisible(false)
             // else {
