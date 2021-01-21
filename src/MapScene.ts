@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
-import { onClearActiveAbility, onEncounterUpdated, onSelectUnit, onShowModal, onShowTileInfo } from "./uiManager/Thunks";
+import { onClearActiveAbility, onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 export default class MapScene extends Scene {
 
@@ -136,7 +136,10 @@ export default class MapScene extends Scene {
     passableTile = (tileX:number, tileY:number, unit:RCUnit) => {
         const tile = this.map.getTileAt(tileX, tileY, false, 'ground')
         if(tile){
-            if(this.entities.find(c=>c.entity.id !== unit.id && c.entity.tileX === tileX && c.entity.tileY === tileY))
+            if(this.entities.find(c=>{
+                if(c.entity.tileX === unit.tileX && c.entity.tileY === unit.tileY) return false
+                return c.entity.id !== unit.id && c.entity.tileX === tileX && c.entity.tileY === tileY
+            }))
                 return false
             const terrain = this.map.getTileAt(tileX, tileY, false, 'terrain')
             if(terrain) return canPassTerrainType(unit, terrain.index)
@@ -233,21 +236,7 @@ export default class MapScene extends Scene {
             let object = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
             //Try perform active action
             if(this.targetingMove){
-                this.targetingMove = false
-                let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
-                
-                const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
-                const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
-                const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
-                const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, unit.entity)).compute(tile.x, tile.y)
-                if(path.length > unit.entity.moves) img.setTint(0xff0000)        
-                this.tweens.add({
-                    targets: img,
-                    alpha: 0,
-                    duration: 500,
-                    onComplete: ()=>img.destroy()
-                })
-                this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(state.selectedUnit.id, targetTile)
+                this.tryPerformMove()
             }
             // else if(this.targetingAbility){
             //     const data = AbilityData.find(a=>a.type === this.targetingAbility.type)
@@ -281,14 +270,14 @@ export default class MapScene extends Scene {
             //         }
             //     }
             // }
-            if(object){
+            if(GameObjects[0]){
+                onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
+            }
+            else if(object){
                 switch(object.index-1){
                     case Objects.Vault: onShowModal(Modal.Menu)
                     break
                 }
-            }
-            else if(GameObjects[0]){
-                onSelectUnit((GameObjects[0] as CharacterSprite).entity)
             }
         })
         this.initCompleted = true
@@ -301,6 +290,25 @@ export default class MapScene extends Scene {
                 base = t
         })
         return base
+    }
+
+    tryPerformMove = () => {
+        const state = store.getState()
+        this.targetingMove = false
+        let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
+        
+        const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
+        const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
+        const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
+        const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, unit.entity)).compute(tile.x, tile.y)
+        if(path.length > unit.entity.moves) img.setTint(0xff0000)        
+        this.tweens.add({
+            targets: img,
+            alpha: 0,
+            duration: 500,
+            onComplete: ()=>img.destroy()
+        })
+        this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(state.selectedUnit.id, targetTile)
     }
 
     executeCharacterAbility = (targetingData:AbilityTargetingData, casterId:string) => {

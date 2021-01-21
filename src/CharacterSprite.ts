@@ -2,7 +2,7 @@ import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
 import { AbilityType, FONT_DEFAULT } from '../constants'
 import MapScene from "./MapScene";
-import { onSelectUnit } from "./uiManager/Thunks";
+import { onUpdateSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 
 export default class CharacterSprite extends GameObjects.Sprite {
@@ -94,19 +94,24 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         duration: 1000,
                         onComplete: ()=>{
                             this.entity.moves--
-                            onSelectUnit(this.entity)
+                            onUpdateSelectedUnit(this.entity)
                             this.scene.carveFogOfWar(activeChar.sight, tile.x, tile.y)
                         }
                     }
                 }),
                 onComplete: ()=>{
                     const pos = path[path.length-1]
+                    activeChar.tileX = pos.x
+                    activeChar.tileY = pos.y
                     this.scene.carveFogOfWar(activeChar.sight, pos.x, pos.y)
                     this.scene.onCompleteMove(characterId)
                 }
             });
         }
         else {
+            const pos = path[path.length-1]
+            activeChar.tileX = pos.x
+            activeChar.tileY = pos.y
             this.scene.onCompleteMove(characterId)
         }
     }

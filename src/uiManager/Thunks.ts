@@ -81,7 +81,14 @@ export const onSelectUnitDestination = () => {
     })
 }
 
-export const onSelectUnit = (unit:RCUnit) => {
+export const onUpdateSelectedUnit = (unit:RCUnit) => {
+    dispatch({
+        type: UIReducerActions.UPDATE_SELECT_UNIT,
+        unit
+    })
+}
+
+export const onSelectedUnit = (unit:RCUnit) => {
     dispatch({
         type: UIReducerActions.SELECT_UNIT,
         unit

@@ -17,7 +17,7 @@ export default class CharacterInfo extends React.Component<Props> {
     render(){
         const charDat = this.props.selectedUnit
         return (
-            <div style={{...styles, width:'250px', minHeight:'200px'}}>
+            <div style={{...styles, width:'250px', minHeight:'200px', pointerEvents:'all'}}>
                 {charDat ? 
                 <div>
                     <h2>{charDat.name}</h2>

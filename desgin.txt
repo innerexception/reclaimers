@@ -32,10 +32,9 @@ build a network of point to point charging stations to keep the bots moving
 
 
 
-7. Scout reveals info about the ground toxins nearby
 8. Deploy a basic extractor and give it coordinates
 9. See the extractor remove one type of toxin after moving and generate a material in inventory
+12. Show greenery after % of toxins removed from a square
 10. Extractor drops off inventory at base when full
 11. Use material to unlock a new chassis
-12. Show greenery after % of toxins removed from a square
 13. Extractors won't attempt to work the same squares
