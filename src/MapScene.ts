@@ -353,13 +353,17 @@ export default class MapScene extends Scene {
         // })
     }
 
+    updateFogOfWar = () => {
+        this.entities.forEach(c=>this.carveFogOfWar(c.entity.sight, c.entity.tileX, c.entity.tileY))
+    }
+
     carveFogOfWar = (radius:number, x:number, y:number) => {
         this.map.setLayer('fog')
         this.map.getTileAt(x, y).alpha = 0
         for(var i=radius; i>0; i--){
             getCircle(x, y, i).forEach(tuple=>{
                 let tile = this.map.getTileAt(tuple[0], tuple[1])
-                if(tile) tile.alpha = i === radius ? 0.5 : 0
+                if(tile) tile.alpha = i === radius && tile.alpha === 1 ? 0.5 : 0
             })
         }
     }

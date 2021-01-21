@@ -52,8 +52,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         let y = Phaser.Math.Between(0,1)
                         let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
                         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-                        if(t && this.scene.passableTile(t.x, t.y, dat))
-                            this.executeCharacterMove(dat.id, t)
+                        if(t) this.executeCharacterMove(dat.id, t)
                     }
                 break
                 case AbilityType.ExtractorMk1:
@@ -68,25 +67,24 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     executeCharacterMove = (characterId:string, targetTile:Tilemaps.Tile) => {
         const encounter = store.getState().activeEncounter
-        let activeChar = this.entity
         const targetSprite = this.scene.entities.find(c=>c.entity.id === characterId)
         const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
-        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar)).compute(spriteTile.x, spriteTile.y)
+        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
         
         let base = this.scene.getBase()
         if(base.x===spriteTile.x && base.y===spriteTile.y){
-            activeChar.moves = activeChar.maxMoves
-            encounter.eventLog.push(activeChar.name+' is recharging...')
+            this.entity.moves = this.entity.maxMoves
+            encounter.eventLog.push(this.entity.name+' is recharging...')
             //onAddEventLog(encounter)
         }
-        if(activeChar.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar)).compute(spriteTile.x, spriteTile.y)
+        if(this.entity.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
                         
         if(targetSprite.visible){
-            encounter.eventLog.push(activeChar.name+' is moving...')
+            encounter.eventLog.push(this.entity.name+' is moving...')
             if(this.currentMove) this.currentMove.stop()
             this.currentMove = this.scene.tweens.timeline({
                 targets: targetSprite,    
-                tweens: path.map(tuple=>{
+                tweens: path.map((tuple,i)=>{
                     let tile = this.scene.map.getTileAt(tuple.x, tuple.y, false, 'ground')
                     return {
                         x: tile.getCenterX(),
@@ -94,24 +92,27 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         duration: 1000,
                         onComplete: ()=>{
                             this.entity.moves--
+                            const pos = path[i]
+                            this.entity.tileX = pos.x
+                            this.entity.tileY = pos.y
                             onUpdateSelectedUnit(this.entity)
-                            this.scene.carveFogOfWar(activeChar.sight, tile.x, tile.y)
+                            this.scene.updateFogOfWar()
                         }
                     }
                 }),
                 onComplete: ()=>{
                     const pos = path[path.length-1]
-                    activeChar.tileX = pos.x
-                    activeChar.tileY = pos.y
-                    this.scene.carveFogOfWar(activeChar.sight, pos.x, pos.y)
+                    this.entity.tileX = pos.x
+                    this.entity.tileY = pos.y
+                    this.scene.updateFogOfWar()
                     this.scene.onCompleteMove(characterId)
                 }
             });
         }
         else {
             const pos = path[path.length-1]
-            activeChar.tileX = pos.x
-            activeChar.tileY = pos.y
+            this.entity.tileX = pos.x
+            this.entity.tileY = pos.y
             this.scene.onCompleteMove(characterId)
         }
     }
