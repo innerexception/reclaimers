@@ -7,6 +7,7 @@ interface UserAccount {
 }
 
 interface TileInfo {
+    type: import('./constants').TerrainType
     toxins: Array<import('./constants').Toxins>
 }
 

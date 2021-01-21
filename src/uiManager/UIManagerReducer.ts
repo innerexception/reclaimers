@@ -23,7 +23,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
         case UIReducerActions.SELECT_UNIT:
-            return { ...state, selectedUnit: action.unit, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unit } }  
+            return { ...state, selectedUnit: {...action.unit}, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unit } }  
         case UIReducerActions.SELECT_DESTINATION:
             return { ...state, engineEvent: { action: UIReducerActions.SELECT_DESTINATION, data:null } }  
         case UIReducerActions.SPAWN_BOT:
@@ -37,7 +37,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             })
             return { ...state, modalState: null, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design, state.onlineAccount.id) }}  
         case UIReducerActions.TILE_INFO:
-            return { ...state, selectedTile: action.explored ? state.activeEncounter.tiles[action.tileX][action.tileY] : null}
+            return { ...state, selectedTile: action.explored ? {...state.activeEncounter.tiles[action.tileX][action.tileY]} : null}
         default:
             return state
     }

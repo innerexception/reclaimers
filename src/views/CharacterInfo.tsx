@@ -42,6 +42,5 @@ export default class CharacterInfo extends React.Component<Props> {
 const styles = {
     border: '3px inset',
     borderColor: 'silver',
-    color: colors.lGreen,
     padding:'5px'
 }

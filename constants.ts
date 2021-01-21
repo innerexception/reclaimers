@@ -75,15 +75,24 @@ export enum Scenario {
 }
 
 export enum Toxins {
-    Lead,Benzene,Mercury,Cadmium,Arsenic,Plutonium,Uranium
+    Lead='Lead',Benzene='Benzene',Mercury='Mercury',Cadmium='Cadmium',Arsenic='Arsenic',Plutonium='Plutonium',Uranium='Uranium'
 }
 
 export enum TerrainType {
-    Something
+    Any=-1,
+    Woods=0,DenseWoods=1,SBushes=2,Dunes1=3,Dunes2=4,FrozenDunes=5,Mountain=6,Mountain2=7,
+    Woods2=8,FrozenWoods=9,MBushes=10,ThickGrass=11,DesertGrass=12,FrozenGrass=13,Mountain3=14,Mountain4=15,
+    DryForest=16,Barren=17,LBushes=18,SparseGrass=19,Cactus=20,FrozenRocks=21,Hill=22,FrozenHill=23,Huts=24,
+    Minerals1=27,Minerals2=28,MediumGrass=29,Rocks=30,FrozenHill2=31,Cave1=35,Cave2=36,Cave3=57,
+    Village1=88,Village2=90,Village3=63
 }
 
+export const CleanWater = [32,33,34,40,41,42,48,49,50]
+export const PollutedWater = [64,65,66,72,73,74,80,81,82]
+
 export const TerrainToxins = {
-    [TerrainType.Something]: [Toxins.Arsenic, Toxins.Benzene]
+    [TerrainType.Any]: [Toxins.Arsenic, Toxins.Benzene],
+    [TerrainType.Dunes1]: [Toxins.Cadmium, Toxins.Lead]
 }
 
 export type Resources = {

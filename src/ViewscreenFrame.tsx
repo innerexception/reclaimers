@@ -6,6 +6,7 @@ import BotChooser from './views/BotChooser'
 import CharacterInfo from './views/CharacterInfo'
 import EventLog from './views/EventLog'
 import Intro from './views/Intro'
+import TilePortrait from './views/TilePortrait'
 import Viewscreen from './Viewscreen'
 
 interface Props {
@@ -22,7 +23,6 @@ interface Props {
 export default class ViewscreenFrame extends React.Component<Props> {
 
     getModal = () => {
-        let data = this.props.modalState.data
         switch(this.props.modalState.modal){
             case Modal.CharacterInfo: return <CharacterInfo/>
             case Modal.Menu: return <Intro/>
@@ -36,10 +36,14 @@ export default class ViewscreenFrame extends React.Component<Props> {
                 {this.props.modalState && this.getModal()}
                 <div style={{display:'flex', flexDirection:'column',alignItems:'center', width:'100%', maxWidth:'1200px'}}>
                     <Viewscreen/>
-                    <div style={{position:'absolute', bottom:0, left:0}}>
+                    <div style={{position:'absolute', bottom:0, left:0, pointerEvents:'none'}}>
                         <CharacterInfo/>
                         <Actionbar/>
-                        {this.props.match && <EventLog events={this.props.match.eventLog}/>}
+                        {this.props.match && 
+                        <div style={{display:'flex'}}>
+                            <EventLog events={this.props.match.eventLog}/>
+                            <TilePortrait/>
+                         </div>}
                     </div>
                 </div>
             </div>

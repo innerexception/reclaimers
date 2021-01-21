@@ -112,6 +112,14 @@ export default class MapScene extends Scene {
             })
             let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
             this.carveFogOfWar(4, base.x, base.y)
+            //init terrain data
+            let tileData = new Array<Array<TileInfo>>()
+            this.map.setLayer('ground').forEachTile(t=>{
+                if(!tileData[t.x]) tileData[t.x] = []
+                tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index-1), type: t.index }
+            })
+            encounterData.tiles = tileData
+            onEncounterUpdated(encounterData)
         }
         else {
             //We are loading the prelaunch hub
@@ -123,15 +131,6 @@ export default class MapScene extends Scene {
         
         let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
-        
-        //init terrain data
-        let tileData = new Array<Array<TileInfo>>()
-        this.map.setLayer('ground').forEachTile(t=>{
-            if(!tileData[t.x]) tileData[t.x] = []
-            tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index) }
-        })
-        encounterData.tiles = tileData
-        onEncounterUpdated(encounterData)
     }
 
     passableTile = (tileX:number, tileY:number, unit:RCUnit) => {
@@ -190,7 +189,8 @@ export default class MapScene extends Scene {
             if(tile || gameObjects.length > 0){
                 if(gameObjects.length > 0) tile = this.map.getTileAtWorldXY((gameObjects[0] as any).x, (gameObjects[0] as any).y, false, undefined, 'ground')
                 setSelectIconPosition(this, tile)
-                onShowTileInfo(tile.x, tile.y, tile.alpha !== 1)
+                const fog = this.map.getTileAt(tile.x, tile.y, false, 'fog')
+                onShowTileInfo(tile.x, tile.y, fog.alpha !== 1)
             }
             else this.selectIcon.setVisible(false)
             // else {

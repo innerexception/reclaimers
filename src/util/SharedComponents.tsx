@@ -82,15 +82,15 @@ export const ProgressBar = (value:number, max:number, bg:string) =>
 
 export const CssIcon = (spriteIndex:number, scale:number) => {
     let backgroundImage = 'url('+require('../../assets/OverworldTileset_v03.png')
-    let sheetWidth = 64
-    const h = 32*scale
+    let sheetWidth = 8
+    const h = 16*scale
     return (
         <div style={{height:h+'px', width:h+'px',margin:'4px', alignItems:'center', justifyContent:"center", display:'flex'}}>
             <div style={{
-                width:'32px', 
-                height: '32px', 
+                width:'16px', 
+                height: '16px', 
                 backgroundImage, 
-                backgroundPosition: -(spriteIndex % sheetWidth)*32+'px '+-(Math.floor(spriteIndex/sheetWidth))*32+'px', 
+                backgroundPosition: -(spriteIndex % sheetWidth)*16+'px '+-(Math.floor(spriteIndex/sheetWidth))*16+'px', 
                 backgroundRepeat:'no-repeat',
                 transform:'scale('+scale+')',
                 display:'inline-block'}}/>
