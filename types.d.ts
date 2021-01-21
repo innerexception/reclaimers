@@ -1,3 +1,4 @@
+
 interface UserAccount {
     id:string
     name:string
@@ -6,7 +7,7 @@ interface UserAccount {
 }
 
 interface TileInfo {
-    toxins: Array<import('./constants').Toxin>
+    toxins: Array<import('./constants').Toxins>
 }
 
 interface Tuple {
@@ -86,7 +87,6 @@ interface AbilityTargetingData {
 
 interface Encounter {
     id:string
-    entities: Array<RCUnit>
     tiles: Array<Array<TileInfo>>
     players: Array<RCPlayerState>
     map: import('./constants').Scenario
@@ -118,7 +118,7 @@ interface RState {
     modalState: ModalState
     activeEncounter: Encounter
     activeAbility: Ability
-    selectedUnitId: string
+    selectedUnit: RCUnit
     selectedTile: TileInfo
     engineEvent: { action: import('./constants').UIReducerActions, data: any }
 }

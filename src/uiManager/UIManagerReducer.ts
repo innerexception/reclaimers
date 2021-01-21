@@ -23,7 +23,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
         case UIReducerActions.SELECT_UNIT:
-            return { ...state, selectedUnitId: action.unitId, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unitId } }  
+            return { ...state, selectedUnit: action.unit, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unit } }  
         case UIReducerActions.SELECT_DESTINATION:
             return { ...state, engineEvent: { action: UIReducerActions.SELECT_DESTINATION, data:null } }  
         case UIReducerActions.SPAWN_BOT:
@@ -52,7 +52,7 @@ const getInitialState = ():RState => {
         activeEncounter: null,
         engineEvent: null,
         activeAbility: null,
-        selectedUnitId: '',
+        selectedUnit: null,
         selectedTile: null
     }
 }

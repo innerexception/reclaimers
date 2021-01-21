@@ -68,9 +68,8 @@ export const canAffordBot = (design:RCUnitData) => true
 export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
     return {
         id:v4(),
-        entities: [],
-        tiles: [],
         map,
+        tiles: [],
         eventLog: [],
         players: [{ id: playerId, designs: defaultDesigns, resources: defaultResources}]
     }

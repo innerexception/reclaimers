@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
-import { onShowTileInfo, onEncounterUpdated, onSelectUnit, onShowModal } from "./uiManager/Thunks";
+import { onClearActiveAbility, onEncounterUpdated, onSelectUnit, onShowModal, onShowTileInfo } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 export default class MapScene extends Scene {
 
@@ -56,15 +56,13 @@ export default class MapScene extends Scene {
                             bot.tileY = t.y+1
                         }
                     })
-                    uiState.activeEncounter.entities.push(bot)
-                    onEncounterUpdated(uiState.activeEncounter)
                     this.spawnUnit(bot)
                 break
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
                 break
                 case UIReducerActions.SELECT_UNIT:
-                    this.activeUnit = this.entities.find(e=>e.characterId === engineEvent.data)
+                    this.activeUnit = this.entities.find(e=>e.entity.id === engineEvent.data)
                 break
                 case UIReducerActions.SELECT_DESTINATION:
                     this.targetingMove = true
@@ -74,7 +72,7 @@ export default class MapScene extends Scene {
 
     startTargetingAbility = (ability:Ability) => {
         if(this.targetingAbility){
-            this.targetingAbility.selectedTargetIds.forEach(id=>this.entities.find(c=>c.characterId===id).setTargeted(false))
+            this.targetingAbility.selectedTargetIds.forEach(id=>this.entities.find(c=>c.entity.id===id).setTargeted(false))
             this.targetingAbility = null
         }
         this.targetingAbility = { type:ability.type, selectedTargetIds: [], validTargetIds: [] }
@@ -105,10 +103,10 @@ export default class MapScene extends Scene {
         let encounterData = store.getState().activeEncounter
         if(encounterData){
             //Just restore the data
-            encounterData.entities.forEach(c=>{
-                let t = this.map.getTileAt(c.tileX, c.tileY, false, 'ground')
-                this.entities.push(new CharacterSprite(this, t.getCenterX(), t.getCenterY(), c.avatarIndex, c))
-            })
+            // encounterData.entities.forEach(c=>{
+            //     let t = this.map.getTileAt(c.tileX, c.tileY, false, 'ground')
+            //     this.entities.push(new CharacterSprite(this, t.getCenterX(), t.getCenterY(), c.avatarIndex, c))
+            // })
             this.map.setLayer('fog').forEachTile(t=>{
                 t.index = RCObjectType.Fog+1
             })
@@ -136,10 +134,10 @@ export default class MapScene extends Scene {
         onEncounterUpdated(encounterData)
     }
 
-    passableTile = (tileX:number, tileY:number, unit:RCUnit, encounter:Encounter) => {
+    passableTile = (tileX:number, tileY:number, unit:RCUnit) => {
         const tile = this.map.getTileAt(tileX, tileY, false, 'ground')
         if(tile){
-            if(encounter.entities.find(c=>c.id !== unit.id && c.tileX === tileX && c.tileY === tileY))
+            if(this.entities.find(c=>c.entity.id !== unit.id && c.entity.tileX === tileX && c.entity.tileY === tileY))
                 return false
             const terrain = this.map.getTileAt(tileX, tileY, false, 'terrain')
             if(terrain) return canPassTerrainType(unit, terrain.index)
@@ -239,18 +237,17 @@ export default class MapScene extends Scene {
                 let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
                 
                 const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
-                const unit = state.activeEncounter.entities.find(e=>e.id === state.selectedUnitId)
-                const sprite = this.entities.find(e=>e.characterId === state.selectedUnitId)
-                const tile = this.map.getTileAtWorldXY(sprite.x, sprite.y, false, undefined, 'ground')
-                const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, unit, state.activeEncounter)).compute(tile.x, tile.y)
-                if(path.length > unit.moves) img.setTint(0xff0000)        
+                const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
+                const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
+                const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, unit.entity)).compute(tile.x, tile.y)
+                if(path.length > unit.entity.moves) img.setTint(0xff0000)        
                 this.tweens.add({
                     targets: img,
                     alpha: 0,
                     duration: 500,
                     onComplete: ()=>img.destroy()
                 })
-                this.entities.find(e=>e.characterId === state.selectedUnitId).executeCharacterMove(state.selectedUnitId, targetTile)
+                this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(state.selectedUnit.id, targetTile)
             }
             // else if(this.targetingAbility){
             //     const data = AbilityData.find(a=>a.type === this.targetingAbility.type)
@@ -291,7 +288,7 @@ export default class MapScene extends Scene {
                 }
             }
             else if(GameObjects[0]){
-                onSelectUnit((GameObjects[0] as CharacterSprite).characterId)
+                onSelectUnit((GameObjects[0] as CharacterSprite).entity)
             }
         })
         this.initCompleted = true
@@ -323,18 +320,13 @@ export default class MapScene extends Scene {
     }
 
     onCompleteMove = (characterId:string)=> {
-        let encounter = store.getState().activeEncounter
-        encounter.entities.forEach(c=>{
-            if(c.id === characterId){
-                let base = this.getBase()
-                if(base.x===c.tileX && base.y===c.tileY){
-                    c.moves = c.maxMoves
-                    encounter.eventLog.push(c.name+' is recharging...')
-                } 
-            }
-        })
-        onEncounterUpdated(encounter)
-        this.entities.find(e=>e.characterId === characterId).runUnitTick()
+        let unit = this.entities.find(e=>e.entity.id === characterId)
+        let base = this.getBase()
+        if(base.x===unit.entity.tileX && base.y===unit.entity.tileY){
+            unit.entity.moves = unit.entity.maxMoves
+            //onAddEventLog(unit.entity.name+' is recharging...')
+        }
+        this.entities.find(e=>e.entity.id === characterId).runUnitTick()
     }
 
     calcVisibleObjects = (encounter:Encounter) => {
@@ -383,7 +375,7 @@ export default class MapScene extends Scene {
     }
 
     destroyUnit = (unitId:string) => {
-        const i = this.entities.findIndex(u=>u.characterId === unitId)
+        const i = this.entities.findIndex(u=>u.entity.id === unitId)
         this.entities.splice(i,1)[0].destroy()
     }
 

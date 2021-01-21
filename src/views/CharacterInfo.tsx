@@ -3,23 +3,19 @@ import AppStyles, { colors } from '../../AppStyles';
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onSelectUnitDestination } from '../uiManager/Thunks';
-import { RCUnitType, StatusEffectData } from '../../constants';
-import Footer from '../components/Footer';
+import { StatusEffectData } from '../../constants';
 
 interface Props {
-    encounter?: Encounter
-    onlineAccount?: UserAccount
-    characterId:string
+    selectedUnit?: RCUnit
 }
 
 @(connect((state: RState) => ({
-    encounter: state.activeEncounter,
-    onlineAccount: state.onlineAccount
+    selectedUnit: state.selectedUnit
 })) as any)
 export default class CharacterInfo extends React.Component<Props> {
 
     render(){
-        const charDat = this.props.encounter && this.props.encounter.entities.find(c=>c.id === this.props.characterId)
+        const charDat = this.props.selectedUnit
         return (
             <div style={{...styles, width:'250px', minHeight:'200px'}}>
                 {charDat ? 

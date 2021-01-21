@@ -5,14 +5,7 @@ import { onActivateAbility, onShowModal } from '../uiManager/Thunks';
 import { AbilityType, Modal } from '../../constants';
 import { isPassive } from '../util/Util';
 
-interface Props {
-    encounter?: Encounter
-}
-
-@(connect((state: RState) => ({
-    encounter: state.activeEncounter
-})) as any)
-export default class Actionbar extends React.Component<Props> {
+export default class Actionbar extends React.Component {
 
     render(){
         return (

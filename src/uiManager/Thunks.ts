@@ -81,10 +81,10 @@ export const onSelectUnitDestination = () => {
     })
 }
 
-export const onSelectUnit = (unitId:string) => {
+export const onSelectUnit = (unit:RCUnit) => {
     dispatch({
         type: UIReducerActions.SELECT_UNIT,
-        unitId
+        unit
     })
 }
 

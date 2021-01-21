@@ -79,7 +79,7 @@ export enum Toxins {
 }
 
 export enum TerrainType {
-
+    Something
 }
 
 export const TerrainToxins = {

@@ -3,18 +3,18 @@ import { store } from "../../App"
 import { AbilityType, MAX_TURN_TIMER, StatusEffect, StatusEffectData } from "../../constants"
 import CharacterSprite from "../CharacterSprite"
 
-export const resolveAbility = (encounter:Encounter, targetingAbility:AbilityData, targetList:Array<string>, sprites:Array<CharacterSprite>, caster:RCUnit) => {
-    encounter.entities.forEach(c=>{
-        if(targetList.includes(c.id)){
-            encounter.eventLog.push(caster.name+' used '+targetingAbility.title+' on '+c.name)
-            targetingAbility.statusEffects.forEach(e=>{
-                c = applyStatusEffect(c, e)
-                encounter.eventLog.push(c.name+' is affected by '+StatusEffectData[e].title)
-            })
-            c.hp -= targetingAbility.damage
-        }
-    })
-    return encounter
+export const resolveAbility = (sprites:Array<CharacterSprite>, targetingAbility:AbilityData, targetList:Array<string>,  caster:RCUnit) => {
+    // sprites.forEach(c=>{
+    //     if(targetList.includes(c.id)){
+    //         encounter.eventLog.push(caster.name+' used '+targetingAbility.title+' on '+c.name)
+    //         targetingAbility.statusEffects.forEach(e=>{
+    //             c = applyStatusEffect(c, e)
+    //             encounter.eventLog.push(c.name+' is affected by '+StatusEffectData[e].title)
+    //         })
+    //         c.hp -= targetingAbility.damage
+    //     }
+    // })
+    // return encounter
 }
 
 export const resolveStatusEffects = (c:RCUnit, sprite:CharacterSprite) => {
@@ -58,14 +58,3 @@ export const applyStatusEffect = (character:RCUnit, effect:StatusEffect) => {
     }
     return character
 }
-
-// export const networkExecuteCharacterAbility = (characterId:string, targetingData:AbilityTargetingData) => {
-//     let encounter = store.getState().activeEncounter
-//     encounter.unitActionQueue.push({
-//         id:v4(),
-//         characterId,
-//         selectedTargetIds: targetingData.selectedTargetIds, 
-//         type: targetingData.type
-//     })
-//     Network.upsertMatch(encounter)
-// }

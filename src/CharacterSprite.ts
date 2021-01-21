@@ -1,13 +1,13 @@
-import { Scene, GameObjects, Tweens, Tilemaps } from "phaser";
+import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
-import { AbilityType, FONT_DEFAULT, RCObjectType, StatusEffectData } from '../constants'
+import { AbilityType, FONT_DEFAULT } from '../constants'
 import MapScene from "./MapScene";
-import { onEncounterUpdated } from "./uiManager/Thunks";
+import { onSelectUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
-    characterId: string
+    entity: RCUnit
     reticle: GameObjects.Image
     status: Array<GameObjects.Image>
     scene: MapScene
@@ -16,7 +16,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
     constructor(scene:MapScene,x:number,y:number, frame:number, character:RCUnit){
         super(scene, x,y, 'bot-sprites', frame)
         
-        this.characterId = character.id
+        this.entity = character
         this.status = []
         this.setDisplaySize(16,16)
         // character.statusEffect.forEach((s,i)=>{
@@ -33,9 +33,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
     }
 
     runUnitTick = () => {
-        const encounter = store.getState().activeEncounter
-        const dat = encounter.entities.find(e=>e.id === this.characterId)
-        
+        let dat = this.entity
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
@@ -54,7 +52,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         let y = Phaser.Math.Between(0,1)
                         let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
                         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-                        if(t && this.scene.passableTile(t.x, t.y, dat, encounter))
+                        if(t && this.scene.passableTile(t.x, t.y, dat))
                             this.executeCharacterMove(dat.id, t)
                     }
                 break
@@ -70,43 +68,47 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     executeCharacterMove = (characterId:string, targetTile:Tilemaps.Tile) => {
         const encounter = store.getState().activeEncounter
-        let activeChar = encounter.entities.find(c=>c.id === characterId)
-        const targetSprite = this.scene.entities.find(c=>c.characterId === characterId)
+        let activeChar = this.entity
+        const targetSprite = this.scene.entities.find(c=>c.entity.id === characterId)
         const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
-        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar, encounter)).compute(spriteTile.x, spriteTile.y)
+        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar)).compute(spriteTile.x, spriteTile.y)
         
         let base = this.scene.getBase()
         if(base.x===spriteTile.x && base.y===spriteTile.y){
             activeChar.moves = activeChar.maxMoves
             encounter.eventLog.push(activeChar.name+' is recharging...')
-            onEncounterUpdated(encounter)
-        } 
-        if(activeChar.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar, encounter)).compute(spriteTile.x, spriteTile.y)
+            //onAddEventLog(encounter)
+        }
+        if(activeChar.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, activeChar)).compute(spriteTile.x, spriteTile.y)
                         
-        encounter.eventLog.push(activeChar.name+' is moving...')
-        if(this.currentMove) this.currentMove.stop()
-        this.currentMove = this.scene.tweens.timeline({
-            targets: targetSprite,    
-            tweens: path.map(tuple=>{
-                let tile = this.scene.map.getTileAt(tuple.x, tuple.y, false, 'ground')
-                return {
-                    x: tile.getCenterX(),
-                    y: tile.getCenterY(),
-                    duration: 1000,
-                    onComplete: ()=>{
-                        const enc = store.getState().activeEncounter
-                        enc.entities.find(e=>e.id === characterId).moves--
-                        onEncounterUpdated(enc)
-                        this.scene.carveFogOfWar(activeChar.sight, tile.x, tile.y)
+        if(targetSprite.visible){
+            encounter.eventLog.push(activeChar.name+' is moving...')
+            if(this.currentMove) this.currentMove.stop()
+            this.currentMove = this.scene.tweens.timeline({
+                targets: targetSprite,    
+                tweens: path.map(tuple=>{
+                    let tile = this.scene.map.getTileAt(tuple.x, tuple.y, false, 'ground')
+                    return {
+                        x: tile.getCenterX(),
+                        y: tile.getCenterY(),
+                        duration: 1000,
+                        onComplete: ()=>{
+                            this.entity.moves--
+                            onSelectUnit(this.entity)
+                            this.scene.carveFogOfWar(activeChar.sight, tile.x, tile.y)
+                        }
                     }
+                }),
+                onComplete: ()=>{
+                    const pos = path[path.length-1]
+                    this.scene.carveFogOfWar(activeChar.sight, pos.x, pos.y)
+                    this.scene.onCompleteMove(characterId)
                 }
-            }),
-            onComplete: ()=>{
-                const pos = path[path.length-1]
-                this.scene.carveFogOfWar(activeChar.sight, pos.x, pos.y)
-                this.scene.onCompleteMove(characterId)
-            }
-        });
+            });
+        }
+        else {
+            this.scene.onCompleteMove(characterId)
+        }
     }
 
     floatDamage(dmg:number, color:string){
