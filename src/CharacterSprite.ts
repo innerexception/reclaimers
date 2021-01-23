@@ -56,6 +56,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
                         let tox = this.scene.tiles[dat.tileX][dat.tileY].toxins.splice(tilei,1)
                         dat.inventory.push(tox[0])
+                        this.runUnitTick()
                     }
                     else {
                         const nextVisibleResource = fogTiles.find(t=>t.alpha === 0 && this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
