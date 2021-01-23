@@ -44,7 +44,8 @@ interface BasePCData {
     speed: number
     sight: number
     statusEffect: Array<StatusEffectState>
-    inventory: Array<import('./constants').ItemType>
+    inventory: Array<import('./constants').ItemType | import('./constants').Toxins>
+    maxInventory: number
 }
 
 interface StatusEffectState {
@@ -88,7 +89,6 @@ interface AbilityTargetingData {
 
 interface Encounter {
     id:string
-    tiles: Array<Array<TileInfo>>
     players: Array<RCPlayerState>
     map: import('./constants').Scenario
     eventLog: Array<string>

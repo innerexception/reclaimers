@@ -1,6 +1,6 @@
 import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
-import { AbilityType, FONT_DEFAULT } from '../constants'
+import { AbilityType, ExtractorToxinList, FONT_DEFAULT } from '../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
@@ -34,6 +34,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     runUnitTick = () => {
         let dat = this.entity
+        const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
@@ -41,28 +42,42 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     if(dat.moves <= 0){
                         return this.executeCharacterMove(dat.id, this.scene.getBase())
                     } 
-                    const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
                         this.executeCharacterMove(dat.id, nextVisible)
                     }
                     else {
-                        //Roam
-                        let x = Phaser.Math.Between(0,1)
-                        let y = Phaser.Math.Between(0,1)
-                        let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
-                        let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-                        if(t) this.executeCharacterMove(dat.id, t)
+                        this.roam(dat)
                     }
                 break
                 case AbilityType.ExtractorMk1:
                     //Head towards a revealed resource patch that you can extract:
-                    //Lead or Titanium
-                    //Extract from soil until full
-                    //Return to base
+                    const tilei = this.scene.tiles[dat.tileX][dat.tileY].toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
+                    if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
+                        let tox = this.scene.tiles[dat.tileX][dat.tileY].toxins.splice(tilei,1)
+                        dat.inventory.push(tox[0])
+                    }
+                    else {
+                        const nextVisibleResource = fogTiles.find(t=>t.alpha === 0 && this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
+                        if(nextVisibleResource){
+                            this.executeCharacterMove(dat.id, nextVisibleResource)
+                        }
+                        else {
+                            this.roam(dat)
+                        }
+                    }
                 break
             }
         })
+    }
+
+    roam = (dat:RCUnit) => {
+        //Roam
+        let x = Phaser.Math.Between(0,1)
+        let y = Phaser.Math.Between(0,1)
+        let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
+        let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
+        if(t) this.executeCharacterMove(dat.id, t)
     }
 
     executeCharacterMove = (characterId:string, targetTile:Tilemaps.Tile) => {

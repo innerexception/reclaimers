@@ -42,7 +42,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             })
             return { ...state, modalState: null, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design, state.onlineAccount.id) }}  
         case UIReducerActions.TILE_INFO:
-            return { ...state, selectedTile: action.explored ? {...state.activeEncounter.tiles[action.tileX][action.tileY]} : null}
+            return { ...state, selectedTile: action.explored ? {...action.tile} : null}
         default:
             return state
     }

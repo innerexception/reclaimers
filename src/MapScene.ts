@@ -24,6 +24,7 @@ export default class MapScene extends Scene {
     targetingAbility: AbilityTargetingData
     targetingMove: boolean
     activeUnit: GameObjects.Sprite
+    tiles: Array<Array<TileInfo>>
 
     constructor(config){
         super(config)
@@ -118,7 +119,7 @@ export default class MapScene extends Scene {
                 if(!tileData[t.x]) tileData[t.x] = []
                 tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index-1), type: t.index }
             })
-            encounterData.tiles = tileData
+            this.tiles = tileData
             onEncounterUpdated(encounterData)
         }
         else {
@@ -193,7 +194,7 @@ export default class MapScene extends Scene {
                 if(gameObjects.length > 0) tile = this.map.getTileAtWorldXY((gameObjects[0] as any).x, (gameObjects[0] as any).y, false, undefined, 'ground')
                 setSelectIconPosition(this, tile)
                 const fog = this.map.getTileAt(tile.x, tile.y, false, 'fog')
-                onShowTileInfo(tile.x, tile.y, fog.alpha !== 1)
+                onShowTileInfo(this.tiles[tile.x][tile.y], fog.alpha !== 1)
             }
             else this.selectIcon.setVisible(false)
             // else {

@@ -22,6 +22,7 @@ const defaultDesigns:Array<RCUnitData> = [
         sight: 5,
         statusEffect: [],
         inventory: [],
+        maxInventory: 0,
         abilityTypes: [AbilityType.SensorMk1],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}]
     },
@@ -34,6 +35,7 @@ const defaultDesigns:Array<RCUnitData> = [
         sight: 2,
         statusEffect: [],
         inventory: [],
+        maxInventory: 2,
         abilityTypes: [AbilityType.ExtractorMk1],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
@@ -69,7 +71,6 @@ export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
     return {
         id:v4(),
         map,
-        tiles: [],
         eventLog: [],
         players: [{ id: playerId, designs: defaultDesigns, resources: defaultResources}]
     }

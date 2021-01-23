@@ -95,10 +95,10 @@ export const onSelectedUnit = (unit:RCUnit) => {
     })
 }
 
-export const onShowTileInfo = (tileX:number, tileY:number, explored:boolean) => {
+export const onShowTileInfo = (tile:TileInfo, explored:boolean) => {
     dispatch({
         type: UIReducerActions.TILE_INFO,
-        tileX, tileY, explored
+        tile, explored
     })
 }
 

@@ -78,6 +78,10 @@ export enum Toxins {
     Lead='Lead',Benzene='Benzene',Mercury='Mercury',Cadmium='Cadmium',Arsenic='Arsenic',Plutonium='Plutonium',Uranium='Uranium'
 }
 
+export const ExtractorToxinList = {
+    [AbilityType.ExtractorMk1]: [Toxins.Lead, Toxins.Mercury]
+}
+
 export enum TerrainType {
     Any=-1,
     Woods=0,DenseWoods=1,SBushes=2,Dunes1=3,Dunes2=4,FrozenDunes=5,Mountain=6,Mountain2=7,
