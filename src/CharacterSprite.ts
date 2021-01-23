@@ -153,7 +153,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
     }
 
     floatSpriteAndContinue(index:number){
-        let txt = this.scene.add.image(this.x, this.y, 'sprites', index).setDepth(5)
+        let txt = this.scene.add.image(this.x, this.y, 'resources', index).setDepth(5)
         this.scene.tweens.add({
             targets: txt,
             y: this.y-20,
