@@ -56,7 +56,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
                         let tox = this.scene.tiles[dat.tileX][dat.tileY].toxins.splice(tilei,1)
                         dat.inventory.push(tox[0])
-                        this.runUnitTick()
+                        this.floatSpriteAndContinue(tox[0])
                     }
                     else {
                         const nextVisibleResource = fogTiles.find(t=>t.alpha === 0 && this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
@@ -142,6 +142,20 @@ export default class CharacterSprite extends GameObjects.Sprite {
             duration: 1000,
             onComplete: ()=>{
                 txt.destroy()
+            }
+        })
+    }
+
+    floatSpriteAndContinue(index:number){
+        let txt = this.scene.add.image(this.x, this.y, 'sprites', index).setDepth(5)
+        this.scene.tweens.add({
+            targets: txt,
+            y: this.y-20,
+            alpha: 0,
+            duration: 1000,
+            onComplete: ()=>{
+                txt.destroy()
+                this.runUnitTick()
             }
         })
     }
