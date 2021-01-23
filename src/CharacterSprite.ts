@@ -39,9 +39,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
             switch(a.type){
                 case AbilityType.SensorMk1:
                     //Head towards the fog
-                    if(dat.moves <= 0){
-                        return this.executeCharacterMove(dat.id, this.scene.getBase())
-                    } 
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
                         this.executeCharacterMove(dat.id, nextVisible)
@@ -51,6 +48,15 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     }
                 break
                 case AbilityType.ExtractorMk1:
+                    if(dat.inventory.length > 0){
+                        const base = this.scene.getBase()
+                        if(base.x === this.entity.tileX && base.y === this.entity.tileY){
+                            const player = store.getState().activeEncounter.players[0]
+                            dat.inventory.forEach(i=>player.resources[i]++)
+                            dat.inventory = []
+                            onUpdatePlayer(player)
+                        }
+                    }
                     //Head towards a revealed resource patch that you can extract:
                     const tilei = this.scene.tiles[dat.tileX][dat.tileY].toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
                     if(tilei!==-1 && dat.inventory.length < dat.maxInventory){

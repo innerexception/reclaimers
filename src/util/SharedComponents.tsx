@@ -1,9 +1,6 @@
 import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles'
 import Tooltip from 'rc-tooltip'
-import { getAbilityDescription, isPassive, isWeapon } from './Util';
-import { AbilityType, WeaponBackground } from '../../constants';
-import { onActivateAbility } from '../uiManager/Thunks';
 
 export const TopBar = (text:string|JSX.Element) => 
     <div style={AppStyles.topBar}>
@@ -62,26 +59,18 @@ export const Select = (value:any, onValueChange:Function, values: Array<any>) =>
         {LightButton(values.findIndex(v=>v===value) < values.length-1, ()=>onValueChange(values[values.findIndex(v=>v===value)+1]),'>')}
     </div>
 
-export const AbilityCard = (type:AbilityType, onClick:Function, ability?:Ability) => 
-    <Tooltip overlay={<h6>{getAbilityDescription(type)}</h6>} placement="top">
-        <div style={{position:'relative', width:'40px', height:'40px', cursor:'pointer'}}>
-            <div style={{position:'absolute', top:0, left:0, background:'black', width:'100%', height: ability ? (100-ability.cooldown)+'%' : '0%', opacity:0.3, transition: 'height 250ms'}}/>
-            <div style={{position:'absolute', top:0,left:0, width:'100%'}}>
-                {CssIcon(WeaponBackground, 1)}
-            </div>
-            <div style={{position:'absolute', top:0, left: 0, opacity: ability && isPassive(ability.type) ? 0.5:1}} onClick={()=>onClick && onClick()}>
-                {CssIcon(type,1)}
-            </div>
-        </div>
-    </Tooltip>
-
 export const ProgressBar = (value:number, max:number, bg:string) => 
     <div style={{width:'85%', height:'10px', border:'1px solid'}}>
         <div style={{background:'url('+bg+')', width:Math.round((value/max)*100)+'%', height:'100%'}}/>
     </div>
 
-export const CssIcon = (spriteIndex:number, scale:number) => {
-    let backgroundImage = 'url('+require('../../assets/OverworldTileset_v03.png')
+const tiles = require('../../assets/OverworldTileset_v03.png')
+const resources = require('../../assets/OresandRocks.png')
+
+export const CssIcon = (spriteIndex:number, resource?:boolean) => {
+    const scale = 2
+    let backgroundImage = 'url('+tiles+')'
+    if(resource) backgroundImage = 'url('+resources+')'
     let sheetWidth = 8
     const h = 16*scale
     return (

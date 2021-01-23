@@ -1,6 +1,6 @@
 import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles';
-import { AbilityCard, Button } from '../util/SharedComponents';
+import { Button } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { Modal, Scenario, Scenarios } from '../../constants';
 import { onCreateEncounter, onHideModal, onLogoutUser, onUpdateAccount } from '../uiManager/Thunks';

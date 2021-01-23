@@ -2,8 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, defaultResources, EquipmentType, ItemType, RCUnitType, Scenario, TerrainToxins, TerrainType, Toxins } from '../../constants';
-import { AbilityData } from '../data/Abilities';
+import { AbilityType, defaultResources, ItemType, RCUnitType, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 
 enum FirebaseAuthError {
@@ -48,21 +47,6 @@ export const getErrorMessage = (error:string) => {
         case FirebaseAuthError.NOT_FOUND: return 'No account exists with that email, create one now'
         default: return 'Something happened'
     }
-}
-
-export const getAbilityDescription = (abilityType:AbilityType) => {
-    const a = AbilityData.find(a=>a.type === abilityType)
-    if(a) return a.description
-}
-
-export const isPassive = (abil:AbilityType) => {
-    const a = AbilityData.find(a=>a.type === abil)
-    if(a) return a.isPassive
-}
-
-export const isWeapon = (abil:AbilityType) => {
-    const a = AbilityData.find(a=>a.type === abil)
-    if(a) return a.slot===EquipmentType.Weapon
 }
 
 export const canAffordBot = (design:RCUnitData) => true
@@ -150,7 +134,7 @@ export const setSelectIconPosition = (scene:MapScene, tile:Tilemaps.Tile) => {
     scene.selectIcon.setVisible(true)
 }
 
-export const getToxinsOfTerrain = (terrain:TerrainType):Array<Toxins> => {
+export const getToxinsOfTerrain = (terrain:TerrainType):Array<ItemType> => {
     if(TerrainToxins[terrain]){
         const count = Phaser.Math.Between(1, TerrainToxins[terrain].length)
         return TerrainToxins[terrain].slice(0,count)

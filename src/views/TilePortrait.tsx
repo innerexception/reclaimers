@@ -1,6 +1,5 @@
 import * as React from 'react'
-import AppStyles, { colors } from '../../AppStyles';
-import { AbilityCard, Button, CssIcon } from '../util/SharedComponents';
+import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 
 interface Props {
@@ -15,10 +14,12 @@ export default class TilePortrait extends React.Component<Props> {
         return (
             <div style={styles}>
                 {this.props.selectedTile ?
-                <div style={{display:'flex'}}>
-                    <h4>Toxins Present:</h4>,
-                    {CssIcon(this.props.selectedTile.type-1, 2)}
-                    {this.props.selectedTile.toxins.map(t=><h5>{t}</h5>)}
+                <div style={{display:'flex', alignItems:'center', flexDirection:'column'}}>
+                    {CssIcon(this.props.selectedTile.type-1)}
+                    <h4>Toxins Present:</h4>
+                    <div style={{display:"flex"}}>
+                        {this.props.selectedTile.toxins.map(t=>CssIcon(t,true))}
+                    </div>
                 </div>
                 :
                 <h4>No scan</h4>}

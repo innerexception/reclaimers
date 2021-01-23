@@ -10,26 +10,17 @@ export const FONT_DEFAULT = {
 }
 
 export enum AbilityType {
-    Poke=1835,Empty=3258,SteelSkin=1955,Sort=2150,Filter=1839,Oil=1940,Decay=2086,Memories=1970,Balance=2155,Mulch=2164,Charge=1973,Fury=2012,
-    Chains=1996,RightfulPlace=2152,Dilletant=2123,Masque=2022,Mirror=1946,Glitter=2037,StunningBeauty=2190,DepecheMode=2200,Fame=2074,ForeverYoung=1984,
-    UncoverWeakness=2085,ChangeElements=1852,AncientKnowledge=1969,Fade=1976,Move=2187,BossFang,PoisonFang,
-    Dagger=3146,Rags=2404,Destroy,Create,SensorMk1,ExtractorMk1
-}
-
-export enum EquipmentType {
-    Weapon='W',Armor='A'
+    Destroy,Create,SensorMk1,ExtractorMk1
 }
 
 export enum ItemType {
-    Lithium, Palladium, Titanium, Lead
+    Lead=1, Manganese=3, Gold=4, Arsenic=7, Titanium=8, Mercury=9, Cadmium=13, Benzene=14, 
+    Copper=17, Cobalt=18,Asbestos=20,Petroleum=29,Rock=32,Move=81,Mine=85,Lithium=64,
+    Palladium=24
 }
 
 export enum StatusEffect {
     Invulnerable=3544,ColdBlooded=3522,Fear=3595,Poison=3658,Stun=3654,Chains,Charm,Steelskin,Mulch
-}
-
-export enum Element {
-    
 }
 
 export const StatusEffectData = {
@@ -74,12 +65,8 @@ export enum Scenario {
     Tutorial="Tutorial",Hub='Hub'
 }
 
-export enum Toxins {
-    Lead='Lead',Benzene='Benzene',Mercury='Mercury',Cadmium='Cadmium',Arsenic='Arsenic',Plutonium='Plutonium',Uranium='Uranium'
-}
-
 export const ExtractorToxinList = {
-    [AbilityType.ExtractorMk1]: [Toxins.Lead, Toxins.Mercury]
+    [AbilityType.ExtractorMk1]: [ItemType.Lead, ItemType.Mercury]
 }
 
 export enum TerrainType {
@@ -95,22 +82,24 @@ export const CleanWater = [32,33,34,40,41,42,48,49,50]
 export const PollutedWater = [64,65,66,72,73,74,80,81,82]
 
 export const TerrainToxins = {
-    [TerrainType.Any]: [Toxins.Arsenic, Toxins.Benzene],
-    [TerrainType.Dunes1]: [Toxins.Cadmium, Toxins.Lead]
+    [TerrainType.Any]: [ItemType.Arsenic, ItemType.Benzene],
+    [TerrainType.Dunes1]: [ItemType.Cadmium, ItemType.Lead]
 }
 
 export type Resources = {
     [ItemType.Lead]: number
-    [ItemType.Lithium]: number
-    [ItemType.Palladium]: number
     [ItemType.Titanium]: number
+    [ItemType.Copper]: number
+    [ItemType.Palladium]: number
+    [ItemType.Lithium]: number
 }
 
 export const defaultResources = {
     [ItemType.Lead]: 0,
     [ItemType.Lithium]: 0,
     [ItemType.Palladium]: 0,
-    [ItemType.Titanium]: 0
+    [ItemType.Titanium]: 0,
+    [ItemType.Copper]: 0
 }
 
 export const Scenarios = [

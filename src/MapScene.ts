@@ -290,7 +290,7 @@ export default class MapScene extends Scene {
             if(t.index-1 === RCObjectType.Base)
                 base = t
         })
-        return base
+        return base as Tilemaps.Tile
     }
 
     tryPerformMove = () => {

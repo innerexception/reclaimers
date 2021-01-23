@@ -8,7 +8,7 @@ interface UserAccount {
 
 interface TileInfo {
     type: import('./constants').TerrainType
-    toxins: Array<import('./constants').Toxins>
+    toxins: Array<import('./constants').ItemType>
 }
 
 interface Tuple {
@@ -44,7 +44,7 @@ interface BasePCData {
     speed: number
     sight: number
     statusEffect: Array<StatusEffectState>
-    inventory: Array<import('./constants').ItemType | import('./constants').Toxins>
+    inventory: Array<import('./constants').ItemType>
     maxInventory: number
 }
 

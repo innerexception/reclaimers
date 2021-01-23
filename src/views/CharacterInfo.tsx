@@ -25,8 +25,8 @@ export default class CharacterInfo extends React.Component<Props> {
                     <h5>moves: {charDat.moves}</h5>
                     <h5>speed: {charDat.speed}</h5>
                     <h5>carrying: {charDat.inventory.map(s=>
-                        <div>
-                            {s}
+                        <div style={{display:'flex'}}>
+                            {CssIcon(s, true)} {s}
                         </div>)}
                     </h5>
                     <div>

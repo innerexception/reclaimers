@@ -1,9 +1,8 @@
 import * as React from 'react'
-import { AbilityCard, Button } from '../util/SharedComponents';
+import { Button } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onActivateAbility, onShowModal } from '../uiManager/Thunks';
 import { AbilityType, Modal } from '../../constants';
-import { isPassive } from '../util/Util';
 
 export default class Actionbar extends React.Component {
 
