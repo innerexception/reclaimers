@@ -1,6 +1,6 @@
 import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
-import { AbilityType, ExtractorToxinList, FONT_DEFAULT } from '../constants'
+import { AbilityType, ExtractorToxinList, FONT_DEFAULT, TerrainLevels } from '../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
@@ -34,11 +34,11 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     runUnitTick = () => {
         let dat = this.entity
-        const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
                     //Head towards the fog
+                    const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
                         this.executeCharacterMove(dat.id, nextVisible)
@@ -53,8 +53,10 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         if(base.x === this.entity.tileX && base.y === this.entity.tileY){
                             const player = store.getState().activeEncounter.players[0]
                             dat.inventory.forEach(i=>{
-                                player.resources[i]++
-                                this.floatResourceAndContinue(i)
+                                if(player.resources[i] !== undefined) {
+                                    player.resources[i]++
+                                    this.floatResourceAndContinue(i)
+                                }
                             })
                             dat.inventory = []
                             onUpdatePlayer(player)
@@ -62,14 +64,22 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         }
                     }
                     //Head towards a revealed resource patch that you can extract:
-                    const tilei = this.scene.tiles[dat.tileX][dat.tileY].toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
+                    const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
+                    const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
                     if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
-                        let tox = this.scene.tiles[dat.tileX][dat.tileY].toxins.splice(tilei,1)
+                        let tox = tileDat.toxins.splice(tilei,1)
+                        
                         dat.inventory.push(tox[0])
+                        const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground') 
+                        const toxLength = tileDat.toxins.length
+                        if(toxLength < 3){
+                            tile.index = TerrainLevels[tileDat.type-1].reverse()[toxLength]+1
+                        }
                         this.floatResourceAndContinue(tox[0], this.runUnitTick)
                     }
                     else {
-                        const nextVisibleResource = fogTiles.find(t=>t.alpha === 0 && this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
+                        const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
+                        const nextVisibleResource = visibleTiles.find(t=>t.alpha === 0 && this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
                         if(nextVisibleResource){
                             this.executeCharacterMove(dat.id, nextVisibleResource)
                         }
@@ -162,7 +172,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
             targets: txt,
             y: this.y-20,
             alpha: 0,
-            duration: 1000,
+            duration: 2000,
             onComplete: ()=>{
                 txt.destroy()
                 if(onComplete) onComplete()

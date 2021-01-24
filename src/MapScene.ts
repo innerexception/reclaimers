@@ -96,7 +96,7 @@ export default class MapScene extends Scene {
         if(this.map) this.map.destroy()
         this.map = this.add.tilemap(encounter)
         let tiles = this.map.addTilesetImage('OverworldTileset_v03', 'tiles', 16,16) //1,2
-        this.map.createStaticLayer('ground', tiles)
+        this.map.createDynamicLayer('ground', tiles)
         this.map.createStaticLayer('terrain', tiles)
         this.map.createStaticLayer('objects', tiles)
         this.map.createDynamicLayer('fog', tiles)
@@ -375,7 +375,11 @@ export default class MapScene extends Scene {
         for(let i=0; i<arry.length;i++){
             if(arry[i]){
                 for(let j=0; j<arry[i].length;j++){
-                    if(arry[i][j]) tiles.push(this.map.getTileAt(i,j,false,layer))
+                    if(arry[i][j]){
+                        const t = this.map.getTileAt(i,j,false,layer)
+                        if(t.alpha === 1)
+                            tiles.push(t)
+                    } 
                 }
             }
         }

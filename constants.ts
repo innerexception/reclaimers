@@ -16,7 +16,7 @@ export enum AbilityType {
 export enum ItemType {
     Lead=1, Manganese=3, Gold=4, Arsenic=7, Titanium=8, Mercury=9, Cadmium=13, Benzene=14, 
     Copper=17, Cobalt=18,Asbestos=20,Petroleum=29,Rock=32,Move=81,Mine=85,Lithium=64,
-    Palladium=24
+    Palladium=24,Plastics=89,Pesticides=15
 }
 
 export enum StatusEffect {
@@ -66,7 +66,7 @@ export enum Scenario {
 }
 
 export const ExtractorToxinList = {
-    [AbilityType.ExtractorMk1]: [ItemType.Lead, ItemType.Mercury]
+    [AbilityType.ExtractorMk1]: [ItemType.Lead, ItemType.Mercury, ItemType.Plastics, ItemType.Petroleum, ItemType.Pesticides]
 }
 
 export enum TerrainType {
@@ -82,8 +82,19 @@ export const CleanWater = [32,33,34,40,41,42,48,49,50]
 export const PollutedWater = [64,65,66,72,73,74,80,81,82]
 
 export const TerrainToxins = {
-    [TerrainType.Any]: [ItemType.Arsenic, ItemType.Benzene],
+    [TerrainType.Any]: [ItemType.Plastics, ItemType.Petroleum, ItemType.Pesticides],
     [TerrainType.Dunes1]: [ItemType.Cadmium, ItemType.Lead]
+}
+
+export const TerrainLevels:{[key:number]: Array<TerrainType>} = {
+    [TerrainType.Dunes1]: [TerrainType.DesertGrass, TerrainType.Cactus, TerrainType.SparseGrass],
+    [TerrainType.Dunes2]: [TerrainType.DesertGrass, TerrainType.Cactus, TerrainType.SparseGrass],
+    [TerrainType.Barren]: [TerrainType.DesertGrass, TerrainType.SparseGrass, TerrainType.MediumGrass],
+    [TerrainType.DryForest]: [TerrainType.Woods2, TerrainType.DenseWoods, TerrainType.DenseWoods],
+    [TerrainType.Minerals1]: [TerrainType.SBushes, TerrainType.MBushes, TerrainType.LBushes],
+    [TerrainType.Minerals2]: [TerrainType.SBushes, TerrainType.MBushes, TerrainType.LBushes],
+    [TerrainType.Rocks]: [TerrainType.SBushes, TerrainType.MBushes, TerrainType.LBushes],
+    [TerrainType.DesertGrass]: [TerrainType.SparseGrass, TerrainType.MediumGrass, TerrainType.ThickGrass]
 }
 
 export type Resources = {

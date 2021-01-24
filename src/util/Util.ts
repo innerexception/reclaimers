@@ -137,9 +137,9 @@ export const setSelectIconPosition = (scene:MapScene, tile:Tilemaps.Tile) => {
 export const getToxinsOfTerrain = (terrain:TerrainType):Array<ItemType> => {
     if(TerrainToxins[terrain]){
         const count = Phaser.Math.Between(1, TerrainToxins[terrain].length)
-        return TerrainToxins[terrain].slice(0,count)
+        return TerrainToxins[terrain].slice(0,count).concat(TerrainToxins[TerrainType.Any])
     }
-    return []
+    return Array.from(TerrainToxins[TerrainType.Any])
 }
 
 export const shuffle = (array:Array<any>) => {
