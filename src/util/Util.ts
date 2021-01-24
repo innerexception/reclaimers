@@ -211,7 +211,7 @@ export const getCircle = (cx: number, cy: number, r: number, topology?:number) =
     return result;
 }
 
-export const canPassTerrainType = (unit:RCUnit, terrainIndex:number) => true
+export const canPassTerrainType = (unit:RCUnit, terrainIndex:number) => false
 
 export const getNewAbilities = (abils:Array<AbilityType>):Array<Ability> => {
     return abils.map(a=>{

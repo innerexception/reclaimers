@@ -60,7 +60,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             })
                             dat.inventory = []
                             onUpdatePlayer(player)
-                            this.runUnitTick()
+                            return this.runUnitTick()
                         }
                     }
                     //Head towards a revealed resource patch that you can extract:
@@ -79,7 +79,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     }
                     else {
                         const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
-                        const nextVisibleResource = visibleTiles.find(t=>t.alpha === 0 && this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
+                        const nextVisibleResource = visibleTiles.find(t=>this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
                         if(nextVisibleResource){
                             this.executeCharacterMove(dat.id, nextVisibleResource)
                         }
@@ -98,7 +98,8 @@ export default class CharacterSprite extends GameObjects.Sprite {
         let y = Phaser.Math.Between(0,1)
         let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-        if(t) this.executeCharacterMove(dat.id, t)
+        if(t && this.scene.passableTile(t.x, t.y, this.entity)) this.executeCharacterMove(dat.id, t)
+        else this.runUnitTick()
     }
 
     executeCharacterMove = (characterId:string, targetTile:Tilemaps.Tile) => {
