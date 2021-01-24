@@ -31,6 +31,7 @@ build a network of point to point charging stations to keep the bots moving
 
 
 
-12. Show greenery after % of toxins removed from a square
-11. Use material to unlock a new chassis
-13. Extractors won't attempt to work the same squares
+10. Move base to terrain layer
+11. Use material to design and build a new bot
+12. Use materials to place a charging pylon within range of the base
+13. Extractors shouldn't attempt to work the same squares
