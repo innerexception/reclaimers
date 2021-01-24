@@ -37,13 +37,9 @@ export default class ViewscreenFrame extends React.Component<Props> {
                 <div style={{display:'flex', flexDirection:'column',alignItems:'center', width:'100%', maxWidth:'1200px'}}>
                     <Viewscreen/>
                     <div style={{position:'absolute', bottom:0, left:0, pointerEvents:'none'}}>
+                        <TilePortrait/>
                         <CharacterInfo/>
-                        <Actionbar/>
-                        {this.props.match && 
-                        <div style={{display:'flex'}}>
-                            <EventLog events={this.props.match.eventLog}/>
-                            <TilePortrait/>
-                         </div>}
+                        {this.props.match && <Actionbar player={this.props.match.players[0]}/>}
                     </div>
                 </div>
             </div>

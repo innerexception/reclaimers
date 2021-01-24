@@ -31,5 +31,6 @@ export default class TilePortrait extends React.Component<Props> {
 const styles = {
     border: '3px inset',
     borderColor: 'silver',
-    padding:'5px'
+    padding:'5px',
+    width:'200px'
 }
