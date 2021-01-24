@@ -4,6 +4,7 @@ import { AbilityType, ExtractorToxinList, FONT_DEFAULT, TerrainLevels } from '..
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
+import { shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -44,7 +45,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         this.executeCharacterMove(dat.id, nextVisible)
                     }
                     else {
-                        this.roam(dat)
+                        this.roam()
                     }
                 break
                 case AbilityType.ExtractorMk1:
@@ -78,13 +79,16 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         this.floatResourceAndContinue(tox[0], this.runUnitTick)
                     }
                     else {
-                        const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
-                        const nextVisibleResource = visibleTiles.find(t=>this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
+                        const visibleTiles = shuffle(this.scene.getVisibleTiles(dat, 'ground'))
+                        const nextVisibleResource = visibleTiles.find(t=>
+                            this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)
+                            && this.scene.passableTile(t.x, t.y, this.entity)
+                        ))
                         if(nextVisibleResource){
                             this.executeCharacterMove(dat.id, nextVisibleResource)
                         }
                         else {
-                            this.roam(dat)
+                            this.roam()
                         }
                     }
                 break
@@ -92,13 +96,13 @@ export default class CharacterSprite extends GameObjects.Sprite {
         })
     }
 
-    roam = (dat:RCUnit) => {
+    roam = () => {
         //Roam
         let x = Phaser.Math.Between(0,1)
         let y = Phaser.Math.Between(0,1)
-        let candidate = {x: x===1 ? dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
+        let candidate = {x: x===1 ? this.entity.tileX-1 : this.entity.tileX+1, y: y===1 ? this.entity.tileY-1 : this.entity.tileY+1}
         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-        if(t && this.scene.passableTile(t.x, t.y, this.entity)) this.executeCharacterMove(dat.id, t)
+        if(t && this.scene.passableTile(t.x, t.y, this.entity)) this.executeCharacterMove(this.entity.id, t)
         else this.runUnitTick()
     }
 
@@ -115,7 +119,16 @@ export default class CharacterSprite extends GameObjects.Sprite {
             //onAddEventLog(encounter)
         }
         if(this.entity.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
-                        
+                     
+        if(path.length > 100 || path.length === 0){
+            //This unit is currently blocked and has no valid movement path, so we wait one and see if we are unblocked
+            this.scene.time.addEvent({
+                delay: 1000,
+                callback: this.roam
+            })
+            return 
+        } 
+
         if(targetSprite.visible){
             encounter.eventLog.push(this.entity.name+' is moving...')
             if(this.currentMove) this.currentMove.stop()
