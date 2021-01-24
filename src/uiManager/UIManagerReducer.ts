@@ -43,6 +43,10 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, modalState: null, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design, state.onlineAccount.id) }}  
         case UIReducerActions.TILE_INFO:
             return { ...state, selectedTile: action.explored ? {...action.tile} : null}
+        case UIReducerActions.UPDATE_PLAYER:
+            let i = state.activeEncounter.players.findIndex(p=>p.id===action.player.id)
+            state.activeEncounter.players.splice(i,1,action.player)
+            return { ...state, activeEncounter: {...state.activeEncounter} }
         default:
             return state
     }

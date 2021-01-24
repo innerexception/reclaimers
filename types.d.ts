@@ -74,9 +74,7 @@ interface AbilityData {
     startFrame: number
     endFrame: number
     isPassive?: boolean
-    slot?: import('./constants').EquipmentType
     ac?:number
-    element?:import('./constants').Element
     weight?:number
     model?:import('./constants').ItemType
 }

@@ -88,6 +88,13 @@ export const onUpdateSelectedUnit = (unit:RCUnit) => {
     })
 }
 
+export const onUpdatePlayer = (player:RCPlayerState) => {
+    dispatch({
+        type: UIReducerActions.UPDATE_PLAYER,
+        player
+    })
+}
+
 export const onSelectedUnit = (unit:RCUnit) => {
     dispatch({
         type: UIReducerActions.SELECT_UNIT,

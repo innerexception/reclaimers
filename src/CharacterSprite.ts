@@ -2,7 +2,7 @@ import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
 import { AbilityType, ExtractorToxinList, FONT_DEFAULT } from '../constants'
 import MapScene from "./MapScene";
-import { onUpdateSelectedUnit } from "./uiManager/Thunks";
+import { onUpdateSelectedUnit, onUpdatePlayer } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 
 export default class CharacterSprite extends GameObjects.Sprite {
@@ -52,9 +52,13 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         const base = this.scene.getBase()
                         if(base.x === this.entity.tileX && base.y === this.entity.tileY){
                             const player = store.getState().activeEncounter.players[0]
-                            dat.inventory.forEach(i=>player.resources[i]++)
+                            dat.inventory.forEach(i=>{
+                                player.resources[i]++
+                                this.floatResourceAndContinue(i)
+                            })
                             dat.inventory = []
                             onUpdatePlayer(player)
+                            this.runUnitTick()
                         }
                     }
                     //Head towards a revealed resource patch that you can extract:
@@ -62,7 +66,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
                         let tox = this.scene.tiles[dat.tileX][dat.tileY].toxins.splice(tilei,1)
                         dat.inventory.push(tox[0])
-                        this.floatSpriteAndContinue(tox[0])
+                        this.floatResourceAndContinue(tox[0], this.runUnitTick)
                     }
                     else {
                         const nextVisibleResource = fogTiles.find(t=>t.alpha === 0 && this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)))
@@ -152,7 +156,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         })
     }
 
-    floatSpriteAndContinue(index:number){
+    floatResourceAndContinue(index:number, onComplete?:Function){
         let txt = this.scene.add.image(this.x, this.y, 'resources', index).setDepth(5)
         this.scene.tweens.add({
             targets: txt,
@@ -161,7 +165,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
             duration: 1000,
             onComplete: ()=>{
                 txt.destroy()
-                this.runUnitTick()
+                if(onComplete) onComplete()
             }
         })
     }
