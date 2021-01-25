@@ -48,13 +48,11 @@ export const onSpawnBot = (design:RCUnitData) => {
     })
 }
 
-// export const onLeaveMatch = () => {
-//     let state = store.getState()
-//     Provider.unsubscribeMatch(state.match, state.onlineAccount.uid)
-//     dispatch({
-//         type: UIReducerActions.LEAVE_MATCH
-//     })
-// }
+export const onStartBuildPylon = () => {
+    dispatch({
+        type: UIReducerActions.BUILD_PYLON
+    })
+}
 
 export const onJoinEncounter = (match:Encounter, onlineAccount?:UserAccount) => {
     dispatch({

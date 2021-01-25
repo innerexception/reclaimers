@@ -1,6 +1,6 @@
 import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
-import { AbilityType, ExtractorToxinList, FONT_DEFAULT, TerrainLevels } from '../constants'
+import { AbilityType, ExtractorToxinList, FONT_DEFAULT, RCObjectType, TerrainLevels } from '../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
@@ -50,7 +50,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
                 case AbilityType.ExtractorMk1:
                     if(dat.inventory.length > 0){
-                        const base = this.scene.getBase()
+                        const base = this.scene.getObjects(RCObjectType.Base)[0]
                         if(base.x === this.entity.tileX && base.y === this.entity.tileY){
                             const player = store.getState().activeEncounter.players[0]
                             dat.inventory.forEach(i=>{
@@ -112,7 +112,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
         let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
         
-        let base = this.scene.getBase()
+        let base = this.getNearestPylon(this.scene.getObjects(RCObjectType.Pylon))
         if(base.x===spriteTile.x && base.y===spriteTile.y){
             this.entity.moves = this.entity.maxMoves
             encounter.eventLog.push(this.entity.name+' is recharging...')
@@ -120,7 +120,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         }
         if(this.entity.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
                      
-        if(path.length > 100 || path.length === 0){
+        if(path.length === 0){
             //This unit is currently blocked and has no valid movement path, so we wait one and see if we are unblocked
             this.scene.time.addEvent({
                 delay: 1000,

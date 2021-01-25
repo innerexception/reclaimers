@@ -47,6 +47,8 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             let i = state.activeEncounter.players.findIndex(p=>p.id===action.player.id)
             state.activeEncounter.players.splice(i,1,action.player)
             return { ...state, activeEncounter: {...state.activeEncounter} }
+        case UIReducerActions.BUILD_PYLON:
+            return { ...state, engineEvent: { action: UIReducerActions.BUILD_PYLON, data: null }}
         default:
             return state
     }

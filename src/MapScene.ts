@@ -2,11 +2,16 @@ import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
 import { v4 } from "uuid";
-import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
+import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes, TerrainType } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onClearActiveAbility, onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
+
+enum MouseTarget {
+    NONE,MOVE,PYLON
+}
+
 export default class MapScene extends Scene {
 
     unsubscribeRedux: Function
@@ -22,7 +27,8 @@ export default class MapScene extends Scene {
     origDragPoint: Phaser.Math.Vector2
     entities: Array<CharacterSprite>
     targetingAbility: AbilityTargetingData
-    targetingMove: boolean
+    mouseTarget: MouseTarget
+    pylonPreview: GameObjects.Sprite
     activeUnit: GameObjects.Sprite
     tiles: Array<Array<TileInfo>>
 
@@ -66,7 +72,11 @@ export default class MapScene extends Scene {
                     this.activeUnit = this.entities.find(e=>e.entity.id === engineEvent.data)
                 break
                 case UIReducerActions.SELECT_DESTINATION:
-                    this.targetingMove = true
+                    this.mouseTarget = MouseTarget.MOVE
+                break
+                case UIReducerActions.BUILD_PYLON:
+                    this.mouseTarget = MouseTarget.PYLON
+                    this.pylonPreview.setVisible(true)
                 break
             }
     }
@@ -153,6 +163,7 @@ export default class MapScene extends Scene {
     {
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
+        this.pylonPreview = this.add.sprite(0,0,'tiles',RCObjectType.Pylon).setAlpha(0.5).setVisible(false)
         this.initMap(Scenario.Hub)
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
@@ -197,6 +208,15 @@ export default class MapScene extends Scene {
                 onShowTileInfo(this.tiles[tile.x][tile.y], fog.alpha !== 1)
             }
             else this.selectIcon.setVisible(false)
+            if(this.mouseTarget === MouseTarget.PYLON){
+                this.pylonPreview.setPosition(tile.getCenterX(), tile.getCenterY())
+                const obstruction = this.map.getTileAt(tile.x, tile.y, false, 'terrain')
+                if(obstruction){
+                    this.pylonPreview.setTint(0xff0000)
+                }
+                else this.pylonPreview.setTint(0x00ff00)
+            }
+
             // else {
             //     let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
             //     if(tile || gameObjects.length > 0){
@@ -236,8 +256,11 @@ export default class MapScene extends Scene {
             if(!state.activeEncounter) return
             let object = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
             //Try perform active action
-            if(this.targetingMove){
+            if(this.mouseTarget === MouseTarget.MOVE){
                 this.tryPerformMove()
+            }
+            if(this.mouseTarget === MouseTarget.PYLON){
+                this.tryPlacePylon(this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground'))
             }
             // else if(this.targetingAbility){
             //     const data = AbilityData.find(a=>a.type === this.targetingAbility.type)
@@ -284,18 +307,22 @@ export default class MapScene extends Scene {
         this.initCompleted = true
     }
     
-    getBase = () => {
-        let base
+    getObjects = (obj:RCObjectType) => {
+        let bases = []
         this.map.setLayer('objects').forEachTile(t=>{
-            if(t.index-1 === RCObjectType.Base)
-                base = t
+            if(t.index-1 === obj)
+                bases.push(t)
         })
-        return base as Tilemaps.Tile
+        return bases as Array<Tilemaps.Tile>
+    }
+
+    tryPlacePylon = (targetTile:Tilemaps.Tile) => {
+        this.map.putTileAt(RCObjectType.Pylon+1, targetTile.x, targetTile.y, false, 'objects')
     }
 
     tryPerformMove = () => {
         const state = store.getState()
-        this.targetingMove = false
+        this.mouseTarget = MouseTarget.NONE
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
         
         const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
@@ -330,7 +357,7 @@ export default class MapScene extends Scene {
 
     onCompleteMove = (characterId:string)=> {
         let unit = this.entities.find(e=>e.entity.id === characterId)
-        let base = this.getBase()
+        let base = this.getObjects(RCObjectType.Base)[0]
         if(base.x===unit.entity.tileX && base.y===unit.entity.tileY){
             unit.entity.moves = unit.entity.maxMoves
             //onAddEventLog(unit.entity.name+' is recharging...')
