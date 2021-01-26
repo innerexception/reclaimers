@@ -29,7 +29,7 @@ const defaultDesigns:Array<RCUnitData> = [
         name: 'Surface Compactor mk.1',
         avatarIndex: RCUnitType.LightCompactor,
         maxHp: 1,
-        maxMoves: 3,
+        maxMoves: 4,
         speed: 2,
         sight: 2,
         statusEffect: [],

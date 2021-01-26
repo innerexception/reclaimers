@@ -50,6 +50,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
                 case AbilityType.ExtractorMk1:
                     if(dat.inventory.length > 0){
+                        //TODO: Head towards drop off point
                         const base = this.scene.getObjects(RCObjectType.Base)[0]
                         if(base.x === this.entity.tileX && base.y === this.entity.tileY){
                             const player = store.getState().activeEncounter.players[0]
@@ -167,6 +168,19 @@ export default class CharacterSprite extends GameObjects.Sprite {
         }
     }
 
+    getNearestPylon = (pylons:Array<Tilemaps.Tile>) => {
+        let closest = 1000
+        let pylon = pylons[0]
+        pylons.forEach(p=>{
+            const dist = Phaser.Math.Distance.Between(p.x, p.y, this.entity.tileX, this.entity.tileY)
+            if(dist < closest){
+                pylon = p
+                closest = dist
+            } 
+        })
+        return pylon
+    }
+        
     floatDamage(dmg:number, color:string){
         let txt = this.scene.add.text(this.x, this.y, dmg.toString(), {...FONT_DEFAULT, color}).setDepth(5)
         this.scene.tweens.add({

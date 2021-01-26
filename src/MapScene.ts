@@ -108,7 +108,7 @@ export default class MapScene extends Scene {
         let tiles = this.map.addTilesetImage('OverworldTileset_v03', 'tiles', 16,16) //1,2
         this.map.createDynamicLayer('ground', tiles)
         this.map.createStaticLayer('terrain', tiles)
-        this.map.createStaticLayer('objects', tiles)
+        this.map.createDynamicLayer('objects', tiles)
         this.map.createDynamicLayer('fog', tiles)
         
         let encounterData = store.getState().activeEncounter
@@ -163,7 +163,7 @@ export default class MapScene extends Scene {
     {
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
-        this.pylonPreview = this.add.sprite(0,0,'tiles',RCObjectType.Pylon).setAlpha(0.5).setVisible(false)
+        this.pylonPreview = this.add.sprite(0,0,'sprites',RCObjectType.Pylon).setAlpha(0.5).setVisible(false).setDepth(3)
         this.initMap(Scenario.Hub)
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
@@ -208,7 +208,7 @@ export default class MapScene extends Scene {
                 onShowTileInfo(this.tiles[tile.x][tile.y], fog.alpha !== 1)
             }
             else this.selectIcon.setVisible(false)
-            if(this.mouseTarget === MouseTarget.PYLON){
+            if(this.mouseTarget === MouseTarget.PYLON && tile){
                 this.pylonPreview.setPosition(tile.getCenterX(), tile.getCenterY())
                 const obstruction = this.map.getTileAt(tile.x, tile.y, false, 'terrain')
                 if(obstruction){
@@ -318,6 +318,8 @@ export default class MapScene extends Scene {
 
     tryPlacePylon = (targetTile:Tilemaps.Tile) => {
         this.map.putTileAt(RCObjectType.Pylon+1, targetTile.x, targetTile.y, false, 'objects')
+        this.mouseTarget = MouseTarget.NONE
+        this.pylonPreview.destroy()
     }
 
     tryPerformMove = () => {
