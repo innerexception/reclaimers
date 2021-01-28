@@ -51,8 +51,8 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 case AbilityType.ExtractorMk1:
                     if(dat.inventory.length > 0){
                         //TODO: Head towards drop off point
-                        const base = this.scene.getObjects(RCObjectType.Base)[0]
-                        if(base.x === this.entity.tileX && base.y === this.entity.tileY){
+                        const base = this.scene.getObjects(RCObjectType.Base).find(base=>base.x === this.entity.tileX && base.y === this.entity.tileY)
+                        if(base){
                             const player = store.getState().activeEncounter.players[0]
                             dat.inventory.forEach(i=>{
                                 if(player.resources[i] !== undefined) {
@@ -113,7 +113,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
         let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
         
-        let base = this.getNearestPylon(this.scene.getObjects(RCObjectType.Pylon))
+        let base = this.getNearestPylon(this.scene.getObjects(RCObjectType.Base))
         if(base.x===spriteTile.x && base.y===spriteTile.y){
             this.entity.moves = this.entity.maxMoves
             encounter.eventLog.push(this.entity.name+' is recharging...')

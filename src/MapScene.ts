@@ -163,7 +163,7 @@ export default class MapScene extends Scene {
     {
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
-        this.pylonPreview = this.add.sprite(0,0,'sprites',RCObjectType.Pylon).setAlpha(0.5).setVisible(false).setDepth(3)
+        this.pylonPreview = this.add.sprite(0,0,'sprites',RCObjectType.Base).setAlpha(0.5).setVisible(false).setDepth(3)
         this.initMap(Scenario.Hub)
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
@@ -216,40 +216,6 @@ export default class MapScene extends Scene {
                 }
                 else this.pylonPreview.setTint(0x00ff00)
             }
-
-            // else {
-            //     let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
-            //     if(tile || gameObjects.length > 0){
-            //         if(gameObjects.length > 0) tile = this.map.getTileAtWorldXY((gameObjects[0] as any).x, (gameObjects[0] as any).y, false, undefined, 'ground')
-            //         setSelectIconPosition(this, tile)
-            //     }
-            //     else this.selectIcon.setVisible(false)
-
-            //     if(this.targetingAbility){
-            //         const data = AbilityData.find(a=>a.type === this.targetingAbility.type)
-            //         if(data.areaEffectRadius && data.range > 0){
-            //             //Set center point, fill target list
-            //             this.targetingAbility.selectedTargetIds.forEach(id=>{
-            //                 this.entities.find(c=>c.characterId === id).setTargeted(false)
-            //             })
-            //             this.targetingAbility.selectedTargetIds = []
-            //             let center = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
-            //             getCircle(center.x, center.y, data.areaEffectRadius)
-            //             .forEach(tuple=>{
-            //                 const char = encounter.entities.find(c=>c.tileX === tuple[0] && c.tileY === tuple[1])
-            //                 if(char){
-            //                     this.targetingAbility.selectedTargetIds.push(char.id)
-            //                     this.entities.find(c=>c.characterId === char.id).setTargeted(true)
-            //                 } 
-            //             })
-            //         }
-            //         else if(gameObjects.length > 0){
-            //             if(this.targetingAbility.validTargetIds.includes((gameObjects[0] as CharacterSprite).characterId)){
-            //                 this.selectIcon.setTint(0x00ff00)
-            //             }
-            //         }
-            //     }
-            // }
         })
         this.input.on('pointerdown', (event, GameObjects:Array<Phaser.GameObjects.GameObject>) => {
             const state = store.getState()
@@ -262,38 +228,6 @@ export default class MapScene extends Scene {
             if(this.mouseTarget === MouseTarget.PYLON){
                 this.tryPlacePylon(this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground'))
             }
-            // else if(this.targetingAbility){
-            //     const data = AbilityData.find(a=>a.type === this.targetingAbility.type)
-            //     if(data.range === 0){
-            //         //Self target or radius around self, targeting is pre-computed
-            //         networkExecuteCharacterAbility(state.activeEncounter.activeCharacterId, this.targetingAbility)
-            //         this.targetingAbility = null
-            //         onClearActiveAbility()
-            //     }
-            //     else {
-            //         //All other cases, need to determine targets or center point
-            //         if(data.areaEffectRadius){
-            //             //Pre-calculated on mouse move
-            //             networkExecuteCharacterAbility(state.activeEncounter.activeCharacterId, this.targetingAbility)
-            //             this.targetingAbility = null
-            //             onClearActiveAbility()
-            //         }
-            //         else {
-            //             const char = GameObjects[0] as CharacterSprite
-            //             if(char && this.targetingAbility.validTargetIds.includes(char.characterId)){
-            //                 let selected = this.targetingAbility.selectedTargetIds.findIndex(id=>id===char.characterId)
-            //                 if(selected !== -1) this.targetingAbility.selectedTargetIds.slice(selected,1)
-            //                 else this.targetingAbility.selectedTargetIds.push(char.characterId)
-            //                 char.setTargeted(selected===-1)
-            //                 if(this.targetingAbility.selectedTargetIds.length === data.targets){
-            //                     networkExecuteCharacterAbility(state.activeEncounter.activeCharacterId, this.targetingAbility)
-            //                     this.targetingAbility = null
-            //                     onClearActiveAbility()
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
             if(GameObjects[0]){
                 onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
             }
@@ -317,9 +251,9 @@ export default class MapScene extends Scene {
     }
 
     tryPlacePylon = (targetTile:Tilemaps.Tile) => {
-        this.map.putTileAt(RCObjectType.Pylon+1, targetTile.x, targetTile.y, false, 'objects')
+        this.map.putTileAt(RCObjectType.Base+1, targetTile.x, targetTile.y, false, 'objects')
         this.mouseTarget = MouseTarget.NONE
-        this.pylonPreview.destroy()
+        this.pylonPreview.setVisible(false)
     }
 
     tryPerformMove = () => {
