@@ -31,11 +31,10 @@ build a network of point to point charging stations to keep the bots moving
 
 
 
-9. Implement selected building updater (same as selected unit updater)
 11. Use materials to unlock a new bot design
-11. Base/charging stations vs factories. Factories pre-positioned? Requires materials to activate?
-12. Processing plants (drop off sites): Heavy metal, Petrochemicals, Plastics
+11. Base/charging stations vs factories. Factories pre-positioned. Pylons can be placed? Requires materials to activate?
+12. Processing plants (built into factories) : Heavy metal, Petrochemicals, Plastics
 13. Bots must find a path to a valid drop off site. This may require multiple charging stations along route. 
-    (Bots should attempt to follow move orders until there is a roam event)
+14. Bots should attempt to follow move orders until there is a roam event
 
 13. Extractors shouldn't attempt to work the same squares
