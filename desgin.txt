@@ -32,11 +32,10 @@ build a network of point to point charging stations to keep the bots moving
 
 
 10. Production timer for bot factories. Choose bot production to reset the timer.
+11. Use materials to unlock a new bot design
 11. Base/charging stations vs factories. Factories pre-positioned? Requires materials to activate?
 12. Processing plants (drop off sites): Heavy metal, Petrochemicals, Plastics
 13. Bots must find a path to a valid drop off site. This may require multiple charging stations along route. 
     (Bots should attempt to follow move orders until there is no charging station to proceed forward with)
 
-
-11. Use material to design and build a new bot (or unlock a new design?)
 13. Extractors shouldn't attempt to work the same squares

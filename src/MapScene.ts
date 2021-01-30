@@ -31,6 +31,7 @@ export default class MapScene extends Scene {
     pylonPreview: GameObjects.Sprite
     activeUnit: GameObjects.Sprite
     tiles: Array<Array<TileInfo>>
+    selectedSpawn: BuildingSprite
 
     constructor(config){
         super(config)
@@ -57,13 +58,13 @@ export default class MapScene extends Scene {
                 break
                 case UIReducerActions.SPAWN_BOT:
                     let bot = engineEvent.data as RCUnit
-                    this.map.setLayer('objects').forEachTile(t=>{
-                        if(t.index-1 === RCObjectType.Base){
-                            bot.tileX = t.x
-                            bot.tileY = t.y+1
-                        }
-                    })
+                    bot.tileX = this.selectedSpawn.x
+                    bot.tileY = this.selectedSpawn.y+1
                     this.spawnUnit(bot)
+                break
+                case UIReducerActions.SET_PRODUCTION:
+                    this.selectedSpawn.activeDesign = engineEvent.data as RCUnit
+                    this.selectedSpawn.spawnTimer = 60
                 break
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
@@ -233,7 +234,9 @@ export default class MapScene extends Scene {
             }
             else if(object){
                 switch(object.index-1){
-                    case Objects.Vault: onShowModal(Modal.Menu)
+                    case RCObjectType.Base: 
+                        this.selectedSpawn = object
+                        onShowModal(Modal.BotSpawn)
                     break
                 }
             }
@@ -352,6 +355,7 @@ export default class MapScene extends Scene {
     spawnUnit = (unit:RCUnit) => {
         let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
         this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), unit.avatarIndex, unit))
+        this.selectedSpawn = null
     }
 
     destroyUnit = (unitId:string) => {

@@ -17,7 +17,6 @@ export default class Actionbar extends React.Component<Props> {
                         <div style={{display:'flex', alignItems:'center'}}>{CssIcon(+key, true)} {this.props.player.resources[key]}</div>
                     )}
                     {Button(true, onStartBuildPylon, 'Build Base')}
-                    {Button(true, ()=>onShowModal(Modal.BotSpawn), 'Deploy Bot')}
                     {Button(true, ()=>onShowModal(Modal.Menu), 'Menu')}
                 </div>
             </div>

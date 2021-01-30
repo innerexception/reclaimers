@@ -12,7 +12,7 @@ interface Props {
 }
 
 interface State {
-    selectedDesign: RCUnitData
+    selectedIndex: number
 }
 
 @(connect((state: RState) => ({
@@ -21,15 +21,17 @@ interface State {
 })) as any)
 export default class BotChooser extends React.Component<Props, State> {
 
-    state:State = { selectedDesign: null }
+    state:State = { selectedIndex: 0 }
 
     render(){
         const me = this.props.encounter.players.find(p=>p.id === this.props.onlineAccount.id)
+        const d = me.designs[this.state.selectedIndex]
         return (
             <div style={{...AppStyles.modal, justifyContent:'space-between'}}>
                 <div>
-                    {me.designs.map(d=>
-                        <div onClick={()=>this.setState({selectedDesign: d})}>
+                    <div style={{display:'flex'}}>
+                        {Button(this.state.selectedIndex > 0, ()=>this.setState({selectedIndex: this.state.selectedIndex-1}), '<')}
+                        <div>
                             <h2>{d.name}</h2>
                             <h5>hp: {d.maxHp}</h5>
                             <h5>range: {d.maxMoves}</h5>
@@ -38,11 +40,11 @@ export default class BotChooser extends React.Component<Props, State> {
                             {d.requiredItems.map(i=>
                                 <h5>{i.amount}x {i.type}</h5>
                                 )}
-                            <hr/>
                         </div>
-                    )}
+                        {Button(this.state.selectedIndex < me.designs.length, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
+                    </div>
                     {Button(true, onHideModal, 'Cancel')}
-                    {Button(canAffordBot(this.state.selectedDesign), ()=>onSpawnBot(this.state.selectedDesign), 'Deploy')}
+                    {Button(canAffordBot(d), ()=>onSetProduction(d), 'Change Production')}
                 </div>
                 <Footer/>
             </div>
