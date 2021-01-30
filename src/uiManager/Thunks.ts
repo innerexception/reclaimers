@@ -1,5 +1,6 @@
 import { dispatch, store } from '../../App';
 import { Modal, Scenario, UIReducerActions } from '../../constants';
+import BuildingSprite from '../BuildingSprite';
 // const { ipcRenderer } = require('electron');
 
 export const onShowModal = (modal:Modal, data?:any) => {
@@ -41,10 +42,11 @@ export const onLoginFailed = () => {
 }
 
 
-export const onSpawnBot = (design:RCUnitData) => {
+export const onSpawnBot = (design:RCUnitData, building:BuildingSprite) => {
     dispatch({
         type: UIReducerActions.SPAWN_BOT,
-        design
+        design,
+        building
     })
 }
 
@@ -96,6 +98,13 @@ export const onUpdatePlayer = (player:RCPlayerState) => {
 export const onSelectedUnit = (unit:RCUnit) => {
     dispatch({
         type: UIReducerActions.SELECT_UNIT,
+        unit
+    })
+}
+
+export const onSelectedBuilding = (unit:BuildingSprite) => {
+    dispatch({
+        type: UIReducerActions.SELECT_BUILDING,
         unit
     })
 }

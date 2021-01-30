@@ -119,5 +119,6 @@ interface RState {
     activeAbility: Ability
     selectedUnit: RCUnit
     selectedTile: TileInfo
+    selectedBuilding: import('./src/BuildingSprite').default
     engineEvent: { action: import('./constants').UIReducerActions, data: any }
 }

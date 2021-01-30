@@ -5,8 +5,9 @@ import { v4 } from "uuid";
 import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes, TerrainType } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
-import { onClearActiveAbility, onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit } from "./uiManager/Thunks";
+import { onClearActiveAbility, onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
+import BuildingSprite from "./BuildingSprite";
 
 enum MouseTarget {
     NONE,MOVE,PYLON
@@ -32,10 +33,12 @@ export default class MapScene extends Scene {
     activeUnit: GameObjects.Sprite
     tiles: Array<Array<TileInfo>>
     selectedSpawn: BuildingSprite
+    buildings: Array<BuildingSprite>
 
     constructor(config){
         super(config)
         this.entities = []
+        this.buildings = []
         this.unsubscribeRedux = store.subscribe(this.onReduxUpdate)
     }
 
@@ -57,14 +60,10 @@ export default class MapScene extends Scene {
                     else this.waitForRender()
                 break
                 case UIReducerActions.SPAWN_BOT:
-                    let bot = engineEvent.data as RCUnit
-                    bot.tileX = this.selectedSpawn.x
-                    bot.tileY = this.selectedSpawn.y+1
+                    let bot = engineEvent.data.unit as RCUnit
+                    bot.tileX = this.map.worldToTileX(engineEvent.data.building.x)
+                    bot.tileY = this.map.worldToTileY(engineEvent.data.building.y)+1
                     this.spawnUnit(bot)
-                break
-                case UIReducerActions.SET_PRODUCTION:
-                    this.selectedSpawn.activeDesign = engineEvent.data as RCUnit
-                    this.selectedSpawn.spawnTimer = 60
                 break
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
@@ -142,6 +141,7 @@ export default class MapScene extends Scene {
         // this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         
         let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
+        this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
     }
 
@@ -230,14 +230,11 @@ export default class MapScene extends Scene {
                 this.tryPlacePylon(this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground'))
             }
             if(GameObjects[0]){
-                onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
+                if((GameObjects[0] as CharacterSprite).entity) onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
+                else if((GameObjects[0] as BuildingSprite).building) onSelectedBuilding((GameObjects[0] as BuildingSprite))
             }
             else if(object){
                 switch(object.index-1){
-                    case RCObjectType.Base: 
-                        this.selectedSpawn = object
-                        onShowModal(Modal.BotSpawn)
-                    break
                 }
             }
         })
@@ -255,6 +252,7 @@ export default class MapScene extends Scene {
 
     tryPlacePylon = (targetTile:Tilemaps.Tile) => {
         this.map.putTileAt(RCObjectType.Base+1, targetTile.x, targetTile.y, false, 'objects')
+        this.buildings.push(new BuildingSprite(this, targetTile.getCenterX(), targetTile.getCenterY(), RCObjectType.Base))
         this.mouseTarget = MouseTarget.NONE
         this.pylonPreview.setVisible(false)
     }

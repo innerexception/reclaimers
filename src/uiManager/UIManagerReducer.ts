@@ -40,7 +40,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
                     })
                 }
             })
-            return { ...state, modalState: null, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: getUnitFromData(action.design, state.onlineAccount.id) }}  
+            return { ...state, modalState: null, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: {unit: getUnitFromData(action.design, state.onlineAccount.id), building: action.building} }}  
         case UIReducerActions.TILE_INFO:
             return { ...state, selectedTile: action.explored ? {...action.tile} : null}
         case UIReducerActions.UPDATE_PLAYER:
@@ -49,6 +49,8 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, activeEncounter: {...state.activeEncounter} }
         case UIReducerActions.BUILD_PYLON:
             return { ...state, engineEvent: { action: UIReducerActions.BUILD_PYLON, data: null }}
+        case UIReducerActions.SELECT_BUILDING:
+            return { ...state, selectedBuilding: action.unit, selectedUnit: null }
         default:
             return state
     }
@@ -64,6 +66,7 @@ const getInitialState = ():RState => {
         engineEvent: null,
         activeAbility: null,
         selectedUnit: null,
-        selectedTile: null
+        selectedTile: null,
+        selectedBuilding: null
     }
 }

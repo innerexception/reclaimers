@@ -58,7 +58,7 @@ export enum RCUnitType {
 export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor]
 
 export enum Modal {
-    BotCreation, CharacterInfo, BotSpawn, Menu
+    BotCreation, CharacterInfo, Menu
 }
 
 export enum Scenario {
@@ -120,7 +120,7 @@ export enum UIReducerActions {
     SHOW_MODAL, HIDE_MODAL, LOGIN_SUCCESS, LOGOUT, LOGIN_PENDING, LOGIN_FAILED,
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
     START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION,TILE_INFO,
-    UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON
+    UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON,SELECT_BUILDING
 }
 
 export enum Objects {

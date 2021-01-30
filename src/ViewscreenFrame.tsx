@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Modal } from '../constants'
 import Actionbar from './views/Actionbar'
 import BotChooser from './views/BotChooser'
-import CharacterInfo from './views/CharacterInfo'
+import EntityInfo from './views/CharacterInfo'
 import EventLog from './views/EventLog'
 import Intro from './views/Intro'
 import TilePortrait from './views/TilePortrait'
@@ -24,9 +24,8 @@ export default class ViewscreenFrame extends React.Component<Props> {
 
     getModal = () => {
         switch(this.props.modalState.modal){
-            case Modal.CharacterInfo: return <CharacterInfo/>
+            case Modal.CharacterInfo: return <EntityInfo/>
             case Modal.Menu: return <Intro/>
-            case Modal.BotSpawn: return <BotChooser/>
         }
     }
 
@@ -38,7 +37,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
                     <Viewscreen/>
                     <div style={{position:'absolute', bottom:0, left:0, pointerEvents:'none'}}>
                         <TilePortrait/>
-                        <CharacterInfo/>
+                        <EntityInfo/>
                         {this.props.match && <Actionbar player={this.props.match.players[0]}/>}
                     </div>
                 </div>
