@@ -1,5 +1,5 @@
-import { Modal, Scenario, UIReducerActions } from '../../constants';
-import { getNewEncounter, getUnitFromData } from '../util/Util';
+import { Modal, UIReducerActions } from '../../constants';
+import { getUnitFromData } from '../util/Util';
 
 const appReducer = (state = getInitialState(), action:any):RState => {
     state.engineEvent = null
@@ -23,12 +23,11 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
         case UIReducerActions.SELECT_UNIT:
-            return { ...state, selectedUnit: {...action.unit}, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unit.id } }  
+            return { ...state, selectedUnit: action.unit, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unit.id } }  
         case UIReducerActions.UPDATE_SELECT_UNIT:
-            if(state.selectedUnit){
-                return { ...state, selectedUnit: state.selectedUnit.id === action.unit.id ? {...action.unit} : state.selectedUnit} 
-            }
-            return { ...state}  
+            return { ...state, selectedUnit: action.unit } 
+        case UIReducerActions.UPDATE_SELECT_BUILDING:
+            return { ...state, selectedBuilding: action.bld} 
         case UIReducerActions.SELECT_DESTINATION:
             return { ...state, engineEvent: { action: UIReducerActions.SELECT_DESTINATION, data:null } }  
         case UIReducerActions.SPAWN_BOT:
@@ -51,6 +50,8 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, engineEvent: { action: UIReducerActions.BUILD_PYLON, data: null }}
         case UIReducerActions.SELECT_BUILDING:
             return { ...state, selectedBuilding: action.unit, selectedUnit: null }
+        case UIReducerActions.CHANGE_PRODUCTION:
+            return { ...state, engineEvent: { action: UIReducerActions.CHANGE_PRODUCTION, data: action.design }}
         default:
             return state
     }

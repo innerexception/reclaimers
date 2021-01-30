@@ -3,7 +3,7 @@ interface UserAccount {
     id:string
     name:string
     completedMissionIds: Array<string>
-    savedMission?: Encounter
+    savedMission?: MapData
 }
 
 interface TileInfo {
@@ -85,7 +85,7 @@ interface AbilityTargetingData {
     type: import('./constants').AbilityType
 }
 
-interface Encounter {
+interface MapData {
     id:string
     players: Array<RCPlayerState>
     map: import('./constants').Scenario
@@ -96,6 +96,15 @@ interface RCPlayerState {
     id:string
     designs: Array<RCUnitData>
     resources: import('./constants').Resources
+}
+
+interface RCBuildingState {
+    id:string
+    type: import('./constants').RCObjectType
+    tileX:number
+    tileY:number
+    timer: number
+    design: RCUnitData
 }
 
 interface RCUnitCommand {
@@ -115,10 +124,10 @@ interface ModalState {
 interface RState {
     onlineAccount: UserAccount
     modalState: ModalState
-    activeEncounter: Encounter
+    activeEncounter: MapData
     activeAbility: Ability
     selectedUnit: RCUnit
     selectedTile: TileInfo
-    selectedBuilding: import('./src/BuildingSprite').default
+    selectedBuilding: RCBuildingState
     engineEvent: { action: import('./constants').UIReducerActions, data: any }
 }

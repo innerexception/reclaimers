@@ -1,25 +1,25 @@
 import * as React from 'react'
-import AppStyles, { colors } from '../../AppStyles';
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onSelectUnitDestination } from '../uiManager/Thunks';
-import { RCObjectType, StatusEffectData } from '../../constants';
-import BuildingSprite from '../BuildingSprite';
+import { RCObjectType } from '../../constants';
 import BotChooser from './BotChooser';
 
 interface Props {
     selectedUnit?: RCUnit
-    selectedBuilding?:BuildingSprite
+    selectedBuilding?:RCBuildingState
+    encounter?:MapData
 }
 
 @(connect((state: RState) => ({
     selectedUnit: state.selectedUnit,
-    selectedBuilding: state.selectedBuilding
+    selectedBuilding: state.selectedBuilding,
+    encounter: state.activeEncounter
 })) as any)
 export default class EntityInfo extends React.Component<Props> {
 
     render(){
-        const charDat = this.props.selectedUnit
+        const charDat =  this.props.selectedUnit
         const buildDat = this.props.selectedBuilding
         return (
             <div style={{...styles, width:'250px', minHeight:'200px', pointerEvents:'all'}}>
@@ -40,8 +40,8 @@ export default class EntityInfo extends React.Component<Props> {
                 </div>}
                 {buildDat &&
                 <div>
-                    {CssIcon(buildDat.building)}
-                    {buildDat.building === RCObjectType.Base && 
+                    {CssIcon(buildDat.type)}
+                    {buildDat.type === RCObjectType.Base && 
                         <BotChooser selectedBuilding={buildDat}/>}
                 </div>}
                 {!buildDat && !charDat && <h4>No Selection</h4>}

@@ -11,7 +11,7 @@ import Viewscreen from './Viewscreen'
 
 interface Props {
     modalState?:ModalState
-    match?:Encounter
+    match?:MapData
     me?:UserAccount
 }
 

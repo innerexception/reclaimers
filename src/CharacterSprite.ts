@@ -2,13 +2,13 @@ import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
 import { AbilityType, ExtractorToxinList, FONT_DEFAULT, RCObjectType, TerrainLevels } from '../constants'
 import MapScene from "./MapScene";
-import { onUpdateSelectedUnit, onUpdatePlayer } from "./uiManager/Thunks";
+import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import { shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
-    entity: RCUnit
+    character: RCUnit
     reticle: GameObjects.Image
     status: Array<GameObjects.Image>
     scene: MapScene
@@ -17,13 +17,9 @@ export default class CharacterSprite extends GameObjects.Sprite {
     constructor(scene:MapScene,x:number,y:number, frame:number, character:RCUnit){
         super(scene, x,y, 'bot-sprites', frame)
         
-        this.entity = character
+        this.character = character
         this.status = []
         this.setDisplaySize(16,16)
-        // character.statusEffect.forEach((s,i)=>{
-        //     if(!this.status.find(st=>+st.frame.name === s.type) && !StatusEffectData[s.type].isPassive)
-        //         this.status.push(this.scene.add.image(x+8-(i*5), y-16, 'sprites', s.type).setScale(0.5).setDepth(4))
-        // })
         this.play(character.avatarIndex.toString())
         this.setInteractive()
         scene.add.existing(this)
@@ -33,8 +29,12 @@ export default class CharacterSprite extends GameObjects.Sprite {
         })
     }
 
+    getEntity = () => 
+        this.character
+    
+
     runUnitTick = () => {
-        let dat = this.entity
+        let dat = this.getEntity()
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
@@ -42,7 +42,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
-                        this.executeCharacterMove(dat.id, nextVisible)
+                        this.executeCharacterMove(nextVisible)
                     }
                     else {
                         this.roam()
@@ -51,7 +51,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 case AbilityType.ExtractorMk1:
                     if(dat.inventory.length > 0){
                         //TODO: Head towards drop off point
-                        const base = this.scene.getObjects(RCObjectType.Base).find(base=>base.x === this.entity.tileX && base.y === this.entity.tileY)
+                        const base = this.scene.getObjects(RCObjectType.Base).find(base=>base.x === dat.tileX && base.y === dat.tileY)
                         if(base){
                             const player = store.getState().activeEncounter.players[0]
                             dat.inventory.forEach(i=>{
@@ -83,10 +83,10 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         const visibleTiles = shuffle(this.scene.getVisibleTiles(dat, 'ground'))
                         const nextVisibleResource = visibleTiles.find(t=>
                             this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)
-                            && this.scene.passableTile(t.x, t.y, this.entity)
+                            && this.scene.passableTile(t.x, t.y, dat)
                         ))
                         if(nextVisibleResource){
-                            this.executeCharacterMove(dat.id, nextVisibleResource)
+                            this.executeCharacterMove(nextVisibleResource)
                         }
                         else {
                             this.roam()
@@ -98,28 +98,27 @@ export default class CharacterSprite extends GameObjects.Sprite {
     }
 
     roam = () => {
+        const dat = this.getEntity()
         //Roam
         let x = Phaser.Math.Between(0,1)
         let y = Phaser.Math.Between(0,1)
-        let candidate = {x: x===1 ? this.entity.tileX-1 : this.entity.tileX+1, y: y===1 ? this.entity.tileY-1 : this.entity.tileY+1}
+        let candidate = {x: x===1 ?dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-        if(t && this.scene.passableTile(t.x, t.y, this.entity)) this.executeCharacterMove(this.entity.id, t)
+        if(t && this.scene.passableTile(t.x, t.y, dat)) this.executeCharacterMove(t)
         else this.runUnitTick()
     }
 
-    executeCharacterMove = (characterId:string, targetTile:Tilemaps.Tile) => {
-        const encounter = store.getState().activeEncounter
-        const targetSprite = this.scene.entities.find(c=>c.entity.id === characterId)
+    executeCharacterMove = (targetTile:Tilemaps.Tile) => {
+        const dat = this.getEntity()
+        const targetSprite = this.scene.entities.find(c=>c.character.id === dat.id)
         const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
-        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
+        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
         
-        let base = this.getNearestPylon(this.scene.getObjects(RCObjectType.Base))
+        let base = this.getNearestBase(this.scene.getObjects(RCObjectType.Base), dat)
         if(base.x===spriteTile.x && base.y===spriteTile.y){
-            this.entity.moves = this.entity.maxMoves
-            encounter.eventLog.push(this.entity.name+' is recharging...')
-            //onAddEventLog(encounter)
+            dat.moves = dat.maxMoves
         }
-        if(this.entity.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, this.entity)).compute(spriteTile.x, spriteTile.y)
+        if(dat.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
                      
         if(path.length === 0){
             //This unit is currently blocked and has no valid movement path, so we wait one and see if we are unblocked
@@ -131,7 +130,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
         } 
 
         if(targetSprite.visible){
-            encounter.eventLog.push(this.entity.name+' is moving...')
             if(this.currentMove) this.currentMove.stop()
             this.currentMove = this.scene.tweens.timeline({
                 targets: targetSprite,    
@@ -142,37 +140,39 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         y: tile.getCenterY(),
                         duration: 1000,
                         onComplete: ()=>{
-                            this.entity.moves--
+                            let dat = this.getEntity()
+                            dat.moves--
                             const pos = path[i]
-                            this.entity.tileX = pos.x
-                            this.entity.tileY = pos.y
-                            onUpdateSelectedUnit(this.entity)
+                            dat.tileX = pos.x
+                            dat.tileY = pos.y
+                            onUpdateSelectedUnit(dat)
                             this.scene.updateFogOfWar()
                         }
                     }
                 }),
                 onComplete: ()=>{
                     const pos = path[path.length-1]
-                    this.entity.tileX = pos.x
-                    this.entity.tileY = pos.y
+                    let dat = this.getEntity()
+                    dat.tileX = pos.x
+                    dat.tileY = pos.y
                     this.scene.updateFogOfWar()
-                    this.scene.onCompleteMove(characterId)
+                    this.scene.onCompleteMove(dat)
                 }
             });
         }
         else {
             const pos = path[path.length-1]
-            this.entity.tileX = pos.x
-            this.entity.tileY = pos.y
-            this.scene.onCompleteMove(characterId)
+            dat.tileX = pos.x
+            dat.tileY = pos.y
+            this.scene.onCompleteMove(dat)
         }
     }
 
-    getNearestPylon = (pylons:Array<Tilemaps.Tile>) => {
+    getNearestBase = (pylons:Array<Tilemaps.Tile>, dat:RCUnit) => {
         let closest = 1000
         let pylon = pylons[0]
         pylons.forEach(p=>{
-            const dist = Phaser.Math.Distance.Between(p.x, p.y, this.entity.tileX, this.entity.tileY)
+            const dist = Phaser.Math.Distance.Between(p.x, p.y, dat.tileX, dat.tileY)
             if(dist < closest){
                 pylon = p
                 closest = dist
@@ -223,6 +223,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     preUpdate(time, delta){
         this.anims.update(time, delta)
+        this.reticle && this.reticle.setPosition(this.x, this.y)
     }
 
     destroy(){

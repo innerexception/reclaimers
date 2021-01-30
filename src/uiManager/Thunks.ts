@@ -50,13 +50,20 @@ export const onSpawnBot = (design:RCUnitData, building:BuildingSprite) => {
     })
 }
 
+export const onChangeProduction = (design:RCUnitData) => {
+    dispatch({
+        type: UIReducerActions.CHANGE_PRODUCTION,
+        design
+    })
+}
+
 export const onStartBuildPylon = () => {
     dispatch({
         type: UIReducerActions.BUILD_PYLON
     })
 }
 
-export const onJoinEncounter = (match:Encounter, onlineAccount?:UserAccount) => {
+export const onJoinEncounter = (match:MapData, onlineAccount?:UserAccount) => {
     dispatch({
         type: UIReducerActions.JOIN_ENCOUNTER,
         match,
@@ -64,7 +71,7 @@ export const onJoinEncounter = (match:Encounter, onlineAccount?:UserAccount) => 
     })
 }
 
-export const onCreateEncounter = async (encounter:Encounter) => {
+export const onCreateEncounter = async (encounter:MapData) => {
     dispatch({
         type: UIReducerActions.JOIN_ENCOUNTER,
         match:encounter
@@ -82,10 +89,23 @@ export const onSelectUnitDestination = () => {
 }
 
 export const onUpdateSelectedUnit = (unit:RCUnit) => {
-    dispatch({
-        type: UIReducerActions.UPDATE_SELECT_UNIT,
-        unit
-    })
+    const selectedUnitId = store.getState().selectedUnit.id
+    if(selectedUnitId && selectedUnitId === unit.id){
+        dispatch({
+            type: UIReducerActions.UPDATE_SELECT_UNIT,
+            unit
+        })
+    }
+}
+
+export const onUpdateSelectedBuilding = (bld:RCBuildingState) => {
+    const selectedUnitId = store.getState().selectedBuilding.id
+    if(selectedUnitId && selectedUnitId === bld.id){
+        dispatch({
+            type: UIReducerActions.UPDATE_SELECT_BUILDING,
+            bld
+        })
+    }
 }
 
 export const onUpdatePlayer = (player:RCPlayerState) => {
@@ -102,7 +122,7 @@ export const onSelectedUnit = (unit:RCUnit) => {
     })
 }
 
-export const onSelectedBuilding = (unit:BuildingSprite) => {
+export const onSelectedBuilding = (unit:RCBuildingState) => {
     dispatch({
         type: UIReducerActions.SELECT_BUILDING,
         unit
@@ -116,7 +136,7 @@ export const onShowTileInfo = (tile:TileInfo, explored:boolean) => {
     })
 }
 
-export const onEncounterUpdated = (encounter:Encounter) => {
+export const onEncounterUpdated = (encounter:MapData) => {
     dispatch({
         type: UIReducerActions.ENCOUNTER_UPDATED,
         encounter

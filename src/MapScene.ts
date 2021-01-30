@@ -30,9 +30,7 @@ export default class MapScene extends Scene {
     targetingAbility: AbilityTargetingData
     mouseTarget: MouseTarget
     pylonPreview: GameObjects.Sprite
-    activeUnit: GameObjects.Sprite
     tiles: Array<Array<TileInfo>>
-    selectedSpawn: BuildingSprite
     buildings: Array<BuildingSprite>
 
     constructor(config){
@@ -68,9 +66,6 @@ export default class MapScene extends Scene {
                 case UIReducerActions.ACTIVATE_ABILITY:
                     this.startTargetingAbility(engineEvent.data as Ability)
                 break
-                case UIReducerActions.SELECT_UNIT:
-                    this.activeUnit = this.entities.find(e=>e.entity.id === engineEvent.data)
-                break
                 case UIReducerActions.SELECT_DESTINATION:
                     this.mouseTarget = MouseTarget.MOVE
                 break
@@ -78,12 +73,15 @@ export default class MapScene extends Scene {
                     this.mouseTarget = MouseTarget.PYLON
                     this.pylonPreview.setVisible(true)
                 break
+                case UIReducerActions.CHANGE_PRODUCTION:
+                    this.buildings.find(b=>b.building.id === uiState.selectedBuilding.id).resetProduction(engineEvent.data)
+                break
             }
     }
 
     startTargetingAbility = (ability:Ability) => {
         if(this.targetingAbility){
-            this.targetingAbility.selectedTargetIds.forEach(id=>this.entities.find(c=>c.entity.id===id).setTargeted(false))
+            this.targetingAbility.selectedTargetIds.forEach(id=>this.entities.find(c=>c.character.id===id).setTargeted(false))
             this.targetingAbility = null
         }
         this.targetingAbility = { type:ability.type, selectedTargetIds: [], validTargetIds: [] }
@@ -141,7 +139,9 @@ export default class MapScene extends Scene {
         // this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         
         let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
-        this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
+        if(store.getState().activeEncounter){
+            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
+        }
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
     }
 
@@ -149,8 +149,9 @@ export default class MapScene extends Scene {
         const tile = this.map.getTileAt(tileX, tileY, false, 'ground')
         if(tile){
             if(this.entities.find(c=>{
-                if(c.entity.tileX === unit.tileX && c.entity.tileY === unit.tileY) return false
-                return c.entity.id !== unit.id && c.entity.tileX === tileX && c.entity.tileY === tileY
+                const dat = c.getEntity()
+                if(dat.tileX === unit.tileX && dat.tileY === unit.tileY) return false
+                return c.character.id !== unit.id && dat.tileX === tileX && dat.tileY === tileY
             }))
                 return false
             const terrain = this.map.getTileAt(tileX, tileY, false, 'terrain')
@@ -230,8 +231,14 @@ export default class MapScene extends Scene {
                 this.tryPlacePylon(this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground'))
             }
             if(GameObjects[0]){
-                if((GameObjects[0] as CharacterSprite).entity) onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
-                else if((GameObjects[0] as BuildingSprite).building) onSelectedBuilding((GameObjects[0] as BuildingSprite))
+                if((GameObjects[0] as CharacterSprite).character){
+                    this.entities.find(e=>e.character.id === (GameObjects[0] as CharacterSprite).character.id).setTargeted(true)
+                    onSelectedUnit((GameObjects[0] as CharacterSprite).getEntity())
+                } 
+                else if((GameObjects[0] as BuildingSprite).building.id){
+                    this.buildings.find(e=>e.building.id === (GameObjects[0] as BuildingSprite).building.id).setTargeted(true)
+                    onSelectedBuilding((GameObjects[0] as BuildingSprite).building)
+                } 
             }
             else if(object){
                 switch(object.index-1){
@@ -263,17 +270,18 @@ export default class MapScene extends Scene {
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
         
         const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
-        const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
+        const unit = this.entities.find(e=>e.character.id === state.selectedUnit.id)
+        const dat = unit.getEntity()
         const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
-        const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, unit.entity)).compute(tile.x, tile.y)
-        if(path.length > unit.entity.moves) img.setTint(0xff0000)        
+        const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, dat)).compute(tile.x, tile.y)
+        if(path.length > dat.moves) img.setTint(0xff0000)        
         this.tweens.add({
             targets: img,
             alpha: 0,
             duration: 500,
             onComplete: ()=>img.destroy()
         })
-        this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(state.selectedUnit.id, targetTile)
+        this.entities.find(e=>e.character.id === state.selectedUnit.id).executeCharacterMove(targetTile)
     }
 
     executeCharacterAbility = (targetingData:AbilityTargetingData, casterId:string) => {
@@ -292,17 +300,16 @@ export default class MapScene extends Scene {
         // })
     }
 
-    onCompleteMove = (characterId:string)=> {
-        let unit = this.entities.find(e=>e.entity.id === characterId)
+    onCompleteMove = (unit:RCUnit)=> {
         let base = this.getObjects(RCObjectType.Base)[0]
-        if(base.x===unit.entity.tileX && base.y===unit.entity.tileY){
-            unit.entity.moves = unit.entity.maxMoves
-            //onAddEventLog(unit.entity.name+' is recharging...')
+        if(base.x===unit.tileX && base.y===unit.tileY){
+            unit.moves = unit.maxMoves
         }
-        this.entities.find(e=>e.entity.id === characterId).runUnitTick()
+        onUpdateSelectedUnit(unit)
+        this.entities.find(e=>e.character.id === unit.id).runUnitTick()
     }
 
-    calcVisibleObjects = (encounter:Encounter) => {
+    calcVisibleObjects = (encounter:MapData) => {
         // let me = encounter.entities.find(c=>store.getState().onlineAccount.characters.find(ch=>ch.id===c.id))
         // const visibilityMap = getSightMap(me, this.map)
         // this.entities.filter(c=>c.characterId !== me.id).forEach(c=>{
@@ -319,7 +326,7 @@ export default class MapScene extends Scene {
     }
 
     updateFogOfWar = () => {
-        this.entities.forEach(c=>this.carveFogOfWar(c.entity.sight, c.entity.tileX, c.entity.tileY))
+        this.entities.forEach(c=>{const dat = c.getEntity(); this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
     }
 
     carveFogOfWar = (radius:number, x:number, y:number) => {
@@ -353,15 +360,10 @@ export default class MapScene extends Scene {
     spawnUnit = (unit:RCUnit) => {
         let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
         this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), unit.avatarIndex, unit))
-        this.selectedSpawn = null
     }
 
     destroyUnit = (unitId:string) => {
-        const i = this.entities.findIndex(u=>u.entity.id === unitId)
+        const i = this.entities.findIndex(u=>u.character.id === unitId)
         this.entities.splice(i,1)[0].destroy()
-    }
-
-    update(){
-        if(this.activeUnit) this.activeIcon.setPosition(this.activeUnit.x, this.activeUnit.y)
     }
 }

@@ -1,33 +1,41 @@
-import { GameObjects, Tweens, Tilemaps, Time } from "phaser";
+import { GameObjects, Time } from "phaser";
+import { v4 } from "uuid";
 import { store } from "../App";
-import { AbilityType, ExtractorToxinList, FONT_DEFAULT, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
+import { FONT_DEFAULT, RCObjectType } from '../constants'
 import MapScene from "./MapScene";
-import { onSpawnBot } from "./uiManager/Thunks";
-import { getUnitFromData } from "./util/Util";
+import { onEncounterUpdated, onSpawnBot, onUpdateSelectedBuilding } from "./uiManager/Thunks";
 
 export default class BuildingSprite extends GameObjects.Sprite {
 
-    building: RCObjectType
-    design: RCUnitData
+    building: RCBuildingState
     reticle: GameObjects.Image
     scene: MapScene
     timer: Time.TimerEvent
+    updateTimer: Time.TimerEvent
     
     constructor(scene:MapScene,x:number,y:number, building:RCObjectType){
         super(scene, x,y, 'sprites', building)
         
-        this.building = building
+        this.building = {
+            id:v4(),
+            type: building,
+            tileX:0,
+            tileY:0,
+            timer: 0,
+            design: null
+        }
         this.setDisplaySize(16,16)
         this.setInteractive()
         scene.add.existing(this)
     }
         
     resetProduction(design:RCUnitData){
-        this.design = design
         this.timer && this.timer.remove()
+        this.building.design = design
         this.timer = this.scene.time.addEvent({
-            delay:30000,
-            callback: ()=>onSpawnBot(design, this)
+            delay: 30000,
+            callback: ()=>onSpawnBot(design, this),
+            loop: true
         })
     }
 
@@ -47,12 +55,23 @@ export default class BuildingSprite extends GameObjects.Sprite {
     setTargeted(state:boolean){
         if(state){
             this.reticle = this.scene.add.image(this.x, this.y, 'selected')
+            this.updateTimer && this.updateTimer.remove()
+            this.updateTimer = this.scene.time.addEvent({
+                delay:1000,
+                callback: ()=>onUpdateSelectedBuilding({...this.building, timer: this.timer? this.timer.getProgress() : 0}),
+                loop: true
+            })
         }
-        else this.reticle.destroy()
+        else{
+            this.reticle.destroy()
+            this.updateTimer.remove()
+        } 
     }
 
     destroy(){
         super.destroy()
         this.reticle && this.reticle.destroy()
+        this.timer && this.timer.remove()
+        this.updateTimer && this.updateTimer.remove()
     }
 }

@@ -1,16 +1,13 @@
 import * as React from 'react'
-import AppStyles from '../../AppStyles';
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onHideModal, onSpawnBot } from '../uiManager/Thunks';
-import Footer from '../components/Footer';
+import { onChangeProduction, onSpawnBot } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
-import BuildingSprite from '../BuildingSprite';
 
 interface Props {
-    encounter?: Encounter
+    encounter?: MapData
     onlineAccount?: UserAccount
-    selectedBuilding: BuildingSprite
+    selectedBuilding: RCBuildingState
 }
 
 interface State {
@@ -19,7 +16,8 @@ interface State {
 
 @(connect((state: RState) => ({
     encounter: state.activeEncounter,
-    onlineAccount: state.onlineAccount
+    onlineAccount: state.onlineAccount,
+    selectedBuilding: state.selectedBuilding
 })) as any)
 export default class BotChooser extends React.Component<Props, State> {
 
@@ -37,7 +35,7 @@ export default class BotChooser extends React.Component<Props, State> {
         const d = me.designs[this.state.selectedIndex]
         return (
                 <div>
-                    {this.props.selectedBuilding.design && <h5>Producing: {this.props.selectedBuilding.design.name} {Math.round(this.props.selectedBuilding.timer.getProgress()*100)}%</h5>}
+                    {this.props.selectedBuilding.design && <h5>Producing: {this.props.selectedBuilding.design.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h5>}
                     <div style={{display:'flex'}}>
                         {Button(this.state.selectedIndex > 0, ()=>this.setState({selectedIndex: this.state.selectedIndex-1}), '<')}
                         <div>
@@ -52,7 +50,7 @@ export default class BotChooser extends React.Component<Props, State> {
                         </div>
                         {Button(this.state.selectedIndex < me.designs.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
                     </div>
-                    {Button(canAffordBot(d), ()=>this.props.selectedBuilding.resetProduction(d), 'Change Production')}
+                    {Button(canAffordBot(d), ()=>onChangeProduction(d), 'Change Production')}
                 </div>
         )
     }

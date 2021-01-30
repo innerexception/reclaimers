@@ -51,7 +51,7 @@ export const getErrorMessage = (error:string) => {
 
 export const canAffordBot = (design:RCUnitData) => true
 
-export const getNewEncounter = (map:Scenario, playerId:string):Encounter => {
+export const getNewEncounter = (map:Scenario, playerId:string):MapData => {
     return {
         id:v4(),
         map,
