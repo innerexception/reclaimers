@@ -1,6 +1,7 @@
 import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
-import { AbilityType, ExtractorToxinList, FONT_DEFAULT, RCObjectType, TerrainLevels } from '../constants'
+import { AbilityType, defaultProcessing, ExtractorToxinList, FONT_DEFAULT, ItemType, RCObjectType, TerrainLevels } from '../constants'
+import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
@@ -44,6 +45,23 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         this.roam()
                     }
                 break
+                case AbilityType.Decrypter:
+                    //1. Check if dormant factory in sight range
+                    const visibleTiles = this.scene.getVisibleTiles(dat, 'objects')
+                    const fac = visibleTiles.find(t=>t.index === RCObjectType.Base && !this.scene.buildings.find(b=>b.building.tileX === t.x && b.building.tileY === t.y))
+                    //2. If so, move towards. 
+                    if(fac){
+                        //If on top of, merge with it to activate (remove self)
+                        if(fac.x === dat.tileX && fac.y === dat.tileY){
+                            this.scene.buildings.push(new BuildingSprite(this.scene, fac.getCenterX(), fac.getCenterY(), RCObjectType.Base, ItemType.Lithium))
+                            this.destroy()
+                        }
+                        else {
+                            this.executeCharacterMove(fac)
+                        }
+                    }
+                    else this.roam()
+                break
                 case AbilityType.ExtractorMk1:
                     if(dat.inventory.length > 0){
                         //TODO: Head towards drop off point
@@ -61,9 +79,12 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             return this.runUnitTick()
                         }
                     }
-                    //Head towards a revealed resource patch that you can extract:
+                    //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
-                    const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
+                    const validToxins = this.scene.buildings.filter(b=>
+                        tileDat.toxins.includes(b.building.processingType) || tileDat.toxins.find(t=>defaultProcessing.includes(t)))
+                        .map(d=>d.building.processingType)
+                    const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].find(t=>validToxins.includes(x)))
                     if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
                         let tox = tileDat.toxins.splice(tilei,1)
                         
@@ -139,7 +160,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     return {
                         x: tile.getCenterX(),
                         y: tile.getCenterY(),
-                        duration: 1000,
+                        duration: 1000/dat.speed,
                         onComplete: ()=>{
                             let dat = this.entity
                             dat.moves--

@@ -10,7 +10,7 @@ export const FONT_DEFAULT = {
 }
 
 export enum AbilityType {
-    Destroy,Create,SensorMk1,ExtractorMk1
+    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter
 }
 
 export enum ItemType {
@@ -52,10 +52,10 @@ export enum RCObjectType {
 }
 
 export enum RCUnitType {
-    Scout=0, LightCompactor=9
+    Scout=0, LightCompactor=8, Ordinater=16
 }
 
-export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor]
+export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater]
 
 export enum Modal {
     BotCreation, CharacterInfo, Menu
@@ -81,9 +81,14 @@ export enum TerrainType {
 export const CleanWater = [32,33,34,40,41,42,48,49,50]
 export const PollutedWater = [64,65,66,72,73,74,80,81,82]
 
+export const defaultProcessing = [ItemType.Titanium, ItemType.Plastics, ItemType.Pesticides, ItemType.Petroleum]
+
 export const TerrainToxins = {
-    [TerrainType.Any]: [ItemType.Plastics, ItemType.Petroleum, ItemType.Pesticides],
-    [TerrainType.Dunes1]: [ItemType.Cadmium, ItemType.Lead]
+    [TerrainType.Any]: [],
+    [TerrainType.Dunes1]: [ItemType.Cadmium, ItemType.Lead],
+    [TerrainType.Dunes2]: [ItemType.Titanium, ItemType.Lead],
+    [TerrainType.Rocks]: [ItemType.Asbestos, ItemType.Lithium],
+    [TerrainType.DesertGrass]: [ItemType.Arsenic, ItemType.Pesticides]
 }
 
 export const TerrainLevels:{[key:number]: Array<TerrainType>} = {
@@ -107,9 +112,9 @@ export type Resources = {
 
 export const defaultResources = {
     [ItemType.Lead]: 0,
-    [ItemType.Lithium]: 0,
-    [ItemType.Palladium]: 0,
-    [ItemType.Titanium]: 0,
+    [ItemType.Lithium]: 2,
+    [ItemType.Palladium]: 1,
+    [ItemType.Titanium]: 2,
     [ItemType.Copper]: 0
 }
 
@@ -127,3 +132,45 @@ export enum UIReducerActions {
 export enum Objects {
     PlayerSpawnPoint=6037,PatronSpawn=4429,Vault=7,VaultOpen=8,ViperDoor=1127
 }
+
+export const defaultDesigns:Array<RCUnitData> = [
+    {
+        name: 'Scout',
+        avatarIndex: RCUnitType.Scout,
+        maxHp: 1,
+        maxMoves: 70,
+        speed: 2,
+        sight: 5,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 0,
+        abilityTypes: [AbilityType.SensorMk1],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}]
+    },
+    {
+        name: 'Surface Compactor mk.1',
+        avatarIndex: RCUnitType.LightCompactor,
+        maxHp: 1,
+        maxMoves: 70,
+        speed: 1,
+        sight: 1,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 2,
+        abilityTypes: [AbilityType.ExtractorMk1],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    },
+    {
+        name: 'Ordinater',
+        avatarIndex: RCUnitType.Ordinater,
+        maxHp: 1,
+        maxMoves: 70,
+        speed: 1,
+        sight: 2,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 0,
+        abilityTypes: [AbilityType.Decrypter],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    }
+]

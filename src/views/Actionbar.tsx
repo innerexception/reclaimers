@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
-import { onStartBuildPylon, onShowModal } from '../uiManager/Thunks';
+import { onShowModal } from '../uiManager/Thunks';
 import { Modal } from '../../constants';
 
 interface Props {

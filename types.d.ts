@@ -94,7 +94,6 @@ interface MapData {
 
 interface RCPlayerState {
     id:string
-    designs: Array<RCUnitData>
     resources: import('./constants').Resources
 }
 
@@ -105,6 +104,7 @@ interface RCBuildingState {
     tileY:number
     timer: number
     design: RCUnitData
+    processingType: import('./constants').ItemType
 }
 
 interface RCUnitCommand {

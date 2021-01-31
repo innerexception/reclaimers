@@ -1,7 +1,7 @@
 import { GameObjects, Time } from "phaser";
 import { v4 } from "uuid";
 import { store } from "../App";
-import { FONT_DEFAULT, RCObjectType } from '../constants'
+import { FONT_DEFAULT, ItemType, RCObjectType } from '../constants'
 import MapScene from "./MapScene";
 import { onEncounterUpdated, onSpawnBot, onUpdateSelectedBuilding } from "./uiManager/Thunks";
 
@@ -13,7 +13,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
     timer: Time.TimerEvent
     updateTimer: Time.TimerEvent
     
-    constructor(scene:MapScene,x:number,y:number, building:RCObjectType){
+    constructor(scene:MapScene,x:number,y:number, building:RCObjectType, processingType:ItemType){
         super(scene, x,y, 'sprites', building)
         
         this.building = {
@@ -22,7 +22,8 @@ export default class BuildingSprite extends GameObjects.Sprite {
             tileX:0,
             tileY:0,
             timer: 0,
-            design: null
+            design: null,
+            processingType
         }
         this.setDisplaySize(16,16)
         this.setInteractive()

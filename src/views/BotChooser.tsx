@@ -3,6 +3,7 @@ import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onChangeProduction, onSpawnBot } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
+import { defaultDesigns } from '../../constants';
 
 interface Props {
     encounter?: MapData
@@ -25,14 +26,14 @@ export default class BotChooser extends React.Component<Props, State> {
 
     componentDidMount(){
         if(this.props.selectedBuilding.design){
-            let index = this.props.encounter.players.find(p=>p.id === this.props.onlineAccount.id).designs.findIndex(d=>d.name === this.props.selectedBuilding.design.name)
+            let index = defaultDesigns.findIndex(d=>d.name === this.props.selectedBuilding.design.name)
             this.setState({selectedIndex: index})
         }
     }
 
     render(){
         const me = this.props.encounter.players.find(p=>p.id === this.props.onlineAccount.id)
-        const d = me.designs[this.state.selectedIndex]
+        const d = defaultDesigns[this.state.selectedIndex]
         return (
                 <div>
                     {this.props.selectedBuilding.design && <h5>Producing: {this.props.selectedBuilding.design.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h5>}
@@ -48,9 +49,9 @@ export default class BotChooser extends React.Component<Props, State> {
                                 <h5>{i.amount}x {i.type}</h5>
                             )}
                         </div>
-                        {Button(this.state.selectedIndex < me.designs.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
+                        {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
                     </div>
-                    {Button(canAffordBot(d), ()=>onChangeProduction(d), 'Change Production')}
+                    {Button(canAffordBot(me.resources, d), ()=>onChangeProduction(d), 'Change Production')}
                 </div>
         )
     }

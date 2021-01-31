@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, defaultResources, ItemType, RCUnitType, Scenario, TerrainToxins, TerrainType } from '../../constants';
+import { AbilityType, defaultDesigns, defaultResources, ItemType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 
 enum FirebaseAuthError {
@@ -10,35 +10,6 @@ enum FirebaseAuthError {
     BAD_EMAIL='auth/invalid-email',
     BAD_PASSWORD='auth/wrong-password'
 }
-
-const defaultDesigns:Array<RCUnitData> = [
-    {
-        name: 'Scout',
-        avatarIndex: RCUnitType.Scout,
-        maxHp: 1,
-        maxMoves: 7,
-        speed: 2,
-        sight: 5,
-        statusEffect: [],
-        inventory: [],
-        maxInventory: 0,
-        abilityTypes: [AbilityType.SensorMk1],
-        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}]
-    },
-    {
-        name: 'Surface Compactor mk.1',
-        avatarIndex: RCUnitType.LightCompactor,
-        maxHp: 1,
-        maxMoves: 4,
-        speed: 2,
-        sight: 2,
-        statusEffect: [],
-        inventory: [],
-        maxInventory: 2,
-        abilityTypes: [AbilityType.ExtractorMk1],
-        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
-    }
-]
 
 export const getErrorMessage = (error:string) => {
     switch(error){
@@ -49,14 +20,16 @@ export const getErrorMessage = (error:string) => {
     }
 }
 
-export const canAffordBot = (design:RCUnitData) => true
+export const canAffordBot = (resources:Resources, design:RCUnitData) => 
+    !design.requiredItems.find(i=>resources[i.type] < i.amount)
+
 
 export const getNewEncounter = (map:Scenario, playerId:string):MapData => {
     return {
         id:v4(),
         map,
         eventLog: [],
-        players: [{ id: playerId, designs: defaultDesigns, resources: defaultResources}]
+        players: [{ id: playerId, resources: defaultResources}]
     }
 }
 

@@ -32,11 +32,10 @@ build a network of point to point charging stations to keep the bots moving
 
 
 11. Having materials will unlock a new bot design
-11. Factories pre-positioned. 
-11. Remove Pylons for now. Possibly add back in. Bots range should be unlimited.
-10. But, Bots will only pick up material they have a valid dropoff point for
+14. Factories must be activated by an ordinator bot
+15. factories are sometimes guarded by machines or beasts
+10. Bots will only pick up material they have a valid dropoff point for
 12. Processing plants (built into factories) : Heavy metal, Petrochemicals, Plastics
-14. Factories must be activated by an ordinator bot, sometimes guarded by machines or beasts
 13. Bots must find a path to a valid drop off site. This may require multiple charging stations along route. 
 14. Bots should attempt to follow move orders until there is a roam event
 15. Selected bot can be used to 'rally' other bots to it and create a swarm

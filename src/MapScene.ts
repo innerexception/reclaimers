@@ -2,7 +2,7 @@ import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
 import { v4 } from "uuid";
-import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes, TerrainType } from "../constants";
+import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes, TerrainType, ItemType } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onClearActiveAbility, onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
@@ -108,7 +108,7 @@ export default class MapScene extends Scene {
             })
             let base = this.getObjects(RCObjectType.Base)[0]
             this.carveFogOfWar(4, base.x, base.y)
-            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
+            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, ItemType.Lithium))
             //init terrain data
             let tileData = new Array<Array<TileInfo>>()
             this.map.setLayer('ground').forEachTile(t=>{
