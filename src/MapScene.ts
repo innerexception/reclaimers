@@ -18,18 +18,14 @@ export default class MapScene extends Scene {
     unsubscribeRedux: Function
     effects: GameObjects.Group
     selectIcon: GameObjects.Image
-    activeIcon: GameObjects.Image
     selectedTile: Tilemaps.Tile
     map: Tilemaps.Tilemap
     g: GameObjects.Graphics
     initCompleted: boolean
-    unitText: GameObjects.Text
     sounds: Object
-    origDragPoint: Phaser.Math.Vector2
     entities: Array<CharacterSprite>
     targetingAbility: AbilityTargetingData
     mouseTarget: MouseTarget
-    pylonPreview: GameObjects.Sprite
     tiles: Array<Array<TileInfo>>
     buildings: Array<BuildingSprite>
 
@@ -69,10 +65,6 @@ export default class MapScene extends Scene {
                 case UIReducerActions.SELECT_DESTINATION:
                     this.mouseTarget = MouseTarget.MOVE
                 break
-                case UIReducerActions.BUILD_PYLON:
-                    this.mouseTarget = MouseTarget.PYLON
-                    this.pylonPreview.setVisible(true)
-                break
                 case UIReducerActions.CHANGE_PRODUCTION:
                     this.buildings.find(b=>b.building.id === uiState.selectedBuilding.id).resetProduction(engineEvent.data)
                 break
@@ -81,7 +73,7 @@ export default class MapScene extends Scene {
 
     startTargetingAbility = (ability:Ability) => {
         if(this.targetingAbility){
-            this.targetingAbility.selectedTargetIds.forEach(id=>this.entities.find(c=>c.character.id===id).setTargeted(false))
+            this.targetingAbility.selectedTargetIds.forEach(id=>this.entities.find(c=>c.entity.id===id).setTargeted(false))
             this.targetingAbility = null
         }
         this.targetingAbility = { type:ability.type, selectedTargetIds: [], validTargetIds: [] }
@@ -111,16 +103,12 @@ export default class MapScene extends Scene {
         
         let encounterData = store.getState().activeEncounter
         if(encounterData){
-            //Just restore the data
-            // encounterData.entities.forEach(c=>{
-            //     let t = this.map.getTileAt(c.tileX, c.tileY, false, 'ground')
-            //     this.entities.push(new CharacterSprite(this, t.getCenterX(), t.getCenterY(), c.avatarIndex, c))
-            // })
             this.map.setLayer('fog').forEachTile(t=>{
                 t.index = RCObjectType.Fog+1
             })
-            let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
+            let base = this.getObjects(RCObjectType.Base)[0]
             this.carveFogOfWar(4, base.x, base.y)
+            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
             //init terrain data
             let tileData = new Array<Array<TileInfo>>()
             this.map.setLayer('ground').forEachTile(t=>{
@@ -138,10 +126,7 @@ export default class MapScene extends Scene {
         this.cameras.main.setZoom(2)
         // this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         
-        let base = this.map.setLayer('objects').findTile(t=>t.index-1 === RCObjectType.Base)
-        if(store.getState().activeEncounter){
-            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
-        }
+        let base = this.getObjects(RCObjectType.Base)[0]
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
     }
 
@@ -149,9 +134,9 @@ export default class MapScene extends Scene {
         const tile = this.map.getTileAt(tileX, tileY, false, 'ground')
         if(tile){
             if(this.entities.find(c=>{
-                const dat = c.getEntity()
+                const dat = c.entity
                 if(dat.tileX === unit.tileX && dat.tileY === unit.tileY) return false
-                return c.character.id !== unit.id && dat.tileX === tileX && dat.tileY === tileY
+                return c.entity.id !== unit.id && dat.tileX === tileX && dat.tileY === tileY
             }))
                 return false
             const terrain = this.map.getTileAt(tileX, tileY, false, 'terrain')
@@ -165,11 +150,9 @@ export default class MapScene extends Scene {
     {
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
-        this.pylonPreview = this.add.sprite(0,0,'sprites',RCObjectType.Base).setAlpha(0.5).setVisible(false).setDepth(3)
         this.initMap(Scenario.Hub)
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
-        this.activeIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
         
         // this.sounds = {
         //     border: this.sound.add('border'),
@@ -187,7 +170,7 @@ export default class MapScene extends Scene {
         })
         
         this.add.tween({
-            targets: [this.selectIcon, this.activeIcon],
+            targets: [this.selectIcon],
             scale: 0.5,
             duration: 1000,
             repeat: -1,
@@ -210,14 +193,6 @@ export default class MapScene extends Scene {
                 onShowTileInfo(this.tiles[tile.x][tile.y], fog.alpha !== 1)
             }
             else this.selectIcon.setVisible(false)
-            if(this.mouseTarget === MouseTarget.PYLON && tile){
-                this.pylonPreview.setPosition(tile.getCenterX(), tile.getCenterY())
-                const obstruction = this.map.getTileAt(tile.x, tile.y, false, 'terrain')
-                if(obstruction){
-                    this.pylonPreview.setTint(0xff0000)
-                }
-                else this.pylonPreview.setTint(0x00ff00)
-            }
         })
         this.input.on('pointerdown', (event, GameObjects:Array<Phaser.GameObjects.GameObject>) => {
             const state = store.getState()
@@ -227,13 +202,10 @@ export default class MapScene extends Scene {
             if(this.mouseTarget === MouseTarget.MOVE){
                 this.tryPerformMove()
             }
-            if(this.mouseTarget === MouseTarget.PYLON){
-                this.tryPlacePylon(this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground'))
-            }
             if(GameObjects[0]){
-                if((GameObjects[0] as CharacterSprite).character){
-                    this.entities.find(e=>e.character.id === (GameObjects[0] as CharacterSprite).character.id).setTargeted(true)
-                    onSelectedUnit((GameObjects[0] as CharacterSprite).getEntity())
+                if((GameObjects[0] as CharacterSprite).entity){
+                    this.entities.find(e=>e.entity.id === (GameObjects[0] as CharacterSprite).entity.id).setTargeted(true)
+                    onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
                 } 
                 else if((GameObjects[0] as BuildingSprite).building.id){
                     this.buildings.find(e=>e.building.id === (GameObjects[0] as BuildingSprite).building.id).setTargeted(true)
@@ -257,21 +229,14 @@ export default class MapScene extends Scene {
         return bases as Array<Tilemaps.Tile>
     }
 
-    tryPlacePylon = (targetTile:Tilemaps.Tile) => {
-        this.map.putTileAt(RCObjectType.Base+1, targetTile.x, targetTile.y, false, 'objects')
-        this.buildings.push(new BuildingSprite(this, targetTile.getCenterX(), targetTile.getCenterY(), RCObjectType.Base))
-        this.mouseTarget = MouseTarget.NONE
-        this.pylonPreview.setVisible(false)
-    }
-
     tryPerformMove = () => {
         const state = store.getState()
         this.mouseTarget = MouseTarget.NONE
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
         
         const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
-        const unit = this.entities.find(e=>e.character.id === state.selectedUnit.id)
-        const dat = unit.getEntity()
+        const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
+        const dat = unit.entity
         const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
         const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, dat)).compute(tile.x, tile.y)
         if(path.length > dat.moves) img.setTint(0xff0000)        
@@ -281,7 +246,7 @@ export default class MapScene extends Scene {
             duration: 500,
             onComplete: ()=>img.destroy()
         })
-        this.entities.find(e=>e.character.id === state.selectedUnit.id).executeCharacterMove(targetTile)
+        this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(targetTile)
     }
 
     executeCharacterAbility = (targetingData:AbilityTargetingData, casterId:string) => {
@@ -306,7 +271,7 @@ export default class MapScene extends Scene {
             unit.moves = unit.maxMoves
         }
         onUpdateSelectedUnit(unit)
-        this.entities.find(e=>e.character.id === unit.id).runUnitTick()
+        this.entities.find(e=>e.entity.id === unit.id).runUnitTick()
     }
 
     calcVisibleObjects = (encounter:MapData) => {
@@ -326,7 +291,7 @@ export default class MapScene extends Scene {
     }
 
     updateFogOfWar = () => {
-        this.entities.forEach(c=>{const dat = c.getEntity(); this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
+        this.entities.forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
     }
 
     carveFogOfWar = (radius:number, x:number, y:number) => {
@@ -363,7 +328,7 @@ export default class MapScene extends Scene {
     }
 
     destroyUnit = (unitId:string) => {
-        const i = this.entities.findIndex(u=>u.character.id === unitId)
+        const i = this.entities.findIndex(u=>u.entity.id === unitId)
         this.entities.splice(i,1)[0].destroy()
     }
 }

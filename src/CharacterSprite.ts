@@ -8,7 +8,7 @@ import { shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
-    character: RCUnit
+    entity: RCUnit
     reticle: GameObjects.Image
     status: Array<GameObjects.Image>
     scene: MapScene
@@ -17,7 +17,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
     constructor(scene:MapScene,x:number,y:number, frame:number, character:RCUnit){
         super(scene, x,y, 'bot-sprites', frame)
         
-        this.character = character
+        this.entity = character
         this.status = []
         this.setDisplaySize(16,16)
         this.play(character.avatarIndex.toString())
@@ -28,13 +28,9 @@ export default class CharacterSprite extends GameObjects.Sprite {
             callback: this.runUnitTick,
         })
     }
-
-    getEntity = () => 
-        this.character
     
-
     runUnitTick = () => {
-        let dat = this.getEntity()
+        let dat = this.entity
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
@@ -98,19 +94,24 @@ export default class CharacterSprite extends GameObjects.Sprite {
     }
 
     roam = () => {
-        const dat = this.getEntity()
+        const dat = this.entity
         //Roam
         let x = Phaser.Math.Between(0,1)
         let y = Phaser.Math.Between(0,1)
         let candidate = {x: x===1 ?dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
         if(t && this.scene.passableTile(t.x, t.y, dat)) this.executeCharacterMove(t)
-        else this.runUnitTick()
+        else{
+            this.scene.time.addEvent({
+                delay: 1000,
+                callback: this.runUnitTick
+            })
+        } 
     }
 
     executeCharacterMove = (targetTile:Tilemaps.Tile) => {
-        const dat = this.getEntity()
-        const targetSprite = this.scene.entities.find(c=>c.character.id === dat.id)
+        const dat = this.entity
+        const targetSprite = this.scene.entities.find(c=>c.entity.id === dat.id)
         const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
         let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
         
@@ -140,7 +141,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         y: tile.getCenterY(),
                         duration: 1000,
                         onComplete: ()=>{
-                            let dat = this.getEntity()
+                            let dat = this.entity
                             dat.moves--
                             const pos = path[i]
                             dat.tileX = pos.x
@@ -152,7 +153,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 }),
                 onComplete: ()=>{
                     const pos = path[path.length-1]
-                    let dat = this.getEntity()
+                    let dat = this.entity
                     dat.tileX = pos.x
                     dat.tileY = pos.y
                     this.scene.updateFogOfWar()

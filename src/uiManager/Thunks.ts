@@ -89,8 +89,8 @@ export const onSelectUnitDestination = () => {
 }
 
 export const onUpdateSelectedUnit = (unit:RCUnit) => {
-    const selectedUnitId = store.getState().selectedUnit.id
-    if(selectedUnitId && selectedUnitId === unit.id){
+    const selectedUnit = store.getState().selectedUnit
+    if(selectedUnit && selectedUnit.id === unit.id){
         dispatch({
             type: UIReducerActions.UPDATE_SELECT_UNIT,
             unit
@@ -99,8 +99,8 @@ export const onUpdateSelectedUnit = (unit:RCUnit) => {
 }
 
 export const onUpdateSelectedBuilding = (bld:RCBuildingState) => {
-    const selectedUnitId = store.getState().selectedBuilding.id
-    if(selectedUnitId && selectedUnitId === bld.id){
+    const selectedUnit = store.getState().selectedBuilding
+    if(selectedUnit && selectedUnit.id === bld.id){
         dispatch({
             type: UIReducerActions.UPDATE_SELECT_BUILDING,
             bld

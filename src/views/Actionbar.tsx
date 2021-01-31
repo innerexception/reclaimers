@@ -16,7 +16,6 @@ export default class Actionbar extends React.Component<Props> {
                     {Object.keys(this.props.player.resources).map(key=>
                         <div style={{display:'flex', alignItems:'center'}}>{CssIcon(+key, true)} {this.props.player.resources[key]}</div>
                     )}
-                    {Button(true, onStartBuildPylon, 'Build Base')}
                     {Button(true, ()=>onShowModal(Modal.Menu), 'Menu')}
                 </div>
             </div>
