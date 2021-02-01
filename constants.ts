@@ -111,11 +111,11 @@ export type Resources = {
 }
 
 export const defaultResources = {
-    [ItemType.Lead]: 0,
-    [ItemType.Lithium]: 2,
-    [ItemType.Palladium]: 1,
-    [ItemType.Titanium]: 2,
-    [ItemType.Copper]: 0
+    [ItemType.Lead]: 10,
+    [ItemType.Lithium]: 10,
+    [ItemType.Palladium]: 10,
+    [ItemType.Titanium]: 10,
+    [ItemType.Copper]: 10
 }
 
 export const Scenarios = [
@@ -126,7 +126,7 @@ export enum UIReducerActions {
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
     START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION,TILE_INFO,
     UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON,SELECT_BUILDING,UPDATE_SELECT_BUILDING,
-    CHANGE_PRODUCTION
+    CHANGE_PRODUCTION,PAUSE_PRODUCTION
 }
 
 export enum Objects {

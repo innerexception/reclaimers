@@ -53,7 +53,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     if(fac){
                         //If on top of, merge with it to activate (remove self)
                         if(fac.x === dat.tileX && fac.y === dat.tileY){
-                            this.scene.buildings.push(new BuildingSprite(this.scene, fac.getCenterX(), fac.getCenterY(), RCObjectType.Base, ItemType.Lithium))
+                            this.scene.buildings.push(new BuildingSprite(this.scene, fac.getCenterX(), fac.getCenterY(), RCObjectType.Base))
                             this.destroy()
                         }
                         else {
@@ -81,13 +81,9 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     }
                     //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
-                    const validToxins = this.scene.buildings.filter(b=>
-                        tileDat.toxins.includes(b.building.processingType) || tileDat.toxins.find(t=>defaultProcessing.includes(t)))
-                        .map(d=>d.building.processingType)
-                    const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].find(t=>validToxins.includes(x)))
+                    const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
                     if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
                         let tox = tileDat.toxins.splice(tilei,1)
-                        
                         dat.inventory.push(tox[0])
                         const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground') 
                         const toxLength = tileDat.toxins.length
@@ -233,6 +229,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
     setTargeted(state:boolean){
         if(state){
             this.reticle = this.scene.add.image(this.x, this.y, 'selected')
+            this.scene.cameras.main.startFollow(this)
         }
         else this.reticle.destroy()
     }

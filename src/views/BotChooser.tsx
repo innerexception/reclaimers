@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onChangeProduction, onSpawnBot } from '../uiManager/Thunks';
+import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
 import { defaultDesigns } from '../../constants';
 
@@ -52,6 +52,7 @@ export default class BotChooser extends React.Component<Props, State> {
                         {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
                     </div>
                     {Button(canAffordBot(me.resources, d), ()=>onChangeProduction(d), 'Change Production')}
+                    {Button(true, onPauseProduction, 'Pause Production')}
                 </div>
         )
     }

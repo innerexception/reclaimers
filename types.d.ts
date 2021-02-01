@@ -104,7 +104,6 @@ interface RCBuildingState {
     tileY:number
     timer: number
     design: RCUnitData
-    processingType: import('./constants').ItemType
 }
 
 interface RCUnitCommand {

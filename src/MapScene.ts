@@ -68,6 +68,9 @@ export default class MapScene extends Scene {
                 case UIReducerActions.CHANGE_PRODUCTION:
                     this.buildings.find(b=>b.building.id === uiState.selectedBuilding.id).resetProduction(engineEvent.data)
                 break
+                case UIReducerActions.PAUSE_PRODUCTION:
+                    this.buildings.find(b=>b.building.id === uiState.selectedBuilding.id).pauseProduction()
+                break
             }
     }
 
@@ -108,7 +111,7 @@ export default class MapScene extends Scene {
             })
             let base = this.getObjects(RCObjectType.Base)[0]
             this.carveFogOfWar(4, base.x, base.y)
-            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, ItemType.Lithium))
+            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
             //init terrain data
             let tileData = new Array<Array<TileInfo>>()
             this.map.setLayer('ground').forEachTile(t=>{
@@ -313,7 +316,7 @@ export default class MapScene extends Scene {
                 for(let j=0; j<arry[i].length;j++){
                     if(arry[i][j]){
                         const t = this.map.getTileAt(i,j,false,layer)
-                        if(t.alpha === 1)
+                        if(t && t.alpha === 1)
                             tiles.push(t)
                     } 
                 }
