@@ -112,7 +112,7 @@ export default class MapScene extends Scene {
             })
             let base = this.getObjects(RCObjectType.Base)[0]
             this.carveFogOfWar(4, base.x, base.y)
-            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base))
+            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y))
             //init terrain data
             let tileData = new Array<Array<TileInfo>>()
             this.map.setLayer('ground').forEachTile(t=>{

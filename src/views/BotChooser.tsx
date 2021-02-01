@@ -46,7 +46,7 @@ export default class BotChooser extends React.Component<Props, State> {
                             <h5>speed: {d.speed}</h5>
                             {d.abilityTypes.map(a=><h5>{a}</h5>)}
                             {d.requiredItems.map(i=>
-                                <h5>{i.amount}x {i.type}</h5>
+                                <h5>{i.amount}x {CssIcon(i.type, true)}</h5>
                             )}
                         </div>
                         {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}

@@ -48,12 +48,12 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 case AbilityType.Decrypter:
                     //1. Check if dormant factory in sight range
                     const visibleTiles = this.scene.getVisibleTiles(dat, 'objects')
-                    const fac = visibleTiles.find(t=>t.index === RCObjectType.Base && !this.scene.buildings.find(b=>b.building.tileX === t.x && b.building.tileY === t.y))
+                    const fac = visibleTiles.find(t=>t.index-1 === RCObjectType.Base && !this.scene.buildings.find(b=>b.building.tileX === t.x && b.building.tileY === t.y))
                     //2. If so, move towards. 
                     if(fac){
                         //If on top of, merge with it to activate (remove self)
                         if(fac.x === dat.tileX && fac.y === dat.tileY){
-                            this.scene.buildings.push(new BuildingSprite(this.scene, fac.getCenterX(), fac.getCenterY(), RCObjectType.Base))
+                            this.scene.buildings.push(new BuildingSprite(this.scene, fac.getCenterX(), fac.getCenterY(), RCObjectType.Base, fac.x, fac.y))
                             this.destroy()
                         }
                         else {

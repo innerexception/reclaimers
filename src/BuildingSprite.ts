@@ -1,8 +1,8 @@
 import { GameObjects, Time } from "phaser";
 import { v4 } from "uuid";
-import { FONT_DEFAULT, ItemType, RCObjectType } from '../constants'
+import { FONT_DEFAULT, RCObjectType } from '../constants'
 import MapScene from "./MapScene";
-import { onEncounterUpdated, onSpawnBot, onUpdateSelectedBuilding } from "./uiManager/Thunks";
+import { onSpawnBot, onUpdateSelectedBuilding } from "./uiManager/Thunks";
 
 export default class BuildingSprite extends GameObjects.Sprite {
 
@@ -12,14 +12,14 @@ export default class BuildingSprite extends GameObjects.Sprite {
     timer: Time.TimerEvent
     updateTimer: Time.TimerEvent
     
-    constructor(scene:MapScene,x:number,y:number, building:RCObjectType){
+    constructor(scene:MapScene,x:number,y:number, building:RCObjectType,tileX:number,tileY:number){
         super(scene, x,y, 'sprites', building)
         
         this.building = {
             id:v4(),
             type: building,
-            tileX:0,
-            tileY:0,
+            tileX,
+            tileY,
             timer: 0,
             design: null
         }
