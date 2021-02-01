@@ -59,7 +59,6 @@ export default class BuildingSprite extends GameObjects.Sprite {
     setTargeted(state:boolean){
         if(state){
             this.reticle = this.scene.add.image(this.x, this.y, 'selected')
-            this.scene.cameras.main.startFollow(this)
             this.updateTimer && this.updateTimer.remove()
             this.updateTimer = this.scene.time.addEvent({
                 delay:1000,

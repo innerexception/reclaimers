@@ -229,7 +229,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
     setTargeted(state:boolean){
         if(state){
             this.reticle = this.scene.add.image(this.x, this.y, 'selected')
-            this.scene.cameras.main.startFollow(this)
         }
         else this.reticle.destroy()
     }

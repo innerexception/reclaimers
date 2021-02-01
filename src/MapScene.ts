@@ -17,6 +17,7 @@ export default class MapScene extends Scene {
 
     unsubscribeRedux: Function
     effects: GameObjects.Group
+    originDragPoint: Phaser.Math.Vector2
     selectIcon: GameObjects.Image
     selectedTile: Tilemaps.Tile
     map: Tilemaps.Tilemap
@@ -196,6 +197,20 @@ export default class MapScene extends Scene {
                 onShowTileInfo(this.tiles[tile.x][tile.y], fog.alpha !== 1)
             }
             else this.selectIcon.setVisible(false)
+
+            if (this.game.input.activePointer.isDown) {
+                if (this.originDragPoint) {
+                    // move the camera by the amount the mouse has moved since last update
+                    this.cameras.main.scrollX +=
+                        1*(this.originDragPoint.x - this.game.input.activePointer.position.x);
+                    this.cameras.main.scrollY +=
+                        1*(this.originDragPoint.y - this.game.input.activePointer.position.y);
+                } // set new drag origin to current position
+                this.originDragPoint = this.game.input.activePointer.position.clone();
+            } 
+            else {
+                this.originDragPoint = null;
+            }
         })
         this.input.on('pointerdown', (event, GameObjects:Array<Phaser.GameObjects.GameObject>) => {
             const state = store.getState()
