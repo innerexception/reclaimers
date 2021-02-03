@@ -13,6 +13,12 @@ export enum AbilityType {
     Destroy,Create,SensorMk1,ExtractorMk1,Decrypter
 }
 
+export const Abilities = {
+    [AbilityType.Decrypter]: { name: 'Decrypter', description: 'Allows activation of factories'},
+    [AbilityType.ExtractorMk1]: { name: 'Mk1 Compactor', description: 'Allows extraction of level 1 toxins from soil'},
+    [AbilityType.SensorMk1]: { name: 'Mk1 Sensor', description: 'Allows excellent survey speed'}
+}
+
 export enum ItemType {
     Lead=1, Manganese=3, Gold=4, Arsenic=7, Titanium=8, Mercury=9, Cadmium=13, Benzene=14, 
     Copper=17, Cobalt=18,Asbestos=20,Petroleum=29,Rock=32,Move=81,Mine=85,Lithium=64,
@@ -126,7 +132,7 @@ export enum UIReducerActions {
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
     START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION,TILE_INFO,
     UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON,SELECT_BUILDING,UPDATE_SELECT_BUILDING,
-    CHANGE_PRODUCTION,PAUSE_PRODUCTION
+    CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER
 }
 
 export enum Objects {

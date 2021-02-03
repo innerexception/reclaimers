@@ -22,7 +22,11 @@ export default class Intro extends React.Component<Props> {
         if(account){
             onUpdateAccount(account)
         }
-        else onUpdateAccount(getNewAccount('New Player', v4()))
+        else{
+            account = getNewAccount('New Player', v4())
+            onUpdateAccount(account)
+        } 
+        localStorage.setItem('rc_save', JSON.stringify(account))
     }
 
     render(){

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onSelectUnitDestination } from '../uiManager/Thunks';
+import { onGatherUnits } from '../uiManager/Thunks';
 import { RCObjectType } from '../../constants';
 import BotChooser from './BotChooser';
 
@@ -35,12 +35,11 @@ export default class EntityInfo extends React.Component<Props> {
                         </div>)}
                     </h5>
                     <div>
-                        {Button(true, onSelectUnitDestination, 'Move')}
+                        {Button(true, onGatherUnits, 'Swarm')}
                     </div>
                 </div>}
                 {buildDat &&
                 <div>
-                    {CssIcon(buildDat.type)}
                     {buildDat.type === RCObjectType.Base && 
                         <BotChooser selectedBuilding={buildDat}/>}
                 </div>}

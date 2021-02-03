@@ -3,7 +3,7 @@ import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
-import { defaultDesigns } from '../../constants';
+import { Abilities, defaultDesigns } from '../../constants';
 
 interface Props {
     encounter?: MapData
@@ -36,20 +36,25 @@ export default class BotChooser extends React.Component<Props, State> {
         const d = defaultDesigns[this.state.selectedIndex]
         return (
                 <div>
-                    {this.props.selectedBuilding.design && <h5>Producing: {this.props.selectedBuilding.design.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h5>}
-                    <div style={{display:'flex'}}>
-                        {Button(this.state.selectedIndex > 0, ()=>this.setState({selectedIndex: this.state.selectedIndex-1}), '<')}
+                    {this.props.selectedBuilding.design ? <h6>Producing: {this.props.selectedBuilding.design.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h6>:<h6>Producing nothing</h6>}
+                    <hr/>
+                    <div>
                         <div>
-                            <h2>{d.name}</h2>
-                            <h5>hp: {d.maxHp}</h5>
-                            <h5>range: {d.maxMoves}</h5>
-                            <h5>speed: {d.speed}</h5>
-                            {d.abilityTypes.map(a=><h5>{a}</h5>)}
-                            {d.requiredItems.map(i=>
-                                <h5>{i.amount}x {CssIcon(i.type, true)}</h5>
-                            )}
+                            <h4>{d.name}</h4>
+                            <h6>hp: {d.maxHp}</h6>
+                            <h6>range: {d.maxMoves}</h6>
+                            <h6>speed: {d.speed}</h6>
+                            {d.abilityTypes.map(a=><h6>{Abilities[a].name}</h6>)}
+                            <div style={{display:'flex'}}>
+                                {d.requiredItems.map(i=>
+                                    <h6 style={{display:'flex', alignItems:'center'}}>{i.amount}x {CssIcon(i.type, true)}</h6>
+                                )}
+                            </div>
                         </div>
-                        {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
+                        <div style={{display:'flex'}}>
+                            {Button(this.state.selectedIndex > 0, ()=>this.setState({selectedIndex: this.state.selectedIndex-1}), '<')}
+                            {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
+                        </div>
                     </div>
                     {Button(canAffordBot(me.resources, d), ()=>onChangeProduction(d), 'Change Production')}
                     {Button(true, onPauseProduction, 'Pause Production')}

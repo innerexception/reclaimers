@@ -224,6 +224,7 @@ export default class MapScene extends Scene {
                 if((GameObjects[0] as CharacterSprite).entity){
                     this.entities.find(e=>e.entity.id === (GameObjects[0] as CharacterSprite).entity.id).setTargeted(true)
                     onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
+                    this.mouseTarget = MouseTarget.MOVE
                 } 
                 else if((GameObjects[0] as BuildingSprite).building.id){
                     this.buildings.find(e=>e.building.id === (GameObjects[0] as BuildingSprite).building.id).setTargeted(true)
@@ -249,7 +250,6 @@ export default class MapScene extends Scene {
 
     tryPerformMove = () => {
         const state = store.getState()
-        this.mouseTarget = MouseTarget.NONE
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
         
         const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)

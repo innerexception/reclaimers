@@ -91,6 +91,12 @@ export const onCreateEncounter = async (encounter:MapData) => {
 //     ipcRenderer.send('close')
 // }
 
+export const onGatherUnits = () => {
+    dispatch({
+        type: UIReducerActions.GATHER
+    })
+}
+
 export const onSelectUnitDestination = () => {
     dispatch({
         type: UIReducerActions.SELECT_DESTINATION

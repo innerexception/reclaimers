@@ -15,14 +15,19 @@ export default class TilePortrait extends React.Component<Props> {
             <div style={styles}>
                 {this.props.selectedTile ?
                 <div style={{display:'flex', alignItems:'center', flexDirection:'column'}}>
-                    {CssIcon(this.props.selectedTile.type-1)}
-                    <h4>Toxins Present:</h4>
+                    <div style={{display:'flex', alignItems:'center'}}>
+                        {CssIcon(this.props.selectedTile.type-1)}
+                        <h6>Toxins Present:</h6>
+                    </div>
                     <div style={{display:"flex"}}>
-                        {this.props.selectedTile.toxins.map(t=>CssIcon(t,true))}
+                        {this.props.selectedTile.toxins.length > 0 ? 
+                            this.props.selectedTile.toxins.map(t=>CssIcon(t,true)) :
+                            <h5>None</h5>
+                        }
                     </div>
                 </div>
                 :
-                <h4>No scan</h4>}
+                <h4 style={{textAlign:'center'}}>No scan</h4>}
             </div>
         )
     }
@@ -32,5 +37,6 @@ const styles = {
     border: '3px inset',
     borderColor: 'silver',
     padding:'5px',
-    width:'200px'
+    width:'200px',
+    background:'black'
 }
