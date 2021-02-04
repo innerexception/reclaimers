@@ -34,7 +34,7 @@ abstract class Path {
 		this._toY = toY;
 		this._passableCallback = passableCallback;
 		this._options = Object.assign({
-			topology: 4
+			topology: 8
 		}, options);
 
 		this._dirs = DIRS[this._options.topology];

@@ -216,24 +216,30 @@ export default class MapScene extends Scene {
             const state = store.getState()
             if(!state.activeEncounter) return
             let object = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
-            //Try perform active action
-            if(this.mouseTarget === MouseTarget.MOVE){
-                this.tryPerformMove()
-            }
             if(GameObjects[0]){
                 if((GameObjects[0] as CharacterSprite).entity){
+                    if(state.selectedUnit) this.entities.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
+                    if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
                     this.entities.find(e=>e.entity.id === (GameObjects[0] as CharacterSprite).entity.id).setTargeted(true)
                     onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
                     this.mouseTarget = MouseTarget.MOVE
+                    return
                 } 
-                else if((GameObjects[0] as BuildingSprite).building.id){
+                else if((GameObjects[0] as BuildingSprite).building){
+                    if(state.selectedUnit) this.entities.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
+                    if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
                     this.buildings.find(e=>e.building.id === (GameObjects[0] as BuildingSprite).building.id).setTargeted(true)
                     onSelectedBuilding((GameObjects[0] as BuildingSprite).building)
+                    return
                 } 
             }
             else if(object){
                 switch(object.index-1){
                 }
+            }
+            //Try perform active action
+            if(this.mouseTarget === MouseTarget.MOVE){
+                this.tryPerformMove()
             }
         })
         this.initCompleted = true
@@ -251,20 +257,21 @@ export default class MapScene extends Scene {
     tryPerformMove = () => {
         const state = store.getState()
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
-        
-        const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
-        const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
-        const dat = unit.entity
-        const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
-        const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, dat)).compute(tile.x, tile.y)
-        if(path.length > dat.moves) img.setTint(0xff0000)        
-        this.tweens.add({
-            targets: img,
-            alpha: 0,
-            duration: 500,
-            onComplete: ()=>img.destroy()
-        })
-        this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(targetTile)
+        if(state.selectedUnit){
+            const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
+            const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
+            const dat = unit.entity
+            const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
+            const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, dat)).compute(tile.x, tile.y)
+            if(path.length > dat.moves) img.setTint(0xff0000)        
+            this.tweens.add({
+                targets: img,
+                alpha: 0,
+                duration: 500,
+                onComplete: ()=>img.destroy()
+            })
+            this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(targetTile)
+        }
     }
 
     executeCharacterAbility = (targetingData:AbilityTargetingData, casterId:string) => {
