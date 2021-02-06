@@ -4,7 +4,7 @@ import { defaults } from '../assets/Assets'
 import { v4 } from "uuid";
 import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes, TerrainType, ItemType } from "../constants";
 import CharacterSprite from "./CharacterSprite";
-import { canPassTerrainType, getCircle, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
+import { canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onClearActiveAbility, onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import BuildingSprite from "./BuildingSprite";
@@ -71,6 +71,16 @@ export default class MapScene extends Scene {
                 break
                 case UIReducerActions.PAUSE_PRODUCTION:
                     this.buildings.find(b=>b.building.id === uiState.selectedBuilding.id).pauseProduction()
+                break
+                case UIReducerActions.GATHER:
+                    //add next closest drone
+                    const nextDrone = getNearestDrone(this.entities.filter(e=>!e.entity.swarmLeaderId), this.entities.find(e=>e.entity.id === engineEvent.data).entity)
+                    nextDrone.swarmLeaderId = engineEvent.data
+                break
+                case UIReducerActions.UNGATHER:
+                    this.entities.forEach(e=>{
+                        if(e.entity.swarmLeaderId === engineEvent.data) e.entity.swarmLeaderId = null
+                    })
                 break
             }
     }
@@ -257,7 +267,7 @@ export default class MapScene extends Scene {
     tryPerformMove = () => {
         const state = store.getState()
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
-        if(state.selectedUnit){
+        if(targetTile && state.selectedUnit){
             const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
             const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
             const dat = unit.entity

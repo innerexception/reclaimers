@@ -5,7 +5,7 @@ import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
-import { shuffle } from "./util/Util";
+import { getNearestBase, shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -32,6 +32,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
     
     runUnitTick = () => {
         let dat = this.entity
+        onUpdateSelectedUnit(dat)
         dat.abilities.forEach(a=>{
             switch(a.type){
                 case AbilityType.SensorMk1:
@@ -63,10 +64,9 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     else this.roam()
                 break
                 case AbilityType.ExtractorMk1:
-                    if(dat.inventory.length > 0){
-                        //TODO: Head towards drop off point
-                        const base = this.scene.getObjects(RCObjectType.Base).find(base=>base.x === dat.tileX && base.y === dat.tileY)
-                        if(base){
+                    if(dat.inventory.length === dat.maxInventory){
+                        let base = getNearestBase(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
+                        if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                             const player = store.getState().activeEncounter.players[0]
                             dat.inventory.forEach(i=>{
                                 if(player.resources[i] !== undefined) {
@@ -78,11 +78,12 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             onUpdatePlayer(player)
                             return this.runUnitTick()
                         }
+                        else return this.executeCharacterMove(this.scene.map.getTileAt(base.tileX, base.tileY))
                     }
                     //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
                     const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
-                    if(tilei!==-1 && dat.inventory.length < dat.maxInventory){
+                    if(tilei!==-1){
                         let tox = tileDat.toxins.splice(tilei,1)
                         dat.inventory.push(tox[0])
                         const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground') 
@@ -132,11 +133,16 @@ export default class CharacterSprite extends GameObjects.Sprite {
         const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
         let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
         
-        let base = this.getNearestBase(this.scene.getObjects(RCObjectType.Base), dat)
-        if(base.x===spriteTile.x && base.y===spriteTile.y){
+        if(this.entity.swarmLeaderId){
+            //TODO: if more than 4 tiles from leader, move towards leader
+
+        }
+
+        let base = getNearestBase(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
+        if(base.tileX===spriteTile.x && base.tileY===spriteTile.y){
             dat.moves = dat.maxMoves
         }
-        if(dat.moves < path.length) path = new AStar(base.x, base.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
+        if(dat.moves < path.length) path = new AStar(base.tileX, base.tileY, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
                      
         if(path.length === 0){
             //This unit is currently blocked and has no valid movement path, so we wait one and see if we are unblocked
@@ -173,6 +179,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     let dat = this.entity
                     dat.tileX = pos.x
                     dat.tileY = pos.y
+                    onUpdateSelectedUnit(dat)
                     this.scene.updateFogOfWar()
                     this.scene.onCompleteMove(dat)
                 }
@@ -186,19 +193,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
         }
     }
 
-    getNearestBase = (pylons:Array<Tilemaps.Tile>, dat:RCUnit) => {
-        let closest = 1000
-        let pylon = pylons[0]
-        pylons.forEach(p=>{
-            const dist = Phaser.Math.Distance.Between(p.x, p.y, dat.tileX, dat.tileY)
-            if(dist < closest){
-                pylon = p
-                closest = dist
-            } 
-        })
-        return pylon
-    }
-        
     floatDamage(dmg:number, color:string){
         let txt = this.scene.add.text(this.x, this.y, dmg.toString(), {...FONT_DEFAULT, color}).setDepth(5)
         this.scene.tweens.add({

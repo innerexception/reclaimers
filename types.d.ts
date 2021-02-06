@@ -24,6 +24,7 @@ interface UnitMove {
 interface RCUnit extends BasePCData {
     id:string
     ownerId?:string
+    swarmLeaderId?:string
     abilities: Array<Ability>
     hp:number
     moves:number

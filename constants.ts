@@ -72,7 +72,9 @@ export enum Scenario {
 }
 
 export const ExtractorToxinList = {
-    [AbilityType.ExtractorMk1]: [ItemType.Lead, ItemType.Mercury, ItemType.Plastics, ItemType.Petroleum, ItemType.Pesticides]
+    [AbilityType.ExtractorMk1]: [ItemType.Lead, ItemType.Manganese, ItemType.Gold, ItemType.Arsenic, ItemType.Titanium, ItemType.Mercury, 
+        ItemType.Cadmium, ItemType.Benzene, ItemType.Copper, ItemType.Cobalt,ItemType.Asbestos,ItemType.Petroleum, ItemType.Lithium,
+        ItemType.Palladium,ItemType.Plastics,ItemType.Pesticides]
 }
 
 export enum TerrainType {

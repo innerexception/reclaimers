@@ -4,6 +4,8 @@ import { DIRS } from './AStar'
 import MapScene from '../MapScene';
 import { AbilityType, defaultDesigns, defaultResources, ItemType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
+import BuildingSprite from '../BuildingSprite';
+import CharacterSprite from '../CharacterSprite';
 
 enum FirebaseAuthError {
     NOT_FOUND='auth/user-not-found',
@@ -215,4 +217,30 @@ export const getUnitFromData = (data:RCUnitData, ownerId:string):RCUnit => {
         tileX: 0,
         tileY: 0
     }
+}
+
+export const getNearestBase = (pylons:Array<BuildingSprite>, dat:RCUnit) => {
+    let closest = 1000
+    let pylon = pylons[0]
+    pylons.forEach(p=>{
+        const dist = Phaser.Math.Distance.Between(p.building.tileX, p.building.tileY, dat.tileX, dat.tileY)
+        if(dist < closest){
+            pylon = p
+            closest = dist
+        } 
+    })
+    return pylon.building
+}
+
+export const getNearestDrone = (pylons:Array<CharacterSprite>, dat:RCUnit) => {
+    let closest = 1000
+    let pylon = pylons[0]
+    pylons.forEach(p=>{
+        const dist = Phaser.Math.Distance.Between(p.entity.tileX, p.entity.tileY, dat.tileX, dat.tileY)
+        if(dist < closest){
+            pylon = p
+            closest = dist
+        } 
+    })
+    return pylon.entity
 }
