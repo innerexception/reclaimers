@@ -73,8 +73,8 @@ export default class MapScene extends Scene {
                 break
                 case UIReducerActions.GATHER:
                     //add next closest drone
-                    const nextDrone = getNearestDrone(this.entities.filter(e=>!e.entity.swarmLeaderId), this.entities.find(e=>e.entity.id === engineEvent.data).entity)
-                    nextDrone.swarmLeaderId = engineEvent.data
+                    const nextDrone = getNearestDrone(this.entities.filter(e=>!e.entity.swarmLeaderId && e.entity.id !== engineEvent.data), this.entities.find(e=>e.entity.id === engineEvent.data).entity)
+                    if(nextDrone) nextDrone.swarmLeaderId = engineEvent.data
                 break
                 case UIReducerActions.UNGATHER:
                     this.entities.forEach(e=>{
@@ -172,7 +172,6 @@ export default class MapScene extends Scene {
         //     tech: this.sound.add('tech'),
         // }
         
-        //TODO: preload all ability animations
         RCUnitTypes.forEach(type=>{
             this.anims.create({
                 key: type.toString(),
@@ -248,7 +247,8 @@ export default class MapScene extends Scene {
             }
             //Try perform active action
             if(this.mouseTarget === MouseTarget.MOVE){
-                this.tryPerformMove()
+                let terrain = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'terrain')
+                if(!terrain) this.tryPerformMove()
             }
         })
         this.initCompleted = true
@@ -272,7 +272,7 @@ export default class MapScene extends Scene {
             const dat = unit.entity
             const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
             const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, dat)).compute(tile.x, tile.y)
-            if(path.length > dat.moves) img.setTint(0xff0000)        
+            if(path.length === 0) img.setTint(0xff0000)        
             this.tweens.add({
                 targets: img,
                 alpha: 0,
@@ -284,11 +284,6 @@ export default class MapScene extends Scene {
     }
 
     onCompleteMove = (unit:RCUnit)=> {
-        let base = this.getObjects(RCObjectType.Base)[0]
-        if(base.x===unit.tileX && base.y===unit.tileY){
-            unit.moves = unit.maxMoves
-        }
-        onUpdateSelectedUnit(unit)
         this.entities.find(e=>e.entity.id === unit.id).runUnitTick()
     }
 

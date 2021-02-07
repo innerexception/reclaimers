@@ -19,23 +19,22 @@ interface Props {
 export default class EntityInfo extends React.Component<Props> {
 
     render(){
-        const charDat =  this.props.selectedUnit
+        const unitData =  this.props.selectedUnit
         const buildDat = this.props.selectedBuilding
         return (
             <div style={{...styles, width:'250px', minHeight:'200px', pointerEvents:'all'}}>
-                {charDat &&
+                {unitData &&
                 <div>
-                    <h2>{charDat.name}</h2>
-                    <h5>hp: {charDat.hp}</h5>
-                    <h5>moves: {charDat.moves}</h5>
-                    <h5>speed: {charDat.speed}</h5>
-                    <h5>carrying: {charDat.inventory.map(s=>
+                    <h2>{unitData.name}</h2>
+                    <h5>hp: {unitData.hp}</h5>
+                    <h5>speed: {unitData.speed}</h5>
+                    <h5>carrying: {unitData.inventory.map(s=>
                         <div style={{display:'flex'}}>
                             {CssIcon(s, true)} {s}
                         </div>)}
                     </h5>
                     <div>
-                        {Button(true, onGatherUnits, 'Swarm')}
+                        {Button(true, ()=>onGatherUnits(unitData.id), 'Swarm')}
                     </div>
                 </div>}
                 {buildDat &&
@@ -43,7 +42,7 @@ export default class EntityInfo extends React.Component<Props> {
                     {buildDat.type === RCObjectType.Base && 
                         <BotChooser selectedBuilding={buildDat}/>}
                 </div>}
-                {!buildDat && !charDat && <h4>No Selection</h4>}
+                {!buildDat && !unitData && <h4>No Selection</h4>}
             </div>
         )
     }

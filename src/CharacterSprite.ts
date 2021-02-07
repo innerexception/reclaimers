@@ -5,7 +5,7 @@ import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
-import { getNearestBase, shuffle } from "./util/Util";
+import { getNearestBase as getNearestDropOff, shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -65,7 +65,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
                 case AbilityType.ExtractorMk1:
                     if(dat.inventory.length === dat.maxInventory){
-                        let base = getNearestBase(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
+                        let base = getNearestDropOff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
                         if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                             const player = store.getState().activeEncounter.players[0]
                             dat.inventory.forEach(i=>{
@@ -78,7 +78,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             onUpdatePlayer(player)
                             return this.runUnitTick()
                         }
-                        else return this.executeCharacterMove(this.scene.map.getTileAt(base.tileX, base.tileY))
+                        else return this.executeCharacterMove(this.scene.map.getTileAt(base.tileX, base.tileY, false, 'ground'))
                     }
                     //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
@@ -129,20 +129,23 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     executeCharacterMove = (targetTile:Tilemaps.Tile) => {
         const dat = this.entity
-        const targetSprite = this.scene.entities.find(c=>c.entity.id === dat.id)
-        const spriteTile = this.scene.map.getTileAtWorldXY(targetSprite.x, targetSprite.y, false, undefined, 'ground')
-        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
+        let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
         
-        if(this.entity.swarmLeaderId){
-            //TODO: if more than 4 tiles from leader, move towards leader
-
+        if(dat.swarmLeaderId){
+            //TODO: if more than 3 tiles from leader, move towards leader
+            const leader = this.scene.entities.find(c=>c.entity.id === dat.swarmLeaderId)
+            const dist = Phaser.Math.Distance.Between(leader.entity.tileX, leader.entity.tileY, dat.tileX, dat.tileY)
+            if(dist > 3){
+                path = new AStar(leader.entity.tileX, leader.entity.tileY, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
+            }
         }
 
-        let base = getNearestBase(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
-        if(base.tileX===spriteTile.x && base.tileY===spriteTile.y){
-            dat.moves = dat.maxMoves
-        }
-        if(dat.moves < path.length) path = new AStar(base.tileX, base.tileY, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(spriteTile.x, spriteTile.y)
+        let base = getNearestDropOff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
+        // if(base.tileX===dat.tileX && base.tileY===dat.tileY){
+        //     dat.moves = dat.maxMoves
+        // }
+        
+        //if(dat.moves < path.length) path = new AStar(base.tileX, base.tileY, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
                      
         if(path.length === 0){
             //This unit is currently blocked and has no valid movement path, so we wait one and see if we are unblocked
@@ -153,10 +156,10 @@ export default class CharacterSprite extends GameObjects.Sprite {
             return 
         } 
 
-        if(targetSprite.visible){
+        if(this.visible){
             if(this.currentMove) this.currentMove.stop()
             this.currentMove = this.scene.tweens.timeline({
-                targets: targetSprite,    
+                targets: this,    
                 tweens: path.map((tuple,i)=>{
                     let tile = this.scene.map.getTileAt(tuple.x, tuple.y, false, 'ground')
                     return {
@@ -165,7 +168,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         duration: 1000/dat.speed,
                         onComplete: ()=>{
                             let dat = this.entity
-                            dat.moves--
+                            //dat.moves--
                             const pos = path[i]
                             dat.tileX = pos.x
                             dat.tileY = pos.y

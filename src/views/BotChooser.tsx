@@ -42,7 +42,6 @@ export default class BotChooser extends React.Component<Props, State> {
                         <div>
                             <h4>{d.name}</h4>
                             <h6>hp: {d.maxHp}</h6>
-                            <h6>range: {d.maxMoves}</h6>
                             <h6>speed: {d.speed}</h6>
                             {d.abilityTypes.map(a=><h6>{Abilities[a].name}</h6>)}
                             <div style={{display:'flex'}}>

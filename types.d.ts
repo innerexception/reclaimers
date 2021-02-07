@@ -27,13 +27,13 @@ interface RCUnit extends BasePCData {
     swarmLeaderId?:string
     abilities: Array<Ability>
     hp:number
-    moves:number
     tileX: number
     tileY: number
 }
 
 interface RCUnitData extends BasePCData {
     discovered?:boolean
+    buildTime: number
     abilityTypes: Array<import('./constants').AbilityType>
     requiredItems: Array<{type: import('./constants').ItemType, amount:number}>
 }
@@ -42,7 +42,6 @@ interface BasePCData {
     name: string
     avatarIndex: import('./constants').RCUnitType
     maxHp: number
-    maxMoves: number
     speed: number
     sight: number
     statusEffect: Array<StatusEffectState>

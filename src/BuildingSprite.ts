@@ -37,7 +37,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
         this.timer && this.timer.remove()
         this.building.design = design
         this.timer = this.scene.time.addEvent({
-            delay: 30000,
+            delay: design.buildTime,
             callback: ()=>onSpawnBot(design, this),
             loop: true
         })
