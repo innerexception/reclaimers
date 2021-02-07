@@ -28,17 +28,18 @@ build a network of point to point charging stations to keep the bots moving
 3. more components are unlocked when certain resources are discovered, or data caches are found
 4. baddies show up when disturbed
 5. mission is complete when the map has been cleaned
-
-
-9. Processor drones are the dropoff points for resources in addition to bases
-11. Having materials will unlock a new bot design
-15. factories are sometimes guarded by machines or beasts
-16. Factories can only build certain drone types
-10. Bots will only pick up material they have a valid dropoff point for
-12. Processing drone types : Heavy metal, Petrochemicals, Plastics
-13. Bots must find a path to a valid drop off site.
 15. Selected bot can be used to 'rally' other bots to it and create a swarm
 16. Rally depends on bot type:
     -Processing drones: rallies drones with extractor abilities
     -Defense drones: rallies other defense drones
     -Scout drones: not available
+
+
+
+11. Having materials will unlock a new bot design
+15. factories are sometimes guarded by machines or beasts
+11. Defenders repel enemies
+16. Factories can only build certain drone types
+10. Bots will only pick up material they have a valid dropoff point for
+12. Processing drone types : Heavy metal, Petrochemicals, Plastics
+
