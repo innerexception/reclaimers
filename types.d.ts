@@ -33,6 +33,7 @@ interface RCUnit extends BasePCData {
 }
 
 interface RCUnitData extends BasePCData {
+    discovered?:boolean
     abilityTypes: Array<import('./constants').AbilityType>
     requiredItems: Array<{type: import('./constants').ItemType, amount:number}>
 }

@@ -32,7 +32,6 @@ build a network of point to point charging stations to keep the bots moving
 
 
 11. Having materials will unlock a new bot design
-14. Factories must be activated by an ordinator bot
 15. factories are sometimes guarded by machines or beasts
 10. Bots will only pick up material they have a valid dropoff point for
 12. Processing plants (built into factories) : Heavy metal, Petrochemicals, Plastics
@@ -41,3 +40,4 @@ build a network of point to point charging stations to keep the bots moving
 15. Selected bot can be used to 'rally' other bots to it and create a swarm
 
 13. Extractors shouldn't attempt to work the same squares
+

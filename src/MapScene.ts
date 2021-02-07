@@ -1,16 +1,15 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
-import { v4 } from "uuid";
-import { AbilityType, MAX_TURN_TIMER, Modal, RCUnitType, Objects, Scenario, StatusEffect, UIReducerActions, RCObjectType, RCUnitTypes, TerrainType, ItemType } from "../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
-import { onClearActiveAbility, onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
+import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import BuildingSprite from "./BuildingSprite";
 
 enum MouseTarget {
-    NONE,MOVE,PYLON
+    NONE,MOVE
 }
 
 export default class MapScene extends Scene {
@@ -282,22 +281,6 @@ export default class MapScene extends Scene {
             })
             this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(targetTile)
         }
-    }
-
-    executeCharacterAbility = (targetingData:AbilityTargetingData, casterId:string) => {
-        // let encounter = store.getState().activeEncounter
-        // const caster = encounter.entities.find(p=>p.id === casterId)
-        // targetingData.selectedTargetIds.forEach(id=>{
-        //     const char = this.entities.find(c=>c.characterId === id)
-        //     this.effects.get(char.x, char.y, 'sprites').play(targetingData.type.toString())
-        // })
-        // this.time.addEvent({
-        //     delay:1000,
-        //     callback: () => {
-        //         encounter = resolveAbility(encounter, AbilityData.find(a=>a.type === targetingData.type), targetingData.selectedTargetIds, this.entities, caster)
-        //         this.nextCharacterTurn(encounter)
-        //     }
-        // })
     }
 
     onCompleteMove = (unit:RCUnit)=> {
