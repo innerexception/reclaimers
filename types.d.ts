@@ -40,7 +40,7 @@ interface RCUnitData extends BasePCData {
 
 interface BasePCData {
     name: string
-    avatarIndex: import('./constants').RCUnitType
+    droneType: import('./constants').RCUnitType
     maxHp: number
     speed: number
     sight: number

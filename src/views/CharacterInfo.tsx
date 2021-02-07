@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onGatherUnits } from '../uiManager/Thunks';
-import { RCObjectType } from '../../constants';
+import { AbilityType, RCObjectType, RCUnitType } from '../../constants';
 import BotChooser from './BotChooser';
 
 interface Props {
@@ -30,11 +30,12 @@ export default class EntityInfo extends React.Component<Props> {
                     <h5>speed: {unitData.speed}</h5>
                     <h5>carrying: {unitData.inventory.map(s=>
                         <div style={{display:'flex'}}>
-                            {CssIcon(s, true)} {s}
+                            {CssIcon(s, true)}
                         </div>)}
                     </h5>
                     <div>
-                        {Button(true, ()=>onGatherUnits(unitData.id), 'Swarm')}
+                        {(unitData.droneType == RCUnitType.Defender || unitData.droneType === RCUnitType.Processor)
+                            && Button(true, ()=>onGatherUnits(unitData.id), 'Swarm')}
                     </div>
                 </div>}
                 {buildDat &&

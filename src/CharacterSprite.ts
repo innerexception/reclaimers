@@ -1,11 +1,11 @@
 import { GameObjects, Tweens, Tilemaps } from "phaser";
 import { store } from "../App";
-import { AbilityType, defaultProcessing, ExtractorToxinList, FONT_DEFAULT, ItemType, RCObjectType, TerrainLevels } from '../constants'
+import { AbilityType, defaultProcessing, ExtractorToxinList, FONT_DEFAULT, ItemType, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
 import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
-import { getNearestBase as getNearestDropOff, shuffle } from "./util/Util";
+import { getNearestDropoff, shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -21,7 +21,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         this.entity = character
         this.status = []
         this.setDisplaySize(16,16)
-        this.play(character.avatarIndex.toString())
+        this.play(character.droneType.toString())
         this.setInteractive()
         scene.add.existing(this)
         scene.time.addEvent({
@@ -63,9 +63,15 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     }
                     else this.roam()
                 break
+                case AbilityType.BasicProcessor:
+                    //Do nothing. Can be ordered to generate a swarm, or manually moved.
+                break
+                case AbilityType.Disruptor:
+                    //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
+                break
                 case AbilityType.ExtractorMk1:
                     if(dat.inventory.length === dat.maxInventory){
-                        let base = getNearestDropOff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
+                        let base = getNearestDropoff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), this.scene.entities.filter(e=>e.entity.droneType === RCUnitType.Processor), dat)
                         if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                             const player = store.getState().activeEncounter.players[0]
                             dat.inventory.forEach(i=>{
@@ -139,14 +145,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 path = new AStar(leader.entity.tileX, leader.entity.tileY, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
             }
         }
-
-        let base = getNearestDropOff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), dat)
-        // if(base.tileX===dat.tileX && base.tileY===dat.tileY){
-        //     dat.moves = dat.maxMoves
-        // }
-        
-        //if(dat.moves < path.length) path = new AStar(base.tileX, base.tileY, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
-                     
+              
         if(path.length === 0){
             //This unit is currently blocked and has no valid movement path, so we wait one and see if we are unblocked
             this.scene.time.addEvent({

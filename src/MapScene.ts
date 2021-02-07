@@ -3,7 +3,7 @@ import { store } from "../App";
 import { defaults } from '../assets/Assets'
 import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
 import CharacterSprite from "./CharacterSprite";
-import { canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
+import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import BuildingSprite from "./BuildingSprite";
@@ -73,8 +73,10 @@ export default class MapScene extends Scene {
                 break
                 case UIReducerActions.GATHER:
                     //add next closest drone
-                    const nextDrone = getNearestDrone(this.entities.filter(e=>!e.entity.swarmLeaderId && e.entity.id !== engineEvent.data), this.entities.find(e=>e.entity.id === engineEvent.data).entity)
-                    if(nextDrone) nextDrone.swarmLeaderId = engineEvent.data
+                    const leader = this.entities.find(e=>e.entity.id === engineEvent.data).entity
+                    const eligibleDrones = this.entities.filter(e=>canAttractDrone(leader, e.entity))
+                    const nextDrone = getNearestDrone(eligibleDrones, leader)
+                    if(nextDrone) nextDrone.swarmLeaderId = leader.id
                 break
                 case UIReducerActions.UNGATHER:
                     this.entities.forEach(e=>{
@@ -337,7 +339,7 @@ export default class MapScene extends Scene {
 
     spawnUnit = (unit:RCUnit) => {
         let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
-        this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), unit.avatarIndex, unit))
+        this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), unit.droneType, unit))
     }
 
     destroyUnit = (unitId:string) => {

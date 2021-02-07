@@ -10,13 +10,15 @@ export const FONT_DEFAULT = {
 }
 
 export enum AbilityType {
-    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter
+    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,BasicProcessor,Disruptor
 }
 
 export const Abilities = {
     [AbilityType.Decrypter]: { name: 'Decrypter', description: 'Allows activation of factories'},
     [AbilityType.ExtractorMk1]: { name: 'Mk1 Compactor', description: 'Allows extraction of level 1 toxins from soil'},
-    [AbilityType.SensorMk1]: { name: 'Mk1 Sensor', description: 'Allows excellent survey speed'}
+    [AbilityType.SensorMk1]: { name: 'Mk1 Sensor', description: 'Allows excellent survey speed'},
+    [AbilityType.Disruptor]: { name: 'Disruptor', description: 'Stuns mechanical creatures'},
+    [AbilityType.BasicProcessor]: { name: 'Basic Purifyer', description: 'Processes basic toxins'}
 }
 
 export enum ItemType {
@@ -58,10 +60,10 @@ export enum RCObjectType {
 }
 
 export enum RCUnitType {
-    Scout=0, LightCompactor=8, Ordinater=16
+    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, Processor=32
 }
 
-export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater]
+export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.Processor]
 
 export enum Modal {
     BotCreation, CharacterInfo, Menu
@@ -144,7 +146,7 @@ export enum Objects {
 export const defaultDesigns:Array<RCUnitData> = [
     {
         name: 'Scout',
-        avatarIndex: RCUnitType.Scout,
+        droneType: RCUnitType.Scout,
         maxHp: 1,
         speed: 2,
         sight: 5,
@@ -153,11 +155,11 @@ export const defaultDesigns:Array<RCUnitData> = [
         inventory: [],
         maxInventory: 0,
         abilityTypes: [AbilityType.SensorMk1],
-        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}]
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}],
     },
     {
         name: 'Surface Compactor mk.1',
-        avatarIndex: RCUnitType.LightCompactor,
+        droneType: RCUnitType.LightCompactor,
         maxHp: 1,
         speed: 1,
         sight: 1,
@@ -170,7 +172,7 @@ export const defaultDesigns:Array<RCUnitData> = [
     },
     {
         name: 'Ordinater',
-        avatarIndex: RCUnitType.Ordinater,
+        droneType: RCUnitType.Ordinater,
         maxHp: 1,
         speed: 1,
         sight: 2,
@@ -179,6 +181,32 @@ export const defaultDesigns:Array<RCUnitData> = [
         inventory: [],
         maxInventory: 0,
         abilityTypes: [AbilityType.Decrypter],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    },
+    {
+        name: 'Defender',
+        droneType: RCUnitType.Defender,
+        maxHp: 3,
+        speed: 1,
+        sight: 3,
+        buildTime: 10000,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 0,
+        abilityTypes: [AbilityType.Disruptor],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    },
+    {
+        name: 'Processor',
+        droneType: RCUnitType.Processor,
+        maxHp: 1,
+        speed: 0.5,
+        sight: 1,
+        buildTime: 10000,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 0,
+        abilityTypes: [AbilityType.BasicProcessor],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 ]

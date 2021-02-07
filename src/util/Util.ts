@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, defaultDesigns, defaultResources, ItemType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
+import { AbilityType, defaultDesigns, defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../BuildingSprite';
 import CharacterSprite from '../CharacterSprite';
@@ -218,17 +218,24 @@ export const getUnitFromData = (data:RCUnitData, ownerId:string):RCUnit => {
     }
 }
 
-export const getNearestBase = (pylons:Array<BuildingSprite>, dat:RCUnit) => {
+interface BaseEntity {
+    tileX: number
+    tileY: number
+    id: string
+}
+
+export const getNearestDropoff = (bases:Array<BuildingSprite>, processors:Array<CharacterSprite>, dat:RCUnit) => {
     let closest = 1000
-    let pylon = pylons[0]
-    pylons.forEach(p=>{
-        const dist = Phaser.Math.Distance.Between(p.building.tileX, p.building.tileY, dat.tileX, dat.tileY)
+    let entities = bases.map(b=>b.building as BaseEntity).concat(processors.map(p=>p.entity as BaseEntity))
+    let pylon = entities[0]
+    entities.forEach(p=>{
+        const dist = Phaser.Math.Distance.Between(p.tileX, p.tileY, dat.tileX, dat.tileY)
         if(dist < closest){
             pylon = p
             closest = dist
         } 
     })
-    return pylon.building
+    return pylon
 }
 
 export const getNearestDrone = (pylons:Array<CharacterSprite>, dat:RCUnit) => {
@@ -242,4 +249,15 @@ export const getNearestDrone = (pylons:Array<CharacterSprite>, dat:RCUnit) => {
         } 
     })
     return pylon.entity
+}
+
+export const canAttractDrone = (leader:RCUnit, drone:RCUnit) => {
+    if(drone.swarmLeaderId || drone.id ===leader.id) return false
+    switch(leader.droneType){
+        case RCUnitType.Processor:
+            return drone.droneType === RCUnitType.LightCompactor
+        case RCUnitType.Defender:
+            return drone.droneType === RCUnitType.Defender
+    }
+    return false
 }
