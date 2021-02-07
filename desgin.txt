@@ -36,10 +36,11 @@ build a network of point to point charging stations to keep the bots moving
 
 
 
-11. Having materials will unlock a new bot design
-15. factories are sometimes guarded by machines or beasts
+16. inactive factories are guarded by fixed groups of creatures
+15. inactive factories occasionally create war machines until converted
+15. villages and caves sometimes produce enemy creatures
 11. Defenders repel enemies
 16. Factories can only build certain drone types
 10. Bots will only pick up material they have a valid dropoff point for
 12. Processing drone types : Heavy metal, Petrochemicals, Plastics
-
+11. Having materials will unlock a new bot design
