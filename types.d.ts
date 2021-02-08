@@ -25,7 +25,6 @@ interface RCUnit extends BasePCData {
     id:string
     ownerId?:string
     swarmLeaderId?:string
-    abilities: Array<Ability>
     hp:number
     tileX: number
     tileY: number

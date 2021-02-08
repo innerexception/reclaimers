@@ -56,11 +56,12 @@ export const StatusEffectData = {
 }
 
 export enum RCObjectType {
-    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Town3=90,Fog=87,Pylon=68
+    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Town3=90,Fog=87,Pylon=68,AncientFactory=77
 }
 
 export enum RCUnitType {
-    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, Processor=32
+    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, Processor=32,
+    AncientSentry=160
 }
 
 export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.Processor]

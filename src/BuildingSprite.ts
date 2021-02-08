@@ -26,6 +26,10 @@ export default class BuildingSprite extends GameObjects.Sprite {
         this.setDisplaySize(16,16)
         this.setInteractive()
         scene.add.existing(this)
+
+        if(building === RCObjectType.AncientFactory){
+            this.resetProduction(NPCData.AncientSentry)
+        }
     }
         
     pauseProduction(){

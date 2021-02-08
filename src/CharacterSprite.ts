@@ -33,9 +33,8 @@ export default class CharacterSprite extends GameObjects.Sprite {
     runUnitTick = () => {
         let dat = this.entity
         onUpdateSelectedUnit(dat)
-        dat.abilities.forEach(a=>{
-            switch(a.type){
-                case AbilityType.SensorMk1:
+        switch(dat.droneType){
+                case RCUnitType.Scout:
                     //Head towards the fog
                     const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
@@ -46,7 +45,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         this.roam()
                     }
                 break
-                case AbilityType.Decrypter:
+                case RCUnitType.Ordinater:
                     //1. Check if dormant factory in sight range
                     const visibleTiles = this.scene.getVisibleTiles(dat, 'objects')
                     const fac = visibleTiles.find(t=>t.index-1 === RCObjectType.Base && !this.scene.buildings.find(b=>b.building.tileX === t.x && b.building.tileY === t.y))
@@ -63,13 +62,18 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     }
                     else this.roam()
                 break
-                case AbilityType.BasicProcessor:
+                case RCUnitType.Processor:
                     //Do nothing. Can be ordered to generate a swarm, or manually moved.
                 break
-                case AbilityType.Disruptor:
+                case RCUnitType.Defender:
                     //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
                 break
-                case AbilityType.ExtractorMk1:
+                case RCUnitType.AncientSentry:
+                    //Basically any mechanical runs this branch
+                    //Same as defender ai with paramter mods
+                    //Sometimes drops lore when killed
+                break
+                case RCUnitType.LightCompactor:
                     if(dat.inventory.length === dat.maxInventory){
                         let base = getNearestDropoff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), this.scene.entities.filter(e=>e.entity.droneType === RCUnitType.Processor), dat)
                         if(base.tileX === dat.tileX && base.tileY === dat.tileY){
@@ -114,7 +118,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     }
                 break
             }
-        })
     }
 
     roam = () => {

@@ -121,9 +121,16 @@ export default class MapScene extends Scene {
             this.map.setLayer('fog').forEachTile(t=>{
                 t.index = RCObjectType.Fog+1
             })
-            let base = this.getObjects(RCObjectType.Base)[0]
-            this.carveFogOfWar(4, base.x, base.y)
-            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y))
+            let bases = this.getObjects(RCObjectType.Base)
+            bases.forEach((b,i)=>{
+                if(i==0){
+                    this.carveFogOfWar(4, base.x, base.y)
+                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y))
+                }
+                else {
+                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.AncientFactory, base.x, base.y))
+                }
+            })
             //init terrain data
             let tileData = new Array<Array<TileInfo>>()
             this.map.setLayer('ground').forEachTile(t=>{
