@@ -1,4 +1,4 @@
-import { GameObjects, Tweens, Tilemaps } from "phaser";
+import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../App";
 import { AbilityType, defaultProcessing, ExtractorToxinList, FONT_DEFAULT, ItemType, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
 import BuildingSprite from "./BuildingSprite";
@@ -14,10 +14,13 @@ export default class CharacterSprite extends GameObjects.Sprite {
     status: Array<GameObjects.Image>
     scene: MapScene
     currentMove: Tweens.Timeline
+    g:GameObjects.Graphics
 
     constructor(scene:MapScene,x:number,y:number, frame:number, character:RCUnit){
         super(scene, x,y, 'bot-sprites', frame)
-        
+        this.g = this.scene.add.graphics()
+        this.g = scene.add.graphics()
+        this.g.lineStyle(1, 0xff0000, 1)
         this.entity = character
         this.status = []
         this.setDisplaySize(16,16)
@@ -69,12 +72,14 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
                     const target = this.calcVisibleObjects().find(c=>c.entity.droneType === RCUnitType.AncientSentry)
                     if(target) this.damageToTarget(target)
+                    this.roam()
                 break
                 case RCUnitType.AncientSentry:
                     //Basically any mechanical runs this branch
                     //Same as defender ai with paramter mods
                     const target2 = this.calcVisibleObjects().find(c=>c.entity.droneType !== RCUnitType.AncientSentry)
                     if(target2) this.damageToTarget(target2)
+                    this.roam()
                     //Sometimes drops lore when killed
                 break
                 case RCUnitType.LightCompactor:
@@ -223,6 +228,15 @@ export default class CharacterSprite extends GameObjects.Sprite {
     }
 
     damageToTarget = (target:CharacterSprite) => {
+        this.g.strokeLineShape(new Geom.Line(this.x, this.y, target.getCenter().x, target.getCenter().y))
+        this.scene.time.addEvent({
+            delay: 75,
+            callback: ()=>{
+                this.g.clear()
+            },
+            repeat:1
+        })
+        this.floatDamage(1, '0xff0000')
         this.scene.tweens.addCounter({
             from: 255,
             to: 0,
