@@ -5,7 +5,7 @@ import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
-import { getNearestDropoff, shuffle } from "./util/Util";
+import { getNearestDropoff, getSightMap, shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -67,10 +67,14 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
                 case RCUnitType.Defender:
                     //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
+                    const target = this.calcVisibleObjects().find(c=>c.entity.droneType === RCUnitType.AncientSentry)
+                    if(target) this.damageToTarget(target)
                 break
                 case RCUnitType.AncientSentry:
                     //Basically any mechanical runs this branch
                     //Same as defender ai with paramter mods
+                    const target2 = this.calcVisibleObjects().find(c=>c.entity.droneType !== RCUnitType.AncientSentry)
+                    if(target2) this.damageToTarget(target2)
                     //Sometimes drops lore when killed
                 break
                 case RCUnitType.LightCompactor:
@@ -118,6 +122,13 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     }
                 break
             }
+    }
+
+    calcVisibleObjects = () => {
+        const visibilityMap = getSightMap(this.entity.tileX, this.entity.tileY, this.entity.sight, this.scene.map)
+        return this.scene.entities.filter(c=>c.entity.id !== this.entity.id).filter(c=>
+            visibilityMap[c.entity.tileX] && visibilityMap[c.entity.tileX][c.entity.tileY]
+        )
     }
 
     roam = () => {
@@ -207,6 +218,26 @@ export default class CharacterSprite extends GameObjects.Sprite {
             duration: 1000,
             onComplete: ()=>{
                 txt.destroy()
+            }
+        })
+    }
+
+    damageToTarget = (target:CharacterSprite) => {
+        this.scene.tweens.addCounter({
+            from: 255,
+            to: 0,
+            duration: 700,
+            onUpdate: (tween) => {
+                var value = Math.floor(tween.getValue());
+                this.setTintFill(Phaser.Display.Color.GetColor(value, 0, 0));
+            },
+            onComplete: () => {
+                this.clearTint()
+                target.entity.hp--
+                if(target.entity.hp <= 0){
+                    this.scene.entities.splice(this.scene.entities.findIndex(e=>e.entity.id===target.entity.id), 1)
+                    target.destroy()
+                } 
             }
         })
     }

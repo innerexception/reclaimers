@@ -296,21 +296,7 @@ export default class MapScene extends Scene {
         this.entities.find(e=>e.entity.id === unit.id).runUnitTick()
     }
 
-    calcVisibleObjects = (encounter:MapData) => {
-        // let me = encounter.entities.find(c=>store.getState().onlineAccount.characters.find(ch=>ch.id===c.id))
-        // const visibilityMap = getSightMap(me, this.map)
-        // this.entities.filter(c=>c.characterId !== me.id).forEach(c=>{
-        //     const char = encounter.entities.find(ch=>c.characterId === ch.id)
-        //     if(visibilityMap[char.currentStatus.tileX] && visibilityMap[char.currentStatus.tileX][char.currentStatus.tileY]){
-        //         c.setVisible(true)
-        //         if(Math.abs(char.currentStatus.tileX - char.currentStatus.tileX) === char.sight || Math.abs(char.currentStatus.tileY - char.currentStatus.tileY) === char.sight){
-        //             c.setAlpha(0.5)
-        //         }
-        //         else c.setAlpha(1)
-        //     }
-        //     else c.setVisible(false)
-        // })
-    }
+    
 
     updateFogOfWar = () => {
         this.entities.forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
