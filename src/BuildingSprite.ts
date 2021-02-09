@@ -1,6 +1,7 @@
 import { GameObjects, Time } from "phaser";
 import { v4 } from "uuid";
-import { FONT_DEFAULT, RCObjectType } from '../constants'
+import { FONT_DEFAULT, RCObjectType, RCUnitType } from '../constants'
+import { NPCData } from "./data/NPCData";
 import MapScene from "./MapScene";
 import { onSpawnBot, onUpdateSelectedBuilding } from "./uiManager/Thunks";
 
@@ -28,7 +29,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
         scene.add.existing(this)
 
         if(building === RCObjectType.AncientFactory){
-            this.resetProduction(NPCData.AncientSentry)
+            this.resetProduction(NPCData[RCUnitType.AncientSentry])
         }
     }
         

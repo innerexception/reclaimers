@@ -211,7 +211,6 @@ export const getUnitFromData = (data:RCUnitData, ownerId:string):RCUnit => {
         ...data,
         id:v4(),
         ownerId,
-        abilities: data.abilityTypes.map(a=>{ return { type: a, cooldown: 0, uses: 0}}),
         hp: data.maxHp,
         tileX: 0,
         tileY: 0
