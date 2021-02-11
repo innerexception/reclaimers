@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, defaultDesigns, defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
+import { AbilityType, defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../BuildingSprite';
 import CharacterSprite from '../CharacterSprite';

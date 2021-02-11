@@ -122,7 +122,7 @@ export default class MapScene extends Scene {
                 t.index = RCObjectType.Fog+1
             })
             let bases = this.getObjects(RCObjectType.Base)
-            bases.forEach((b,i)=>{
+            bases.forEach((base,i)=>{
                 if(i==0){
                     this.carveFogOfWar(4, base.x, base.y)
                     this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y))
@@ -293,7 +293,7 @@ export default class MapScene extends Scene {
     }
 
     onCompleteMove = (unit:RCUnit)=> {
-        this.entities.find(e=>e.entity.id === unit.id).runUnitTick()
+        this.entities.find(e=>e.entity.id === unit.id)?.runUnitTick()
     }
 
     

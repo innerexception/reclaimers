@@ -1,5 +1,3 @@
-import { NPCData } from "./src/data/NPCData"
-
 export const CharAppearanceStart = 5074
 export const CharAppearanceEnd = 5189
 export const WeaponBackground = 1806
@@ -145,7 +143,3 @@ export enum UIReducerActions {
 export enum Objects {
     PlayerSpawnPoint=6037,PatronSpawn=4429,Vault=7,VaultOpen=8,ViperDoor=1127
 }
-
-export const defaultDesigns:Array<RCUnitData> = [
-    NPCData[RCUnitType.Scout],NPCData[RCUnitType.Processor],NPCData[RCUnitType.Ordinater],NPCData[RCUnitType.LightCompactor],NPCData[RCUnitType.Defender],
-]

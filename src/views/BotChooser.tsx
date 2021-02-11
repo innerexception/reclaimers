@@ -3,7 +3,8 @@ import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
-import { Abilities, defaultDesigns } from '../../constants';
+import { Abilities } from '../../constants';
+import { defaultDesigns } from '../data/NPCData';
 
 interface Props {
     encounter?: MapData

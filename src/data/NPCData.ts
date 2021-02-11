@@ -10,7 +10,7 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 1,
-        buildTime: -1,
+        buildTime: 10000,
         abilityTypes: [AbilityType.Disruptor],
         requiredItems: []
     },
@@ -80,3 +80,7 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }
+
+export const defaultDesigns:Array<RCUnitData> = [
+    NPCData[RCUnitType.Scout],NPCData[RCUnitType.Processor],NPCData[RCUnitType.Ordinater],NPCData[RCUnitType.LightCompactor],NPCData[RCUnitType.Defender],
+]
