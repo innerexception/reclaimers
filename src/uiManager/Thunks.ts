@@ -138,6 +138,12 @@ export const onSelectedUnit = (unit:RCUnit) => {
     })
 }
 
+export const unSelectedUnit = () => {
+    dispatch({
+        type: UIReducerActions.UNSELECT_UNIT,
+    })
+}
+
 export const onSelectedBuilding = (unit:RCBuildingState) => {
     dispatch({
         type: UIReducerActions.SELECT_BUILDING,

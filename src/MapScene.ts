@@ -1,7 +1,7 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes } from "../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, enemyDrones } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
@@ -235,18 +235,21 @@ export default class MapScene extends Scene {
             let object = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
             if(GameObjects[0]){
                 if((GameObjects[0] as CharacterSprite).entity){
+                    const entity = (GameObjects[0] as CharacterSprite).entity
+                    if(enemyDrones.includes(entity.droneType)) return 
                     if(state.selectedUnit) this.entities.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
                     if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
-                    this.entities.find(e=>e.entity.id === (GameObjects[0] as CharacterSprite).entity.id).setTargeted(true)
-                    onSelectedUnit((GameObjects[0] as CharacterSprite).entity)
+                    this.entities.find(e=>e.entity.id === entity.id).setTargeted(true)
+                    onSelectedUnit(entity)
                     this.mouseTarget = MouseTarget.MOVE
                     return
                 } 
                 else if((GameObjects[0] as BuildingSprite).building){
+                    const building = (GameObjects[0] as BuildingSprite).building
                     if(state.selectedUnit) this.entities.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
                     if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
-                    this.buildings.find(e=>e.building.id === (GameObjects[0] as BuildingSprite).building.id).setTargeted(true)
-                    onSelectedBuilding((GameObjects[0] as BuildingSprite).building)
+                    this.buildings.find(e=>e.building.id === building.id).setTargeted(true)
+                    onSelectedBuilding(building)
                     return
                 } 
             }

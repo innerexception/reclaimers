@@ -64,6 +64,8 @@ export enum RCUnitType {
     AncientSentry=160
 }
 
+export const enemyDrones = [RCUnitType.AncientSentry]
+
 export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.Processor]
 
 export enum Modal {
@@ -137,7 +139,7 @@ export enum UIReducerActions {
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
     START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION,TILE_INFO,
     UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON,SELECT_BUILDING,UPDATE_SELECT_BUILDING,
-    CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER,UNGATHER
+    CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER,UNGATHER,UNSELECT_UNIT
 }
 
 export enum Objects {

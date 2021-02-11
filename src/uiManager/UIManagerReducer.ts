@@ -23,7 +23,9 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
         case UIReducerActions.SELECT_UNIT:
-            return { ...state, selectedBuilding: null, selectedUnit: action.unit, engineEvent: { action: UIReducerActions.SELECT_UNIT, data: action.unit.id } }  
+            return { ...state, selectedBuilding: null, selectedUnit: action.unit }  
+        case UIReducerActions.UNSELECT_UNIT:
+            return { ...state, selectedUnit: null }
         case UIReducerActions.UPDATE_SELECT_UNIT:
             return { ...state, selectedUnit: action.unit } 
         case UIReducerActions.UPDATE_SELECT_BUILDING:
