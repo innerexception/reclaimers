@@ -32,13 +32,21 @@ export default class CharacterSprite extends GameObjects.Sprite {
         })
     }
     
+    gc = () => {
+        if(this.entity.id === store.getState().selectedUnit?.id){
+            this.setTargeted(false)
+            unSelectedUnit()
+        }
+        this.scene.entities.forEach(e=>{
+            if(e.entity.swarmLeaderId === this.entity.id) e.entity.swarmLeaderId=''
+        })
+        this.scene.entities.splice(this.scene.entities.findIndex(e=>e.entity.id===this.entity.id), 1)
+        this.destroy()
+    }
+
     runUnitTick = () => {
         if(this.shouldDestroy){
-            this.scene.entities.forEach(e=>{
-                if(e.entity.swarmLeaderId === this.entity.id) e.entity.swarmLeaderId=''
-            })
-            this.scene.entities.splice(this.scene.entities.findIndex(e=>e.entity.id===this.entity.id), 1)
-            this.destroy()
+            this.gc()
             return
         }
         let dat = this.entity
@@ -57,20 +65,22 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
                 case RCUnitType.Ordinater:
                     //1. Check if dormant factory in sight range
-                    const visibleTiles = this.scene.getVisibleTiles(dat, 'objects')
-                    const fac = visibleTiles.find(t=>t.index-1 === RCObjectType.Base && !this.scene.buildings.find(b=>b.building.tileX === t.x && b.building.tileY === t.y))
+                    const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
+                    const fac = visibleTiles.find(t=>this.scene.buildings.find(b=>b.building.type === RCObjectType.AncientFactory && b.building.tileX === t.x && b.building.tileY === t.y))
                     //2. If so, move towards. 
                     if(fac){
                         //If on top of, merge with it to activate (remove self)
                         if(fac.x === dat.tileX && fac.y === dat.tileY){
-                            this.scene.buildings.push(new BuildingSprite(this.scene, fac.getCenterX(), fac.getCenterY(), RCObjectType.Base, fac.x, fac.y))
-                            this.destroy()
+                            const base = this.scene.buildings.find(b=>b.building.tileX === fac.x && b.building.tileY === fac.y)
+                            base.setFrame(RCObjectType.Base)
+                            base.building.type = RCObjectType.Base
+                            base.pauseProduction()
+                            this.gc()
                         }
                         else {
                             this.executeDroneMove(fac)
                         }
                     }
-                    else this.roam()
                 break
                 case RCUnitType.Processor:
                     //Do nothing. Can be ordered to generate a swarm, or manually moved.
@@ -243,23 +253,19 @@ export default class CharacterSprite extends GameObjects.Sprite {
             },
             repeat:1
         })
-        this.floatDamage(1, '0xff0000')
+        target.floatDamage(1, '0xff0000')
         this.scene.tweens.addCounter({
             from: 255,
             to: 0,
             duration: 700,
             onUpdate: (tween) => {
                 var value = Math.floor(tween.getValue());
-                this.setTintFill(Phaser.Display.Color.GetColor(value, 0, 0));
+                target.setTintFill(Phaser.Display.Color.GetColor(value, 0, 0));
             },
             onComplete: () => {
-                this.clearTint()
+                target.clearTint()
                 target.entity.hp--
                 if(target.entity.hp <= 0){
-                    if(target.entity.id === store.getState().selectedUnit?.id){
-                        this.setTargeted(false)
-                        unSelectedUnit()
-                    }
                     target.setVisible(false)
                     target.shouldDestroy = true
                 } 

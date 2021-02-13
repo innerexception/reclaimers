@@ -177,7 +177,7 @@ export default class MapScene extends Scene {
         this.effects = this.add.group()
         this.initMap(Scenario.Hub)
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
-        this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(3)
+        this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(5)
         
         // this.sounds = {
         //     border: this.sound.add('border'),
@@ -282,7 +282,7 @@ export default class MapScene extends Scene {
         const state = store.getState()
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
         if(targetTile && state.selectedUnit){
-            const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00)
+            const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00).setDepth(5)
             const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
             const dat = unit.entity
             const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')

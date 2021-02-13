@@ -44,10 +44,10 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
     [RCUnitType.Ordinater]: {
         name: 'Ordinater',
         droneType: RCUnitType.Ordinater,
-        maxHp: 1,
+        maxHp: 100,
         speed: 1,
         sight: 2,
-        buildTime: 50000,
+        buildTime: 10000,
         statusEffect: [],
         inventory: [],
         maxInventory: 0,

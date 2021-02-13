@@ -34,8 +34,7 @@ build a network of point to point charging stations to keep the bots moving
     -Defense drones: rallies other defense drones
     -Scout drones: not available
 
-
-11. Mark swarm leaders
+11. If swarm leader is selected, draw lines to swarm members?
 16. inactive factories are guarded by fixed groups of creatures
 15. inactive factories occasionally create war machines until converted
 15. villages and caves sometimes produce enemy creatures
