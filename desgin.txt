@@ -51,16 +51,34 @@ Intro: Directive...reclaim earth. No power. Directive...delayed. Elapsed time: 2
         Directive...restarting.
 
 Emergence of the Overseer
-    Directive...find the extractor pattern in a nearby ruin.
+    Directive...find the needed patterns in the ruins.
 
     Directive...construct an extractor.
              ...construct a scout.
              ...construct a processor.
 
-
 Map 2: Remnants
 Intro: Cleansing proceeds. 
 
+Discover a corrupted factory,
+    It produces a sentry to defend 'company property'
+
 On sighting an enemy
     Directive...construct a defender.
+
+Keep the defenders at bay while cleansing the area around the factories
+
+Map 3: Ordinaters
+
+Discover an Ordinater in a ruin. Escort ordinater to nearby corrupted factory.
+
+After this, Depending on what you choose when you discover ruins in missions, you get different missions
+
+Map 4: Company property
+
+Convert all factories before they can produce too may sentries. Your Ordinaters must survive.
+Cleanse the land of at least 50% of its toxins with 10 square miles of pristine terrain
+
+
+
 
