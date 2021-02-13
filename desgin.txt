@@ -34,14 +34,13 @@ build a network of point to point charging stations to keep the bots moving
     -Defense drones: rallies other defense drones
     -Scout drones: not available
 
-11. If swarm leader is selected, draw lines to swarm members?
+
 16. inactive factories are guarded by fixed groups of creatures
-15. inactive factories occasionally create war machines until converted
-15. villages and caves sometimes produce enemy creatures
+15. villages and caves sometimes produce enemy creatures (creature probability table is tile based)
 16. Factories can only build certain drone types
-10. Bots will only pick up material they have a valid dropoff point for
-12. Processing drone types : Heavy metal, Petrochemicals, Plastics
+12. 3 Processing drone types : Heavy metal, Petrochemicals, Isotopes & Bots will only pick up material they have a valid dropoff point for
 11. Having materials will unlock a new bot design
+11. If swarm leader is selected, draw lines to swarm members?
 
 
 Map 1: Sleeper Awaken
