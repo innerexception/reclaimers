@@ -206,14 +206,14 @@ export const getSightMap = (x,y,radius, map:Phaser.Tilemaps.Tilemap) => {
     return computeFOV(x, y, radius, sightArray, map)
 }
 
-export const getUnitFromData = (data:RCUnitData, ownerId:string):RCUnit => {
+export const getUnitFromData = (data:RCUnitData):RCUnit => {
     return {
         ...data,
         id:v4(),
-        ownerId,
         hp: data.maxHp,
         tileX: 0,
-        tileY: 0
+        tileY: 0,
+        isSwarmLeader: false
     }
 }
 

@@ -73,12 +73,15 @@ export default class MapScene extends Scene {
                 break
                 case UIReducerActions.GATHER:
                     //add next closest drone
-                    const leader = this.entities.find(e=>e.entity.id === engineEvent.data).entity
-                    const eligibleDrones = this.entities.filter(e=>canAttractDrone(leader, e.entity))
-                    const nextDrone = getNearestDrone(eligibleDrones, leader)
-                    if(nextDrone) nextDrone.swarmLeaderId = leader.id
+                    const leader = this.entities.find(e=>e.entity.id === engineEvent.data)
+                    leader.setSwarmLeader(true)
+                    const eligibleDrones = this.entities.filter(e=>canAttractDrone(leader.entity, e.entity))
+                    const nextDrone = getNearestDrone(eligibleDrones, leader.entity)
+                    if(nextDrone) nextDrone.swarmLeaderId = leader.entity.id
                 break
                 case UIReducerActions.UNGATHER:
+                    const oldLeader = this.entities.find(e=>e.entity.id === engineEvent.data)
+                    oldLeader.setSwarmLeader(false)
                     this.entities.forEach(e=>{
                         if(e.entity.swarmLeaderId === engineEvent.data) e.entity.swarmLeaderId = null
                     })
@@ -114,7 +117,7 @@ export default class MapScene extends Scene {
         this.map.createDynamicLayer('ground', tiles)
         this.map.createStaticLayer('terrain', tiles)
         this.map.createDynamicLayer('objects', tiles)
-        this.map.createDynamicLayer('fog', tiles)
+        this.map.createDynamicLayer('fog', tiles).setDepth(3)
         
         let encounterData = store.getState().activeEncounter
         if(encounterData){
@@ -291,7 +294,7 @@ export default class MapScene extends Scene {
                 duration: 500,
                 onComplete: ()=>img.destroy()
             })
-            this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeCharacterMove(targetTile)
+            this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeDroneMove(targetTile)
         }
     }
 
@@ -302,7 +305,7 @@ export default class MapScene extends Scene {
     
 
     updateFogOfWar = () => {
-        this.entities.forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
+        this.entities.filter(e=>!e.entity.isAI).forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
     }
 
     carveFogOfWar = (radius:number, x:number, y:number) => {

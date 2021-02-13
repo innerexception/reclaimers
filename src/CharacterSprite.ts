@@ -11,7 +11,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     entity: RCUnit
     reticle: GameObjects.Image
-    status: Array<GameObjects.Image>
+    swarmLeaderBadge: GameObjects.Image
     scene: MapScene
     currentMove: Tweens.Timeline
     g:GameObjects.Graphics
@@ -22,7 +22,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
         this.g = scene.add.graphics()
         this.g.lineStyle(1, 0xff0000, 1)
         this.entity = character
-        this.status = []
         this.setDisplaySize(16,16)
         this.play(character.droneType.toString())
         this.setInteractive()
@@ -50,7 +49,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
-                        this.executeCharacterMove(nextVisible)
+                        this.executeDroneMove(nextVisible)
                     }
                     else {
                         this.roam()
@@ -68,7 +67,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             this.destroy()
                         }
                         else {
-                            this.executeCharacterMove(fac)
+                            this.executeDroneMove(fac)
                         }
                     }
                     else this.roam()
@@ -105,7 +104,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             onUpdatePlayer(player)
                             return this.runUnitTick()
                         }
-                        else return this.executeCharacterMove(this.scene.map.getTileAt(base.tileX, base.tileY, false, 'ground'))
+                        else return this.executeDroneMove(this.scene.map.getTileAt(base.tileX, base.tileY, false, 'ground'))
                     }
                     //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
@@ -127,7 +126,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             && this.scene.passableTile(t.x, t.y, dat)
                         ))
                         if(nextVisibleResource){
-                            this.executeCharacterMove(nextVisibleResource)
+                            this.executeDroneMove(nextVisibleResource)
                         }
                         else {
                             this.roam()
@@ -151,7 +150,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         let y = Phaser.Math.Between(0,1)
         let candidate = {x: x===1 ?dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-        if(t && this.scene.passableTile(t.x, t.y, dat)) this.executeCharacterMove(t)
+        if(t && this.scene.passableTile(t.x, t.y, dat)) this.executeDroneMove(t)
         else{
             this.scene.time.addEvent({
                 delay: 1000,
@@ -160,7 +159,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         } 
     }
 
-    executeCharacterMove = (targetTile:Tilemaps.Tile) => {
+    executeDroneMove = (targetTile:Tilemaps.Tile) => {
         const dat = this.entity
         let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
         
@@ -286,23 +285,31 @@ export default class CharacterSprite extends GameObjects.Sprite {
         if(state){
             this.reticle = this.scene.add.image(this.x, this.y, 'selected')
         }
-        else this.reticle && this.reticle.destroy()
+        else this.reticle?.destroy()
     }
 
-    setVisible(visible:boolean){
-        super.setVisible(visible)
-        this.status.forEach(s=>s.setVisible(visible))
-        return this
+    setSwarmLeader(state:boolean){
+        if(state){
+            if(!this.entity.isSwarmLeader) this.swarmLeaderBadge = this.scene.add.image(this.x, this.y, 'sprites', RCObjectType.LeaderBadge).setScale(0.5)
+            this.entity.isSwarmLeader = true
+            this.entity.swarmLeaderId = ''
+        }
+        else{
+            this.swarmLeaderBadge?.destroy()
+            this.entity.isSwarmLeader = false
+        } 
+        onUpdateSelectedUnit(this.entity)
     }
 
     preUpdate(time, delta){
         this.anims.update(time, delta)
-        this.reticle && this.reticle.setPosition(this.x, this.y)
+        this.reticle?.setPosition(this.x, this.y)
+        this.swarmLeaderBadge?.setPosition(this.x, this.y)
     }
 
     destroy(){
         super.destroy()
-        this.reticle && this.reticle.destroy()
-        this.status && this.status.forEach(s=>s.destroy())
+        this.reticle?.destroy()
+        this.swarmLeaderBadge?.destroy()
     }
 }

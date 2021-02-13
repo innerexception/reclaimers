@@ -12,7 +12,8 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         maxInventory: 1,
         buildTime: 10000,
         abilityTypes: [AbilityType.Disruptor],
-        requiredItems: []
+        requiredItems: [],
+        isAI: true
     },
     [RCUnitType.Scout]: {
         name: 'Scout',

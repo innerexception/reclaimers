@@ -23,7 +23,8 @@ interface UnitMove {
 
 interface RCUnit extends BasePCData {
     id:string
-    ownerId?:string
+    isAI?:boolean
+    isSwarmLeader: boolean
     swarmLeaderId?:string
     hp:number
     tileX: number
@@ -32,6 +33,7 @@ interface RCUnit extends BasePCData {
 
 interface RCUnitData extends BasePCData {
     discovered?:boolean
+    isAI?:boolean
     buildTime: number
     abilityTypes: Array<import('./constants').AbilityType>
     requiredItems: Array<{type: import('./constants').ItemType, amount:number}>

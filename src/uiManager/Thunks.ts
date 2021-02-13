@@ -98,6 +98,13 @@ export const onGatherUnits = (unitId:string) => {
     })
 }
 
+export const onUnGatherUnits = (unitId:string) => {
+    dispatch({
+        type: UIReducerActions.UNGATHER,
+        unitId
+    })
+}
+
 export const onSelectUnitDestination = () => {
     dispatch({
         type: UIReducerActions.SELECT_DESTINATION

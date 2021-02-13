@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onGatherUnits } from '../uiManager/Thunks';
+import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
 import { AbilityType, RCObjectType, RCUnitType } from '../../constants';
 import BotChooser from './BotChooser';
 
@@ -36,6 +36,7 @@ export default class EntityInfo extends React.Component<Props> {
                     <div>
                         {(unitData.droneType == RCUnitType.Defender || unitData.droneType === RCUnitType.Processor)
                             && Button(true, ()=>onGatherUnits(unitData.id), 'Swarm')}
+                        {unitData.isSwarmLeader && Button(true, ()=>onUnGatherUnits(unitData.id), 'Release')}
                     </div>
                 </div>}
                 {buildDat &&

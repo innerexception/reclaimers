@@ -24,12 +24,6 @@ export default class Viewscreen extends React.Component<State> {
             width: this.state.containerRef.current.clientWidth,
             height: this.state.containerRef.current.clientHeight,
             parent: 'canvasEl',
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    debug: false,
-                }
-            },
             render: {
                 pixelArt: true
             },

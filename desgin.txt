@@ -74,6 +74,7 @@ Discover an Ordinater in a ruin. Escort ordinater to nearby corrupted factory.
 
 After this, Depending on what you choose when you discover ruins in missions, you get different missions
 
+
 Map 4: Company property
 
 Convert all factories before they can produce too may sentries. Your Ordinaters must survive.
