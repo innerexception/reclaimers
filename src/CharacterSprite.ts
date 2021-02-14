@@ -101,21 +101,26 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
                 case RCUnitType.LightCompactor:
                     if(dat.inventory.length === dat.maxInventory){
-                        let base = getNearestDropoff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), this.scene.entities.filter(e=>e.entity.droneType === RCUnitType.Processor), dat)
-                        if(base.tileX === dat.tileX && base.tileY === dat.tileY){
-                            const player = store.getState().activeEncounter.players[0]
-                            dat.inventory.forEach(i=>{
+                        const player = store.getState().activeEncounter.players[0]
+                        dat.inventory.forEach(i=>{
+                            let base = getNearestDropoff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), this.scene.entities.filter(e=>e.entity.droneType === RCUnitType.Processor), dat)
+                            if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                                 if(player.resources[i] !== undefined) {
                                     player.resources[i]++
                                     this.floatResourceAndContinue(i)
                                 }
-                            })
-                            dat.inventory = []
-                            onUpdatePlayer(player)
-                            return this.runUnitTick()
-                        }
+                            }
+                        })
+
+                        //TODO: if we weren't on top of any dropoff, go to the nearest one
                         else return this.executeDroneMove(this.scene.map.getTileAt(base.tileX, base.tileY, false, 'ground'))
+                         
+
+                        dat.inventory = []
+                        onUpdatePlayer(player)
+                        return this.runUnitTick()
                     }
+                    
                     //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
                     const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))

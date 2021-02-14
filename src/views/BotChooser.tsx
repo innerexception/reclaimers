@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
 import { Abilities } from '../../constants';
-import { defaultDesigns } from '../data/NPCData';
 
 interface Props {
     encounter?: MapData
@@ -26,18 +25,19 @@ export default class BotChooser extends React.Component<Props, State> {
     state:State = { selectedIndex: 0 }
 
     componentDidMount(){
-        if(this.props.selectedBuilding.design){
-            let index = defaultDesigns.findIndex(d=>d.name === this.props.selectedBuilding.design.name)
+        if(this.props.selectedBuilding.activeDroneDesign){
+            let index = this.props.selectedBuilding.availableDroneDesigns.findIndex(d=>d.name === this.props.selectedBuilding.activeDroneDesign.name)
             this.setState({selectedIndex: index})
         }
     }
 
     render(){
         const me = this.props.encounter.players.find(p=>p.id === this.props.onlineAccount.id)
+        const defaultDesigns = this.props.selectedBuilding.availableDroneDesigns
         const d = defaultDesigns[this.state.selectedIndex]
         return (
                 <div>
-                    {this.props.selectedBuilding.design ? <h6>Producing: {this.props.selectedBuilding.design.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h6>:<h6>Producing nothing</h6>}
+                    {this.props.selectedBuilding.activeDroneDesign ? <h6>Producing: {this.props.selectedBuilding.activeDroneDesign.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h6>:<h6>Producing nothing</h6>}
                     <hr/>
                     <div>
                         <div>

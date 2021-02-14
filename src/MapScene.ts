@@ -1,12 +1,13 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, enemyDrones } from "../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, defaultDesigns } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import BuildingSprite from "./BuildingSprite";
+import { NPCData } from "./data/NPCData";
 
 enum MouseTarget {
     NONE,MOVE
@@ -124,14 +125,15 @@ export default class MapScene extends Scene {
             this.map.setLayer('fog').forEachTile(t=>{
                 t.index = RCObjectType.Fog+1
             })
+            let otherDesigns = [NPCData[RCUnitType.Defender], NPCData[RCUnitType.HMProcessor], NPCData[RCUnitType.RIProcessor]]
             let bases = this.getObjects(RCObjectType.Base)
             bases.forEach((base,i)=>{
                 if(i==0){
                     this.carveFogOfWar(4, base.x, base.y)
-                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y))
+                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y, defaultDesigns))
                 }
                 else {
-                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.AncientFactory, base.x, base.y))
+                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.AncientFactory, base.x, base.y, [otherDesigns.pop()]))
                 }
             })
             //init terrain data
@@ -239,7 +241,7 @@ export default class MapScene extends Scene {
             if(GameObjects[0]){
                 if((GameObjects[0] as CharacterSprite).entity){
                     const entity = (GameObjects[0] as CharacterSprite).entity
-                    if(enemyDrones.includes(entity.droneType)) return 
+                    if(entity.isAI) return 
                     if(state.selectedUnit) this.entities.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
                     if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
                     this.entities.find(e=>e.entity.id === entity.id).setTargeted(true)

@@ -39,6 +39,7 @@ build a network of point to point charging stations to keep the bots moving
 15. villages and caves sometimes produce enemy creatures (creature probability table is tile based)
 16. Factories can only build certain drone types
 12. 3 Processing drone types : Heavy metal, Petrochemicals, Isotopes & Bots will only pick up material they have a valid dropoff point for
+18. Completable scenario objectives with intro texts
 11. Having materials will unlock a new bot design
 11. If swarm leader is selected, draw lines to swarm members?
 

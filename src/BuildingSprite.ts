@@ -13,7 +13,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
     timer: Time.TimerEvent
     updateTimer: Time.TimerEvent
     
-    constructor(scene:MapScene,x:number,y:number, building:RCObjectType,tileX:number,tileY:number){
+    constructor(scene:MapScene,x:number,y:number, building:RCObjectType,tileX:number,tileY:number, designs:Array<RCUnitData>){
         super(scene, x,y, 'sprites', building)
         
         this.building = {
@@ -22,7 +22,8 @@ export default class BuildingSprite extends GameObjects.Sprite {
             tileX,
             tileY,
             timer: 0,
-            design: null
+            activeDroneDesign: null,
+            availableDroneDesigns: designs
         }
         this.setDisplaySize(16,16)
         this.setInteractive()
@@ -35,12 +36,12 @@ export default class BuildingSprite extends GameObjects.Sprite {
         
     pauseProduction(){
         this.timer && this.timer.remove()
-        this.building.design = null
+        this.building.activeDroneDesign = null
     }
 
     resetProduction(design:RCUnitData){
         this.timer && this.timer.remove()
-        this.building.design = design
+        this.building.activeDroneDesign = design
         this.timer = this.scene.time.addEvent({
             delay: design.buildTime,
             callback: ()=>onSpawnBot(design, this),

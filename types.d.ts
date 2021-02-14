@@ -35,7 +35,6 @@ interface RCUnitData extends BasePCData {
     discovered?:boolean
     isAI?:boolean
     buildTime: number
-    abilityTypes: Array<import('./constants').AbilityType>
     requiredItems: Array<{type: import('./constants').ItemType, amount:number}>
 }
 
@@ -46,6 +45,7 @@ interface BasePCData {
     speed: number
     sight: number
     statusEffect: Array<StatusEffectState>
+    abilityTypes: Array<import('./constants').AbilityType>
     inventory: Array<import('./constants').ItemType>
     maxInventory: number
 }
@@ -105,7 +105,8 @@ interface RCBuildingState {
     tileX:number
     tileY:number
     timer: number
-    design: RCUnitData
+    activeDroneDesign: RCUnitData
+    availableDroneDesigns: Array<RCUnitData>
 }
 
 interface RCUnitCommand {

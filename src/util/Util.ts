@@ -225,7 +225,10 @@ interface BaseEntity {
 
 export const getNearestDropoff = (bases:Array<BuildingSprite>, processors:Array<CharacterSprite>, dat:RCUnit) => {
     let closest = 1000
-    let entities = bases.map(b=>b.building as BaseEntity).concat(processors.map(p=>p.entity as BaseEntity))
+    let entities = bases.map(b=>b.building as BaseEntity).concat(
+        processors.filter(p=>{
+            p.entity.abilityTypes
+        }).map(p=>p.entity as BaseEntity))
     let pylon = entities[0]
     entities.forEach(p=>{
         const dist = Phaser.Math.Distance.Between(p.tileX, p.tileY, dat.tileX, dat.tileY)

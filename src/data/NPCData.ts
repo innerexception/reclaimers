@@ -67,8 +67,8 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         abilityTypes: [AbilityType.Disruptor],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
-    [RCUnitType.Processor]: {
-        name: 'Processor',
+    [RCUnitType.HMProcessor]: {
+        name: 'HM Processor',
         droneType: RCUnitType.Processor,
         maxHp: 1,
         speed: 0.5,
@@ -77,11 +77,33 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [AbilityType.BasicProcessor],
+        abilityTypes: [AbilityType.HeavyMetalProcessor],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    },
+    [RCUnitType.RIProcessor]: {
+        name: 'RI Processor',
+        droneType: RCUnitType.Processor,
+        maxHp: 1,
+        speed: 0.5,
+        sight: 1,
+        buildTime: 10000,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 0,
+        abilityTypes: [AbilityType.IsotopeProcessor],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    },
+    [RCUnitType.CHProcessor]: {
+        name: 'Chem Processor',
+        droneType: RCUnitType.Processor,
+        maxHp: 1,
+        speed: 0.5,
+        sight: 1,
+        buildTime: 10000,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 0,
+        abilityTypes: [AbilityType.PetrochemicalProcessor],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }
-
-export const defaultDesigns:Array<RCUnitData> = [
-    NPCData[RCUnitType.Scout],NPCData[RCUnitType.Processor],NPCData[RCUnitType.Ordinater],NPCData[RCUnitType.LightCompactor],NPCData[RCUnitType.Defender],
-]

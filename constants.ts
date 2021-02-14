@@ -1,3 +1,5 @@
+import { NPCData } from "./src/data/NPCData"
+
 export const CharAppearanceStart = 5074
 export const CharAppearanceEnd = 5189
 export const WeaponBackground = 1806
@@ -10,7 +12,7 @@ export const FONT_DEFAULT = {
 }
 
 export enum AbilityType {
-    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,BasicProcessor,Disruptor
+    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,HeavyMetalProcessor,Disruptor,PetrochemicalProcessor,IsotopeProcessor
 }
 
 export const Abilities = {
@@ -18,7 +20,9 @@ export const Abilities = {
     [AbilityType.ExtractorMk1]: { name: 'Mk1 Compactor', description: 'Allows extraction of level 1 toxins from soil'},
     [AbilityType.SensorMk1]: { name: 'Mk1 Sensor', description: 'Allows excellent survey speed'},
     [AbilityType.Disruptor]: { name: 'Disruptor', description: 'Stuns mechanical creatures'},
-    [AbilityType.BasicProcessor]: { name: 'Basic Purifyer', description: 'Processes basic toxins'}
+    [AbilityType.HeavyMetalProcessor]: { name: 'Basic Purifyer', description: 'Processes heavy metal toxins'},
+    [AbilityType.PetrochemicalProcessor]: { name: 'Petrochemical Processor', description: 'Processes petroleum products'},
+    [AbilityType.IsotopeProcessor]: { name: 'Radiological Purifyer', description: 'Processes isotope toxins'},
 }
 
 export enum ItemType {
@@ -60,11 +64,9 @@ export enum RCObjectType {
 }
 
 export enum RCUnitType {
-    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, Processor=32,
+    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, Processor=32, RIProcessor, CHProcessor, HMProcessor,
     AncientSentry=160
 }
-
-export const enemyDrones = [RCUnitType.AncientSentry]
 
 export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.Processor]
 
@@ -142,6 +144,5 @@ export enum UIReducerActions {
     CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER,UNGATHER,UNSELECT_UNIT
 }
 
-export enum Objects {
-    PlayerSpawnPoint=6037,PatronSpawn=4429,Vault=7,VaultOpen=8,ViperDoor=1127
-}
+export const defaultDesigns = [NPCData[RCUnitType.Scout], NPCData[RCUnitType.LightCompactor], NPCData[RCUnitType.CHProcessor], NPCData[RCUnitType.Ordinater]]
+            
