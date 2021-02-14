@@ -5,7 +5,7 @@ import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated, unSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
-import { getNearestDropoff, getSightMap, shuffle } from "./util/Util";
+import { getNearestDropoffForResource, getSightMap, shuffle } from "./util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -102,29 +102,30 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 case RCUnitType.LightCompactor:
                     if(dat.inventory.length === dat.maxInventory){
                         const player = store.getState().activeEncounter.players[0]
+                        let missedDropoff = null
                         dat.inventory.forEach(i=>{
-                            let base = getNearestDropoff(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), this.scene.entities.filter(e=>e.entity.droneType === RCUnitType.Processor), dat)
+                            let base = getNearestDropoffForResource(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), 
+                                                                    this.scene.entities.filter(e=>e.entity.droneType === RCUnitType.Processor),i,dat)
                             if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                                 if(player.resources[i] !== undefined) {
                                     player.resources[i]++
                                     this.floatResourceAndContinue(i)
                                 }
+                                dat.inventory.splice(dat.inventory.findIndex(inv=>inv===i), 1)
                             }
+                            else missedDropoff = base
                         })
 
-                        //TODO: if we weren't on top of any dropoff, go to the nearest one
-                        else return this.executeDroneMove(this.scene.map.getTileAt(base.tileX, base.tileY, false, 'ground'))
-                         
-
-                        dat.inventory = []
                         onUpdatePlayer(player)
+                        if(missedDropoff){
+                            return this.executeDroneMove(this.scene.map.getTileAt(missedDropoff.tileX, missedDropoff.tileY, false, 'ground'))
+                        } 
                         return this.runUnitTick()
                     }
                     
-                    //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
+                    //Head towards a revealed resource patch that you can extract:
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
-                    //TODO check if a processor of the correct type for at least 1 toxin exists
-                    const tilei = tileDat.toxins.findIndex(x=>this.scene.entities.find(e=>e.entity.abilityTypes.includes(x)))
+                    const tilei = tileDat.toxins.findIndex(x=>this.scene.entities.find(e=>e.entity.processesItems?.includes(x)))
                     if(tilei!==-1){
                         let tox = tileDat.toxins.splice(tilei,1)
                         dat.inventory.push(tox[0])
@@ -138,8 +139,9 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     else {
                         const visibleTiles = shuffle(this.scene.getVisibleTiles(dat, 'ground'))
                         const nextVisibleResource = visibleTiles.find(t=>
-                            this.scene.tiles[t.x][t.y].toxins.some(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x)
-                            && this.scene.passableTile(t.x, t.y, dat)
+                            this.scene.tiles[t.x][t.y].toxins.some(x=>
+                                this.scene.entities.find(e=>e.entity.processesItems?.includes(x))
+                                && this.scene.passableTile(t.x, t.y, dat)
                         ))
                         if(nextVisibleResource){
                             this.executeDroneMove(nextVisibleResource)

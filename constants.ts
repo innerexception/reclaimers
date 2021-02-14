@@ -1,5 +1,3 @@
-import { NPCData } from "./src/data/NPCData"
-
 export const CharAppearanceStart = 5074
 export const CharAppearanceEnd = 5189
 export const WeaponBackground = 1806
@@ -12,7 +10,7 @@ export const FONT_DEFAULT = {
 }
 
 export enum AbilityType {
-    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,HeavyMetalProcessor,Disruptor,PetrochemicalProcessor,IsotopeProcessor
+    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,Disruptor
 }
 
 export const Abilities = {
@@ -20,15 +18,12 @@ export const Abilities = {
     [AbilityType.ExtractorMk1]: { name: 'Mk1 Compactor', description: 'Allows extraction of level 1 toxins from soil'},
     [AbilityType.SensorMk1]: { name: 'Mk1 Sensor', description: 'Allows excellent survey speed'},
     [AbilityType.Disruptor]: { name: 'Disruptor', description: 'Stuns mechanical creatures'},
-    [AbilityType.HeavyMetalProcessor]: { name: 'Basic Purifyer', description: 'Processes heavy metal toxins'},
-    [AbilityType.PetrochemicalProcessor]: { name: 'Petrochemical Processor', description: 'Processes petroleum products'},
-    [AbilityType.IsotopeProcessor]: { name: 'Radiological Purifyer', description: 'Processes isotope toxins'},
 }
 
 export enum ItemType {
     Lead=1, Manganese=3, Gold=4, Arsenic=7, Titanium=8, Mercury=9, Cadmium=13, Benzene=14, 
     Copper=17, Cobalt=18,Asbestos=20,Petroleum=29,Rock=32,Move=81,Mine=85,Lithium=64,
-    Palladium=24,Plastics=89,Pesticides=15
+    Palladium=24,Plastics=89,Pesticides=15,Uranium,Plutonium
 }
 
 export enum StatusEffect {
@@ -143,6 +138,4 @@ export enum UIReducerActions {
     UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON,SELECT_BUILDING,UPDATE_SELECT_BUILDING,
     CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER,UNGATHER,UNSELECT_UNIT
 }
-
-export const defaultDesigns = [NPCData[RCUnitType.Scout], NPCData[RCUnitType.LightCompactor], NPCData[RCUnitType.CHProcessor], NPCData[RCUnitType.Ordinater]]
             

@@ -67,6 +67,20 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         abilityTypes: [AbilityType.Disruptor],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
+    [RCUnitType.Processor]: {
+        name: 'S Processor',
+        droneType: RCUnitType.Processor,
+        maxHp: 1,
+        speed: 0.5,
+        sight: 1,
+        buildTime: 10000,
+        statusEffect: [],
+        inventory: [],
+        maxInventory: 0,
+        abilityTypes: [],
+        processesItems: [ItemType.Arsenic, ItemType.Asbestos, ItemType.Benzene],
+        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
+    },
     [RCUnitType.HMProcessor]: {
         name: 'HM Processor',
         droneType: RCUnitType.Processor,
@@ -77,7 +91,8 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [AbilityType.HeavyMetalProcessor],
+        abilityTypes: [],
+        processesItems: [ItemType.Cadmium, ItemType.Lead, ItemType.Gold, ItemType.Lithium, ItemType.Mercury, ItemType.Manganese, ItemType.Palladium],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.RIProcessor]: {
@@ -90,7 +105,8 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [AbilityType.IsotopeProcessor],
+        abilityTypes: [],
+        processesItems: [ItemType.Cobalt, ItemType.Uranium, ItemType.Plutonium],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.CHProcessor]: {
@@ -103,7 +119,10 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [AbilityType.PetrochemicalProcessor],
+        abilityTypes: [],
+        processesItems: [ItemType.Arsenic, ItemType.Asbestos, ItemType.Benzene, ItemType.Petroleum, ItemType.Pesticides, ItemType.Plastics],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }
+
+export const defaultDesigns = [NPCData[RCUnitType.Scout], NPCData[RCUnitType.LightCompactor], NPCData[RCUnitType.CHProcessor], NPCData[RCUnitType.Ordinater]]

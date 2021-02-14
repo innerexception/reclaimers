@@ -46,6 +46,7 @@ interface BasePCData {
     sight: number
     statusEffect: Array<StatusEffectState>
     abilityTypes: Array<import('./constants').AbilityType>
+    processesItems?: Array<import('./constants').ItemType>
     inventory: Array<import('./constants').ItemType>
     maxInventory: number
 }

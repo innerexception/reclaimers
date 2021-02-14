@@ -1,13 +1,13 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, defaultDesigns } from "../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import BuildingSprite from "./BuildingSprite";
-import { NPCData } from "./data/NPCData";
+import { defaultDesigns, NPCData } from "./data/NPCData";
 
 enum MouseTarget {
     NONE,MOVE

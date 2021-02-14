@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
+import { AbilityType, defaultResources, ItemType, RCObjectType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../BuildingSprite';
 import CharacterSprite from '../CharacterSprite';
@@ -223,12 +223,10 @@ interface BaseEntity {
     id: string
 }
 
-export const getNearestDropoff = (bases:Array<BuildingSprite>, processors:Array<CharacterSprite>, dat:RCUnit) => {
+export const getNearestDropoffForResource = (bases:Array<BuildingSprite>, processors:Array<CharacterSprite>, res:ItemType, dat:RCUnit) => {
     let closest = 1000
     let entities = bases.map(b=>b.building as BaseEntity).concat(
-        processors.filter(p=>{
-            p.entity.abilityTypes
-        }).map(p=>p.entity as BaseEntity))
+        processors.filter(p=>p.entity.processesItems.includes(res)).map(p=>p.entity as BaseEntity))
     let pylon = entities[0]
     entities.forEach(p=>{
         const dist = Phaser.Math.Distance.Between(p.tileX, p.tileY, dat.tileX, dat.tileY)
