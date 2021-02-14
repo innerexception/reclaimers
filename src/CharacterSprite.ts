@@ -123,7 +123,8 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     
                     //Head towards a revealed resource patch that you can extract: //TODO: and that there exists a valid dropoff point for
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
-                    const tilei = tileDat.toxins.findIndex(x=>ExtractorToxinList[AbilityType.ExtractorMk1].includes(x))
+                    //TODO check if a processor of the correct type for at least 1 toxin exists
+                    const tilei = tileDat.toxins.findIndex(x=>this.scene.entities.find(e=>e.entity.abilityTypes.includes(x)))
                     if(tilei!==-1){
                         let tox = tileDat.toxins.splice(tilei,1)
                         dat.inventory.push(tox[0])
