@@ -9,16 +9,10 @@ export const FONT_DEFAULT = {
     color:'white'
 }
 
-export enum AbilityType {
-    Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,Disruptor
-}
-
-export const Abilities = {
-    [AbilityType.Decrypter]: { name: 'Decrypter', description: 'Allows activation of factories'},
-    [AbilityType.ExtractorMk1]: { name: 'Mk1 Compactor', description: 'Allows extraction of level 1 toxins from soil'},
-    [AbilityType.SensorMk1]: { name: 'Mk1 Sensor', description: 'Allows excellent survey speed'},
-    [AbilityType.Disruptor]: { name: 'Disruptor', description: 'Stuns mechanical creatures'},
-}
+//TODO: much later on if we do custom drone designer
+// export enum AbilityType {
+//     Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,Disruptor
+// }
 
 export enum ItemType {
     Lead=1, Manganese=3, Gold=4, Arsenic=7, Titanium=8, Mercury=9, Cadmium=13, Benzene=14, 
@@ -59,11 +53,11 @@ export enum RCObjectType {
 }
 
 export enum RCUnitType {
-    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, Processor=32, RIProcessor, CHProcessor, HMProcessor,
+    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, RIProcessor=32, CHProcessor=40, HMProcessor=48,
     AncientSentry=160
 }
 
-export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.Processor]
+export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.CHProcessor, RCUnitType.HMProcessor, RCUnitType.RIProcessor]
 
 export enum Modal {
     BotCreation, CharacterInfo, Menu
@@ -71,12 +65,6 @@ export enum Modal {
 
 export enum Scenario {
     Tutorial="Tutorial",Hub='Hub'
-}
-
-export const ExtractorToxinList = {
-    [AbilityType.ExtractorMk1]: [ItemType.Lead, ItemType.Manganese, ItemType.Gold, ItemType.Arsenic, ItemType.Titanium, ItemType.Mercury, 
-        ItemType.Cadmium, ItemType.Benzene, ItemType.Copper, ItemType.Cobalt,ItemType.Asbestos,ItemType.Petroleum, ItemType.Lithium,
-        ItemType.Palladium,ItemType.Plastics,ItemType.Pesticides]
 }
 
 export enum TerrainType {

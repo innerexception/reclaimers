@@ -1,9 +1,8 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../App";
-import { AbilityType, defaultProcessing, ExtractorToxinList, FONT_DEFAULT, ItemType, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
-import BuildingSprite from "./BuildingSprite";
+import { FONT_DEFAULT, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
 import MapScene from "./MapScene";
-import { onUpdateSelectedUnit, onUpdatePlayer, onEncounterUpdated, unSelectedUnit } from "./uiManager/Thunks";
+import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import { getNearestDropoffForResource, getSightMap, shuffle } from "./util/Util";
 
@@ -82,9 +81,6 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         }
                     }
                 break
-                case RCUnitType.Processor:
-                    //Do nothing. Can be ordered to generate a swarm, or manually moved.
-                break
                 case RCUnitType.Defender:
                     //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
                     const target = this.calcVisibleObjects().find(c=>c.entity.droneType === RCUnitType.AncientSentry)
@@ -104,8 +100,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         const player = store.getState().activeEncounter.players[0]
                         let missedDropoff = null
                         dat.inventory.forEach(i=>{
-                            let base = getNearestDropoffForResource(this.scene.buildings.filter(b=>b.building.type === RCObjectType.Base), 
-                                                                    this.scene.entities.filter(e=>e.entity.droneType === RCUnitType.Processor),i,dat)
+                            let base = getNearestDropoffForResource(this.scene.entities.filter(e=>e.entity.processesItems),i,dat)
                             if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                                 if(player.resources[i] !== undefined) {
                                     player.resources[i]++

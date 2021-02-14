@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../MapScene';
-import { AbilityType, defaultResources, ItemType, RCObjectType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
+import { defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../BuildingSprite';
 import CharacterSprite from '../CharacterSprite';
@@ -188,16 +188,6 @@ export const getCircle = (cx: number, cy: number, r: number, topology?:number) =
 
 export const canPassTerrainType = (unit:RCUnit, terrainIndex:number) => false
 
-export const getNewAbilities = (abils:Array<AbilityType>):Array<Ability> => {
-    return abils.map(a=>{
-        return {
-            type: a,
-            cooldown: 0,
-            uses: 0
-        }
-    })
-}
-
 export const getSightMap = (x,y,radius, map:Phaser.Tilemaps.Tilemap) => {
     let sightArray = []
     for(var i=radius; i>0; i--){
@@ -223,10 +213,9 @@ interface BaseEntity {
     id: string
 }
 
-export const getNearestDropoffForResource = (bases:Array<BuildingSprite>, processors:Array<CharacterSprite>, res:ItemType, dat:RCUnit) => {
+export const getNearestDropoffForResource = (processors:Array<CharacterSprite>, res:ItemType, dat:RCUnit) => {
     let closest = 1000
-    let entities = bases.map(b=>b.building as BaseEntity).concat(
-        processors.filter(p=>p.entity.processesItems.includes(res)).map(p=>p.entity as BaseEntity))
+    let entities = processors.filter(p=>p.entity.processesItems.includes(res)).map(p=>p.entity as BaseEntity)
     let pylon = entities[0]
     entities.forEach(p=>{
         const dist = Phaser.Math.Distance.Between(p.tileX, p.tileY, dat.tileX, dat.tileY)
@@ -254,7 +243,9 @@ export const getNearestDrone = (pylons:Array<CharacterSprite>, dat:RCUnit) => {
 export const canAttractDrone = (leader:RCUnit, drone:RCUnit) => {
     if(drone.swarmLeaderId || drone.id ===leader.id) return false
     switch(leader.droneType){
-        case RCUnitType.Processor:
+        case RCUnitType.HMProcessor:
+        case RCUnitType.RIProcessor:
+        case RCUnitType.CHProcessor:
             return drone.droneType === RCUnitType.LightCompactor
         case RCUnitType.Defender:
             return drone.droneType === RCUnitType.Defender

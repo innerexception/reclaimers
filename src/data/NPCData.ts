@@ -1,4 +1,4 @@
-import { AbilityType, ItemType, RCUnitType } from "../../constants";
+import { ItemType, RCUnitType } from "../../constants";
 
 export const NPCData:{[key in RCUnitType]:RCUnitData} = {
     [RCUnitType.AncientSentry]: {
@@ -11,7 +11,6 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         inventory: [],
         maxInventory: 1,
         buildTime: 10000,
-        abilityTypes: [AbilityType.Disruptor],
         requiredItems: [],
         isAI: true
     },
@@ -25,7 +24,6 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [AbilityType.SensorMk1],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}],
     },
     [RCUnitType.LightCompactor]: {
@@ -38,7 +36,6 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 2,
-        abilityTypes: [AbilityType.ExtractorMk1],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.Ordinater]: {
@@ -51,7 +48,6 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [AbilityType.Decrypter],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.Defender]: {
@@ -64,26 +60,11 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [AbilityType.Disruptor],
-        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
-    },
-    [RCUnitType.Processor]: {
-        name: 'S Processor',
-        droneType: RCUnitType.Processor,
-        maxHp: 1,
-        speed: 0.5,
-        sight: 1,
-        buildTime: 10000,
-        statusEffect: [],
-        inventory: [],
-        maxInventory: 0,
-        abilityTypes: [],
-        processesItems: [ItemType.Arsenic, ItemType.Asbestos, ItemType.Benzene],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.HMProcessor]: {
         name: 'HM Processor',
-        droneType: RCUnitType.Processor,
+        droneType: RCUnitType.HMProcessor,
         maxHp: 1,
         speed: 0.5,
         sight: 1,
@@ -91,13 +72,12 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [],
         processesItems: [ItemType.Cadmium, ItemType.Lead, ItemType.Gold, ItemType.Lithium, ItemType.Mercury, ItemType.Manganese, ItemType.Palladium],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.RIProcessor]: {
         name: 'RI Processor',
-        droneType: RCUnitType.Processor,
+        droneType: RCUnitType.RIProcessor,
         maxHp: 1,
         speed: 0.5,
         sight: 1,
@@ -105,13 +85,12 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [],
         processesItems: [ItemType.Cobalt, ItemType.Uranium, ItemType.Plutonium],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.CHProcessor]: {
         name: 'Chem Processor',
-        droneType: RCUnitType.Processor,
+        droneType: RCUnitType.CHProcessor,
         maxHp: 1,
         speed: 0.5,
         sight: 1,
@@ -119,7 +98,6 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        abilityTypes: [],
         processesItems: [ItemType.Arsenic, ItemType.Asbestos, ItemType.Benzene, ItemType.Petroleum, ItemType.Pesticides, ItemType.Plastics],
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }

@@ -3,7 +3,6 @@ import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
-import { Abilities } from '../../constants';
 
 interface Props {
     encounter?: MapData
@@ -44,7 +43,11 @@ export default class BotChooser extends React.Component<Props, State> {
                             <h4>{d.name}</h4>
                             <h6>hp: {d.maxHp}</h6>
                             <h6>speed: {d.speed}</h6>
-                            {d.abilityTypes.map(a=><h6>{Abilities[a].name}</h6>)}
+                            {d.processesItems && <h6>processes</h6>}
+                            <div style={{display:'flex'}}>
+                                {d.processesItems?.map(a=>CssIcon(a, true))}
+                            </div>
+                            <h6>requires:</h6>
                             <div style={{display:'flex'}}>
                                 {d.requiredItems.map(i=>
                                     <h6 style={{display:'flex', alignItems:'center'}}>{i.amount}x {CssIcon(i.type, true)}</h6>
