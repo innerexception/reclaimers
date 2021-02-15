@@ -99,16 +99,20 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     if(dat.inventory.length === dat.maxInventory){
                         const player = store.getState().activeEncounter.players[0]
                         let missedDropoff = null
+                        let removeResources = []
                         dat.inventory.forEach(i=>{
                             let base = getNearestDropoffForResource(this.scene.entities.filter(e=>e.entity.processesItems),i,dat)
                             if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                                 if(player.resources[i] !== undefined) {
                                     player.resources[i]++
-                                    this.floatResourceAndContinue(i)
                                 }
-                                dat.inventory.splice(dat.inventory.findIndex(inv=>inv===i), 1)
+                                this.floatResourceAndContinue(i)
+                                removeResources.push(i)
                             }
                             else missedDropoff = base
+                        })
+                        removeResources.forEach(i=>{
+                            dat.inventory.splice(dat.inventory.findIndex(inv=>inv===i), 1)
                         })
 
                         onUpdatePlayer(player)
@@ -142,7 +146,10 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             this.executeDroneMove(nextVisibleResource)
                         }
                         else {
-                            this.roam()
+                            this.scene.time.addEvent({
+                                delay: 1000,
+                                callback: this.runUnitTick
+                            })
                         }
                     }
                 break
@@ -271,6 +278,8 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 if(target.entity.hp <= 0){
                     target.setVisible(false)
                     target.shouldDestroy = true
+                    //Special case for processors since they don't run ai
+                    if(target.entity.processesItems) target.gc()
                 } 
             }
         })

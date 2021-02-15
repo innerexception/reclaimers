@@ -304,8 +304,6 @@ export default class MapScene extends Scene {
         this.entities.find(e=>e.entity.id === unit.id)?.runUnitTick()
     }
 
-    
-
     updateFogOfWar = () => {
         this.entities.filter(e=>!e.entity.isAI).forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
     }

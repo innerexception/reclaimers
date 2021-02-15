@@ -1,5 +1,7 @@
 import { ItemType, RCUnitType } from "../../constants";
 
+const defaultItems = [ItemType.Titanium, ItemType.Copper, ItemType.Gold]
+
 export const NPCData:{[key in RCUnitType]:RCUnitData} = {
     [RCUnitType.AncientSentry]: {
         name: 'Anchient Sentry',
@@ -10,7 +12,7 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 1,
-        buildTime: 10000,
+        buildTime: 30000,
         requiredItems: [],
         isAI: true
     },
@@ -72,7 +74,7 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        processesItems: [ItemType.Cadmium, ItemType.Lead, ItemType.Gold, ItemType.Lithium, ItemType.Mercury, ItemType.Manganese, ItemType.Palladium],
+        processesItems: [ItemType.Cadmium, ItemType.Lead, ItemType.Gold, ItemType.Lithium, ItemType.Mercury, ItemType.Manganese, ItemType.Palladium].concat(defaultItems),
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.RIProcessor]: {
@@ -85,7 +87,7 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        processesItems: [ItemType.Cobalt, ItemType.Uranium, ItemType.Plutonium],
+        processesItems: [ItemType.Cobalt, ItemType.Uranium, ItemType.Plutonium].concat(defaultItems),
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCUnitType.CHProcessor]: {
@@ -98,7 +100,7 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         statusEffect: [],
         inventory: [],
         maxInventory: 0,
-        processesItems: [ItemType.Arsenic, ItemType.Asbestos, ItemType.Benzene, ItemType.Petroleum, ItemType.Pesticides, ItemType.Plastics],
+        processesItems: [ItemType.Arsenic, ItemType.Asbestos, ItemType.Benzene, ItemType.Petroleum, ItemType.Pesticides, ItemType.Plastics].concat(defaultItems),
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }
