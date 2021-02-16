@@ -34,6 +34,9 @@ build a network of point to point charging stations to keep the bots moving
     -Defense drones: rallies other defense drones
     -Scout drones: not available
 
+
+
+
 18. Completable scenario objectives with intro texts
 16. inactive factories are guarded by fixed groups of creatures
 15. villages and caves sometimes produce enemy creatures (creature probability table is tile based)
@@ -43,9 +46,25 @@ build a network of point to point charging stations to keep the bots moving
 
 
 Map 1: Sleeper Awaken
-Intro: Directive...reclaim earth. No power. Directive...delayed. Elapsed time: 21359 cycles. 
-        Solar activity increasing. Air particulates returning to normal. Radiation levels normal.
-        Directive...restarting.
+Intro: No power. Directive...delayed. Elapsed time: 21359 cycles. 
+        Solar activity increasing. Air particulates returning to normal. Radiation levels reduced.
+        Directive...reclaim earth.
+
+    Attempting to contact other sensing units...no connectivity. Directive: contact sensing units to find missing data.
+
+    Construct a scout.
+
+    onDiscover another base: 
+
+    New directive: find ordinater to deliver secret key to locked facility.
+
+    onDiscover an Ordinater in a ruin: Escort ordinater to nearby corrupted factory.
+
+    Facility converted. New patterns detected. Incompatible directives found: 
+    Directive: defend the installation. 
+    Incompatible directive overwritten.
+    Directive: reclaim earth. 
+    construct a processor. cleanse 50% of the map tiles.
 
 Emergence of the Overseer
     Directive...find the needed patterns in the ruins.
@@ -75,7 +94,7 @@ After this, Depending on what you choose when you discover ruins in missions, yo
 Map 4: Company property
 
 Convert all factories before they can produce too may sentries. Your Ordinaters must survive.
-Cleanse the land of at least 50% of its toxins with 10 square miles of pristine terrain
+Cleanse the land of at least 50% of its toxins with 10 squares of pristine terrain
 
 
 
