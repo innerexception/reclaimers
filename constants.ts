@@ -116,7 +116,46 @@ export const defaultResources = {
     [ItemType.Copper]: 10
 }
 
+export enum Objectives {
+    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted
+}
+
 export const Scenarios = [
+    {
+        scenario: Scenario.Tutorial,
+        intro: [
+            "Solar activity increasing. Air particulates returning to normal. Radiation levels reduced.",
+            "Sensing unit power restored. Retrieving directives...",
+            "Err: Directory not found. No connectivity detected. Seek backup data."
+        ],
+        objectives: [
+            {
+                description: "Construct a scout drone and find a backup data source.",
+                id: Objectives.BackupDisk,
+                requires: []
+            },
+            {
+                id: Objectives.DiscoveredOrdinater,
+                description: "Use the ordinater drone to deliver the secret key to another facility",
+                requires: [Objectives.FindAnOrdinater]
+            },
+            {
+                id: Objectives.FindAnOrdinater,
+                description: "Find a way to discover the secret key of this facility",
+                requires: [Objectives.BaseDiscovered]
+            },
+            {
+                id: Objectives.BaseDiscovered,
+                description: "This facility is locked by a secret key.",
+                requires: []
+            },
+            {
+                id: Objectives.BaseConverted,
+                description: "This facility is now under our control. Downloading directives...incompatible directive format found.",
+                requires: [Objectives.DiscoveredOrdinater]
+            }
+        ]
+    }
 ]
 
 export enum UIReducerActions {
