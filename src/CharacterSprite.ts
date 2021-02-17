@@ -65,7 +65,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 case RCUnitType.Ordinater:
                     //1. Check if dormant factory in sight range
                     const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
-                    const fac = visibleTiles.find(t=>this.scene.buildings.find(b=>b.building.type === RCObjectType.AncientFactory && b.building.tileX === t.x && b.building.tileY === t.y))
+                    const fac = visibleTiles.find(t=>this.scene.buildings.find(b=>b.building.type === RCObjectType.WarFactory && b.building.tileX === t.x && b.building.tileY === t.y))
                     //2. If so, move towards. 
                     if(fac){
                         //If on top of, merge with it to activate (remove self)

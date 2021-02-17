@@ -7,7 +7,7 @@ interface Props {
 
 export default class Dialog extends React.Component<Props> {
 
-    state = { textLength: 0, currentStringIndex: 0 }
+    state = { textLength: 0, currentStringIndex: 0, hide:false }
 
     componentWillReceiveProps(props:Props){
         if(!props.messages[this.state.currentStringIndex]){
@@ -32,7 +32,7 @@ export default class Dialog extends React.Component<Props> {
 
     getButton = () => {
         if(this.state.currentStringIndex === this.props.messages.length-1){
-            // return Button(true, onHideModal, 'Next')
+            return Button(true, ()=>this.setState({hide:true}), 'Next')
         }
             
         if(this.props.messages[this.state.currentStringIndex].length === this.state.textLength)
@@ -42,7 +42,10 @@ export default class Dialog extends React.Component<Props> {
     }
 
     render(){
-        return <div dangerouslySetInnerHTML={{__html: this.props.messages[this.state.currentStringIndex].substring(0,this.state.textLength)}}></div>
+        return <div style={{display: this.state.hide ? "none" : "table",width:'100%', pointerEvents:'all', padding:'5px'}}>
+                    <div style={{width:'100%'}} dangerouslySetInnerHTML={{__html: this.props.messages[this.state.currentStringIndex].substring(0,this.state.textLength)}}></div>
+                    {this.getButton()}
+                </div>
                     
     }
 }

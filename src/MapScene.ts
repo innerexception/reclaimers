@@ -126,16 +126,12 @@ export default class MapScene extends Scene {
                 t.index = RCObjectType.Fog+1
             })
             let otherDesigns = [NPCData[RCUnitType.Defender], NPCData[RCUnitType.HMProcessor], NPCData[RCUnitType.RIProcessor]]
-            let bases = this.getObjects(RCObjectType.Base)
-            bases.forEach((base,i)=>{
-                if(i==0){
-                    this.carveFogOfWar(4, base.x, base.y)
-                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y, defaultDesigns))
-                }
-                else {
-                    this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.AncientFactory, base.x, base.y, [otherDesigns.pop()]))
-                }
-            })
+            let base = this.getObjects(RCObjectType.Base)[0]
+            this.carveFogOfWar(4, base.x, base.y)
+            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y, defaultDesigns))
+            this.getObjects(RCObjectType.InactiveFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveFactory, b.x, b.y, [otherDesigns.pop()])))
+            this.getObjects(RCObjectType.WarFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.WarFactory, b.x, b.y, [otherDesigns.pop()])))
+            
             //init terrain data
             let tileData = new Array<Array<TileInfo>>()
             this.map.setLayer('ground').forEachTile(t=>{
@@ -143,7 +139,6 @@ export default class MapScene extends Scene {
                 tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index-1), type: t.index }
             })
             this.tiles = tileData
-            onEncounterUpdated(encounterData)
         }
         else {
             //We are loading the prelaunch hub
@@ -177,7 +172,7 @@ export default class MapScene extends Scene {
     {
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
-        this.initMap(Scenario.Hub)
+        this.initMap(Scenario.LightOfTheWorld)
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(5)
         

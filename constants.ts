@@ -49,7 +49,7 @@ export const StatusEffectData = {
 }
 
 export enum RCObjectType {
-    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Town3=90,Fog=87,Pylon=68,AncientFactory=91,LeaderBadge=86
+    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Town3=90,Fog=87,Pylon=68,WarFactory=91,InactiveFactory=92,LeaderBadge=86
 }
 
 export enum RCUnitType {
@@ -64,7 +64,7 @@ export enum Modal {
 }
 
 export enum Scenario {
-    Tutorial="Tutorial",Hub='Hub'
+    LightOfTheWorld="LightOfTheWorld",Ordinaters='Ordinaters'
 }
 
 export enum TerrainType {
@@ -117,17 +117,41 @@ export const defaultResources = {
 }
 
 export enum Objectives {
-    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted
+    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted,Purify10,BuildExtractor,BuildProcessor
 }
 
 export const Scenarios = [
     {
-        scenario: Scenario.Tutorial,
+        scenario: Scenario.LightOfTheWorld,
         intro: [
             "Solar activity increasing. Air particulates returning to normal. Radiation levels reduced.",
             "Sensing unit power restored. Retrieving directives...",
-            "Err: Directory not found. No connectivity detected. Seek backup data."
+            "Err: Directory not found! No connectivity detected. Seek backup data.",
+            "Temporary directive activated: Reclaim the Earth."
         ],
+        objectives: [
+            {
+                description: "Construct a processor drone.",
+                id: Objectives.BuildProcessor,
+                requires: []
+            },
+            {
+                description: "Construct an extraction drone.",
+                id: Objectives.BuildExtractor,
+                requires: []
+            },
+            {
+                description: "Purify 10 square miles of terrain down to 2 toxins or less.",
+                id: Objectives.Purify10,
+                purityLevel: 2,
+                tileCount: 10,
+                requires: []
+            }
+        ]
+    },
+    {
+        scenario: Scenario.Ordinaters,
+        intro: [],
         objectives: [
             {
                 description: "Construct a scout drone and find a backup data source.",

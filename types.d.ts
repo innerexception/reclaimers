@@ -109,6 +109,14 @@ interface RCBuildingState {
     availableDroneDesigns: Array<RCUnitData>
 }
 
+interface Objective {
+    id:import('./constants').Objectives
+    requires:Array<import('./constants').Objectives>
+    description:string
+    tileCount?:number
+    purityLevel?:number
+}
+
 interface RCUnitCommand {
     id:string
     characterId:string

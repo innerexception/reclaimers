@@ -29,7 +29,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
         this.setInteractive()
         scene.add.existing(this)
 
-        if(building === RCObjectType.AncientFactory){
+        if(building === RCObjectType.WarFactory){
             this.resetProduction(NPCData[RCUnitType.AncientSentry])
         }
     }
