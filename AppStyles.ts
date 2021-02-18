@@ -60,7 +60,6 @@ export default {
         backgroundPosition:'center',
         position:'absolute' as 'absolute',
         width: '350px',
-        height: 'fit-content',
         display:'flex',
         flexDirection: 'column' as 'column',
         justifyContent: 'space-between',

@@ -7,6 +7,7 @@ import BotChooser from './views/BotChooser'
 import EntityInfo from './views/CharacterInfo'
 import EventLog from './views/EventLog'
 import Intro from './views/Intro'
+import Menu from './views/Menu'
 import Objectives from './views/Objectives'
 import TilePortrait from './views/TilePortrait'
 import Viewscreen from './Viewscreen'
@@ -26,8 +27,9 @@ export default class ViewscreenFrame extends React.Component<Props> {
 
     getModal = () => {
         switch(this.props.modalState.modal){
-            case Modal.CharacterInfo: return <EntityInfo/>
-            case Modal.Menu: return <Intro/>
+            case Modal.MainMenu: return <Intro/>
+            case Modal.Menu: return <Menu/>
+            case Modal.Intro: return <Dialog messages={Scenarios.find(s=>s.scenario === this.props.match.map).intro}/>
         }
     }
 
@@ -37,17 +39,12 @@ export default class ViewscreenFrame extends React.Component<Props> {
                 {this.props.modalState && this.getModal()}
                 <div style={{display:'flex', flexDirection:'column',alignItems:'center', width:'100%', maxWidth:'1200px'}}>
                     <div style={{position:'absolute', top:0, left:0, pointerEvents:'none'}}>
-                        {this.props.match && <Objectives objectives={Scenarios.find(s=>s.scenario === this.props.match.map).objectives}/>}
                         <TilePortrait/>
                     </div>
                     <Viewscreen/>
                     <div style={{position:'absolute', bottom:0, left:0, pointerEvents:'none'}}>
                         <EntityInfo/>
-                        {this.props.match &&
-                        <div style={{width:'450px'}}>
-                            <Dialog messages={Scenarios.find(s=>s.scenario === this.props.match.map).intro}/>
-                            <Actionbar player={this.props.match.players[0]}/>
-                        </div>}
+                        {this.props.match && <Actionbar player={this.props.match.players[0]}/>}
                     </div>
                 </div>
             </div>

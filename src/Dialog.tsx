@@ -1,4 +1,7 @@
 import * as React from 'react'
+import AppStyles from '../AppStyles';
+import { Modal } from '../constants';
+import { onHideModal, onShowModal } from './uiManager/Thunks';
 import { Button } from './util/SharedComponents';
 
 interface Props {
@@ -7,7 +10,7 @@ interface Props {
 
 export default class Dialog extends React.Component<Props> {
 
-    state = { textLength: 0, currentStringIndex: 0, hide:false }
+    state = { textLength: 0, currentStringIndex: 0}
 
     componentWillReceiveProps(props:Props){
         if(!props.messages[this.state.currentStringIndex]){
@@ -32,7 +35,7 @@ export default class Dialog extends React.Component<Props> {
 
     getButton = () => {
         if(this.state.currentStringIndex === this.props.messages.length-1){
-            return Button(true, ()=>this.setState({hide:true}), 'Next')
+            return Button(true, ()=>onShowModal(Modal.Menu), 'Next')
         }
             
         if(this.props.messages[this.state.currentStringIndex].length === this.state.textLength)
@@ -42,9 +45,11 @@ export default class Dialog extends React.Component<Props> {
     }
 
     render(){
-        return <div style={{display: this.state.hide ? "none" : "table",width:'100%', pointerEvents:'all', padding:'5px'}}>
-                    <div style={{width:'100%'}} dangerouslySetInnerHTML={{__html: this.props.messages[this.state.currentStringIndex].substring(0,this.state.textLength)}}></div>
-                    {this.getButton()}
+        return <div style={{...AppStyles.modal, height:'200px'}}>
+                    <div style={{display:'flex', justifyContent:'space-between', flexDirection:'column', height:'100%'}}>
+                        <div style={{width:'100%'}} dangerouslySetInnerHTML={{__html: this.props.messages[this.state.currentStringIndex].substring(0,this.state.textLength)}}></div>
+                        {this.getButton()}
+                    </div>
                 </div>
                     
     }

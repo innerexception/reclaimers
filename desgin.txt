@@ -97,5 +97,9 @@ Convert all factories before they can produce too may sentries. Your Ordinaters 
 Cleanse the land of at least 50% of its toxins with 10 squares of pristine terrain
 
 
+Map 5: The people awaken
+Cleanse enough land for the people to grow enough food for 500 population
 
 
+Map 6: The war at home
+Defend the people & increase population to 1000

@@ -60,7 +60,7 @@ export enum RCUnitType {
 export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.CHProcessor, RCUnitType.HMProcessor, RCUnitType.RIProcessor]
 
 export enum Modal {
-    BotCreation, CharacterInfo, Menu
+    BotCreation, CharacterInfo, Menu,Intro,MainMenu
 }
 
 export enum Scenario {

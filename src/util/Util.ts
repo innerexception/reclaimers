@@ -31,7 +31,7 @@ export const getNewEncounter = (map:Scenario, playerId:string):MapData => {
         id:v4(),
         map,
         eventLog: [],
-        players: [{ id: playerId, resources: defaultResources}]
+        players: [{ id: playerId, resources: defaultResources, completedObjectives: []}]
     }
 }
 

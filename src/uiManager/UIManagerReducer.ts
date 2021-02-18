@@ -19,7 +19,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.JOIN_ENCOUNTER:
             let onlineAccount = state.onlineAccount || action.onlineAccount
             onlineAccount = {...onlineAccount, encounterId: action.match.id}
-            return { ...state, activeEncounter: action.match, modalState: null, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
+            return { ...state, activeEncounter: action.match, modalState: { modal: Modal.Intro }, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
         case UIReducerActions.SELECT_UNIT:
@@ -69,7 +69,7 @@ export default appReducer;
 
 const getInitialState = ():RState => {
     return {
-        modalState: { modal: Modal.Menu },
+        modalState: { modal: Modal.MainMenu },
         onlineAccount: null,
         activeEncounter: null,
         engineEvent: null,
