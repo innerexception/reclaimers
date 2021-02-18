@@ -53,11 +53,11 @@ export enum RCObjectType {
 }
 
 export enum RCUnitType {
-    Scout=0, LightCompactor=8, Ordinater=16, Defender=24, RIProcessor=32, CHProcessor=40, HMProcessor=48,
+    Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, RIProcessor=32, CHProcessor=40, HMProcessor=48,
     AncientSentry=160
 }
 
-export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.LightCompactor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.CHProcessor, RCUnitType.HMProcessor, RCUnitType.RIProcessor]
+export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.ToxinExtractor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.CHProcessor, RCUnitType.HMProcessor, RCUnitType.RIProcessor]
 
 export enum Modal {
     BotCreation, CharacterInfo, Menu,Intro,MainMenu
@@ -82,11 +82,15 @@ export const PollutedWater = [64,65,66,72,73,74,80,81,82]
 export const defaultProcessing = [ItemType.Titanium, ItemType.Plastics, ItemType.Pesticides, ItemType.Petroleum]
 
 export const TerrainToxins = {
-    [TerrainType.Any]: [],
-    [TerrainType.Dunes1]: [ItemType.Cadmium, ItemType.Lead],
+    [TerrainType.Any]: [ItemType.Pesticides, ItemType.Plastics, ItemType.Petroleum],
+    [TerrainType.Dunes1]: [ItemType.Cadmium, ItemType.Lead, ItemType.Asbestos],
     [TerrainType.Dunes2]: [ItemType.Titanium, ItemType.Lead],
     [TerrainType.Rocks]: [ItemType.Asbestos, ItemType.Lithium],
-    [TerrainType.DesertGrass]: [ItemType.Arsenic, ItemType.Pesticides]
+    [TerrainType.DesertGrass]: [ItemType.Arsenic, ItemType.Pesticides],
+    [TerrainType.DryForest]: [ItemType.Arsenic],
+    [TerrainType.Minerals1]: [ItemType.Cobalt, ItemType.Lithium, ItemType.Manganese, ItemType.Copper],
+    [TerrainType.Minerals2]: [ItemType.Mercury, ItemType.Palladium, ItemType.Plutonium, ItemType.Gold],
+    [TerrainType.Barren]: [ItemType.Benzene, ItemType.Arsenic]
 }
 
 export const TerrainLevels:{[key:number]: Array<TerrainType>} = {
@@ -117,70 +121,8 @@ export const defaultResources = {
 }
 
 export enum Objectives {
-    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted,Purify10,BuildExtractor,BuildProcessor
+    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted,Purify20,BuildExtractor,BuildProcessor
 }
-
-export const Scenarios = [
-    {
-        scenario: Scenario.LightOfTheWorld,
-        intro: [
-            "Solar activity increasing. Air particulates returning to normal. Radiation levels reduced.",
-            "Sensing unit power restored. Retrieving directives...",
-            "Err: Directory not found! No connectivity detected. Seek backup data.",
-            "Temporary directive activated: Reclaim the Earth."
-        ],
-        objectives: [
-            {
-                description: "Construct a processor drone.",
-                id: Objectives.BuildProcessor,
-                requires: []
-            },
-            {
-                description: "Construct an extraction drone.",
-                id: Objectives.BuildExtractor,
-                requires: []
-            },
-            {
-                description: "Purify 10 square miles of terrain down to 2 toxins or less.",
-                id: Objectives.Purify10,
-                purityLevel: 2,
-                tileCount: 10,
-                requires: []
-            }
-        ]
-    },
-    {
-        scenario: Scenario.Ordinaters,
-        intro: [],
-        objectives: [
-            {
-                description: "Construct a scout drone and find a backup data source.",
-                id: Objectives.BackupDisk,
-                requires: []
-            },
-            {
-                id: Objectives.DiscoveredOrdinater,
-                description: "Use the ordinater drone to deliver the secret key to another facility",
-                requires: [Objectives.FindAnOrdinater]
-            },
-            {
-                id: Objectives.FindAnOrdinater,
-                description: "Find a way to discover the secret key of this facility",
-                requires: [Objectives.BaseDiscovered]
-            },
-            {
-                id: Objectives.BaseDiscovered,
-                description: "This facility is locked by a secret key.",
-                requires: []
-            },
-            {
-                id: Objectives.BaseConverted,
-                description: "This facility is now under our control. Downloading directives...incompatible directive format found.",
-                requires: [Objectives.DiscoveredOrdinater]
-            }
-        ]
-    }
-]
 
 export enum UIReducerActions {
     SHOW_MODAL, HIDE_MODAL, LOGIN_SUCCESS, LOGOUT, LOGIN_PENDING, LOGIN_FAILED,

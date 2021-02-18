@@ -59,18 +59,15 @@ export default {
         background:'black',
         backgroundPosition:'center',
         position:'absolute' as 'absolute',
-        width: '350px',
-        display:'flex',
-        flexDirection: 'column' as 'column',
-        justifyContent: 'space-between',
+        display:'table',
         zIndex:2,
         padding:'10px',
         border: '3px inset',
         boxShadow: '5px 6px 8px 0px black',
         borderColor: colors.lGreen,
         color: colors.lGreen,
-        top:0,left:0,right:0,bottom:0,
-        margin:'auto'
+        top:'50%',left:'50%',
+        transform: 'translate(-50%,-50%)'
     },
     centered: {
         margin:'auto',

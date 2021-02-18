@@ -1,14 +1,12 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Modal, Scenarios } from '../constants'
+import { Modal } from '../constants'
+import { Scenarios } from './data/Scenarios'
 import Dialog from './Dialog'
 import Actionbar from './views/Actionbar'
-import BotChooser from './views/BotChooser'
 import EntityInfo from './views/CharacterInfo'
-import EventLog from './views/EventLog'
 import Intro from './views/Intro'
 import Menu from './views/Menu'
-import ObjectiveView from './views/Objectives'
 import TilePortrait from './views/TilePortrait'
 import Viewscreen from './Viewscreen'
 
@@ -44,7 +42,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
                     <Viewscreen/>
                     <div style={{position:'absolute', bottom:0, left:0, pointerEvents:'none'}}>
                         <EntityInfo/>
-                        {this.props.match && <Actionbar player={this.props.match.players[0]}/>}
+                        {this.props.match && <Actionbar player={this.props.match.player}/>}
                     </div>
                 </div>
             </div>

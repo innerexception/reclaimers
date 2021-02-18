@@ -44,7 +44,7 @@ export const onLoginFailed = () => {
 
 
 export const onSpawnBot = (design:RCUnitData, building:BuildingSprite) => {
-    const me = store.getState().activeEncounter.players[0]
+    const me = store.getState().activeEncounter.player
     if(canAffordBot(me.resources, design))
         dispatch({
             type: UIReducerActions.SPAWN_BOT,

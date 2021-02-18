@@ -28,9 +28,9 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
         maxInventory: 0,
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}],
     },
-    [RCUnitType.LightCompactor]: {
-        name: 'Surface Compactor mk.1',
-        droneType: RCUnitType.LightCompactor,
+    [RCUnitType.ToxinExtractor]: {
+        name: 'Toxin Extractor',
+        droneType: RCUnitType.ToxinExtractor,
         maxHp: 1,
         speed: 1,
         sight: 1,
@@ -105,4 +105,4 @@ export const NPCData:{[key in RCUnitType]:RCUnitData} = {
     }
 }
 
-export const defaultDesigns = [NPCData[RCUnitType.Scout], NPCData[RCUnitType.LightCompactor], NPCData[RCUnitType.CHProcessor], NPCData[RCUnitType.Ordinater]]
+export const defaultDesigns = [NPCData[RCUnitType.Scout], NPCData[RCUnitType.ToxinExtractor], NPCData[RCUnitType.CHProcessor], NPCData[RCUnitType.Ordinater]]

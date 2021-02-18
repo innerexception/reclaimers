@@ -45,7 +45,7 @@ export default class Dialog extends React.Component<Props> {
     }
 
     render(){
-        return <div style={{...AppStyles.modal, height:'200px'}}>
+        return <div style={{...AppStyles.modal, height:'200px', width:'350px'}}>
                     <div style={{display:'flex', justifyContent:'space-between', flexDirection:'column', height:'100%'}}>
                         <div style={{width:'100%'}} dangerouslySetInnerHTML={{__html: this.props.messages[this.state.currentStringIndex].substring(0,this.state.textLength)}}></div>
                         {this.getButton()}

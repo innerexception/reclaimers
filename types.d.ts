@@ -89,13 +89,12 @@ interface AbilityTargetingData {
 
 interface MapData {
     id:string
-    players: Array<RCPlayerState>
+    player: RCPlayerState
     map: import('./constants').Scenario
     eventLog: Array<string>
 }
 
 interface RCPlayerState {
-    id:string
     resources: import('./constants').Resources
     completedObjectives: Array<import('./constants').Objectives>
 }

@@ -1,9 +1,10 @@
 import { GameObjects, Time } from "phaser";
 import { v4 } from "uuid";
-import { FONT_DEFAULT, RCObjectType, RCUnitType } from '../constants'
+import { store } from "../App";
+import { FONT_DEFAULT, Objectives, RCObjectType, RCUnitType } from '../constants'
 import { NPCData } from "./data/NPCData";
 import MapScene from "./MapScene";
-import { onSpawnBot, onUpdateSelectedBuilding } from "./uiManager/Thunks";
+import { onSpawnBot, onUpdatePlayer, onUpdateSelectedBuilding } from "./uiManager/Thunks";
 
 export default class BuildingSprite extends GameObjects.Sprite {
 
@@ -44,7 +45,18 @@ export default class BuildingSprite extends GameObjects.Sprite {
         this.building.activeDroneDesign = design
         this.timer = this.scene.time.addEvent({
             delay: design.buildTime,
-            callback: ()=>onSpawnBot(design, this),
+            callback: ()=>{
+                onSpawnBot(design, this)
+                const p = store.getState().activeEncounter.player
+                if(design.droneType === RCUnitType.ToxinExtractor && !p.completedObjectives.includes(Objectives.BuildExtractor)){
+                    p.completedObjectives.push(Objectives.BuildExtractor)
+                    onUpdatePlayer({...p})
+                }
+                if(design.droneType === RCUnitType.CHProcessor && !p.completedObjectives.includes(Objectives.BuildProcessor)){
+                    p.completedObjectives.push(Objectives.BuildProcessor)
+                    onUpdatePlayer({...p})
+                }
+            },
             loop: true
         })
     }

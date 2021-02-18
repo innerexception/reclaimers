@@ -33,20 +33,15 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.SELECT_DESTINATION:
             return { ...state, engineEvent: { action: UIReducerActions.SELECT_DESTINATION, data:null } }  
         case UIReducerActions.SPAWN_BOT:
-            state.activeEncounter.players.forEach(p=>{
-                if(p.id === state.onlineAccount.id){
-                    const design = action.design as RCUnitData
-                    design.requiredItems.forEach(i=>{
-                        p.resources[i.type] -= i.amount
-                    })
-                }
+            const design = action.design as RCUnitData
+            design.requiredItems.forEach(i=>{
+                state.activeEncounter.player.resources[i.type] -= i.amount
             })
             return { ...state, activeEncounter: {...state.activeEncounter}, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: {unit: getUnitFromData(action.design), building: action.building} }}  
         case UIReducerActions.TILE_INFO:
             return { ...state, selectedTile: action.explored ? {...action.tile} : null}
         case UIReducerActions.UPDATE_PLAYER:
-            let i = state.activeEncounter.players.findIndex(p=>p.id===action.player.id)
-            state.activeEncounter.players.splice(i,1,action.player)
+            state.activeEncounter.player=action.player
             return { ...state, activeEncounter: {...state.activeEncounter} }
         case UIReducerActions.BUILD_PYLON:
             return { ...state, engineEvent: { action: UIReducerActions.BUILD_PYLON, data: null }}

@@ -1,13 +1,14 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../App";
 import { defaults } from '../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, Scenarios, Objectives } from "../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, Objectives } from "../constants";
 import CharacterSprite from "./CharacterSprite";
 import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import BuildingSprite from "./BuildingSprite";
 import { defaultDesigns, NPCData } from "./data/NPCData";
+import { Scenarios } from "./data/Scenarios";
 
 enum MouseTarget {
     NONE,MOVE
@@ -335,11 +336,17 @@ export default class MapScene extends Scene {
         let scen = Scenarios.find(s=>s.scenario === store.getState().activeEncounter.map)
         scen.objectives.forEach((o:Objective)=>{
             switch(o.id){
-                case Objectives.Purify10:
-                    if(this.tiles.filter) 
-                        onUpdatePlayer({...p, completedObjectives: p.completedObjectives.concat(Objectives.Purify10)})
+                case Objectives.Purify20:
+                    const p = store.getState().activeEncounter.player
+                    let cleaned = []
+                    this.tiles.forEach(trow=>trow.forEach(tcol=>{
+                        if(tcol.type !== -1 && tcol.toxins.length <= 2)  cleaned.push(tcol)
+                    }))
+                    if(!p.completedObjectives.includes(Objectives.Purify20) && cleaned.length >= 20) {
+                        p.completedObjectives.push(Objectives.Purify20)
+                        onUpdatePlayer({...p})
+                    }
                     break
-                
             }
         })
     }

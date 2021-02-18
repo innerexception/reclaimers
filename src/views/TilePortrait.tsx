@@ -37,6 +37,6 @@ const styles = {
     border: '3px inset',
     borderColor: 'silver',
     padding:'5px',
-    width:'200px',
+    minWidth:'200px',
     background:'black'
 }

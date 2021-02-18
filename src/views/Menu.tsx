@@ -2,12 +2,10 @@ import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles';
 import { Button } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { Modal, Scenario, Scenarios } from '../../constants';
-import { onCreateEncounter, onHideModal, onLogoutUser, onUpdateAccount } from '../uiManager/Thunks';
+import { onHideModal, onLogoutUser } from '../uiManager/Thunks';
 import Footer from '../components/Footer';
-import { getNewAccount, getNewEncounter } from '../util/Util';
-import { v4 } from 'uuid';
 import ObjectiveView from './Objectives';
+import { Scenarios } from '../data/Scenarios';
 
 interface Props {
     onlineAccount?: UserAccount
@@ -22,15 +20,15 @@ export default class Menu extends React.Component<Props> {
 
     render(){
         return (
-            <div style={{...AppStyles.modal, height:'66vh', justifyContent:'space-between'}}>
+            <div style={{...AppStyles.modal, width:'400px'}}>
                 <div>
                     <h3>Objectives</h3>
                     {this.props.match && <ObjectiveView match={this.props.match} objectives={Scenarios.find(s=>s.scenario === this.props.match.map).objectives}/>}
                     <hr/>
-                    <div>
+                    <div style={{marginBottom:'2em'}}>
                         {Button(true, onLogoutUser, 'Quit')}
                     </div>
-                    {Button(true, onHideModal, 'Close')}
+                    {Button(true, onHideModal, 'Continue')}
                 </div>
                 <Footer/>
             </div>

@@ -1,21 +1,13 @@
 import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles';
 import { Button } from '../util/SharedComponents';
-import { connect } from 'react-redux';
-import { Modal, Scenario, Scenarios } from '../../constants';
-import { onCreateEncounter, onHideModal, onLogoutUser, onUpdateAccount } from '../uiManager/Thunks';
+import { Scenario } from '../../constants';
+import { onCreateEncounter, onLogoutUser, onUpdateAccount } from '../uiManager/Thunks';
 import Footer from '../components/Footer';
 import { getNewAccount, getNewEncounter } from '../util/Util';
 import { v4 } from 'uuid';
 
-interface Props {
-    onlineAccount?: UserAccount
-}
-
-@(connect((state: RState) => ({
-    onlineAccount: state.onlineAccount,
-})) as any)
-export default class Intro extends React.Component<Props> {
+export default class Intro extends React.Component {
 
     componentDidMount(){
         let account = JSON.parse(localStorage.getItem('rc_save')) as UserAccount
@@ -37,7 +29,7 @@ export default class Intro extends React.Component<Props> {
                     <h5>Copyright 2068 TechnoSerf LLC</h5>
                     <hr/>
                     <div>
-                        {Button(true, ()=>onCreateEncounter(getNewEncounter(Scenario.LightOfTheWorld, this.props.onlineAccount.id)), 'Beginning')}
+                        {Button(true, ()=>onCreateEncounter(getNewEncounter(Scenario.LightOfTheWorld)), 'Beginning')}
                         {/* {Scenarios.map(s=>Button(true, ()=>onCreateEncounter(getNewEncounter(s), this.props.onlineAccount.id), 'Mission '+s))} */}
                     </div>
                     {Button(true, onLogoutUser, 'Quit')}

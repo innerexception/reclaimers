@@ -1,11 +1,10 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../App";
-import { FONT_DEFAULT, Objectives, RCObjectType, RCUnitType, Scenarios, TerrainLevels } from '../constants'
+import { FONT_DEFAULT, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import { getNearestDropoffForResource, getSightMap, shuffle } from "./util/Util";
-import ObjectiveView from "./views/Objectives";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -96,9 +95,9 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     this.roam()
                     //Sometimes drops lore when killed
                 break
-                case RCUnitType.LightCompactor:
+                case RCUnitType.ToxinExtractor:
                     if(dat.inventory.length === dat.maxInventory){
-                        const player = store.getState().activeEncounter.players[0]
+                        const player = store.getState().activeEncounter.player
                         let missedDropoff = null
                         let removeResources = []
                         dat.inventory.forEach(i=>{

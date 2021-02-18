@@ -26,12 +26,12 @@ export const canAffordBot = (resources:Resources, design:RCUnitData) =>
     !design.requiredItems.find(i=>resources[i.type] < i.amount)
 
 
-export const getNewEncounter = (map:Scenario, playerId:string):MapData => {
+export const getNewEncounter = (map:Scenario):MapData => {
     return {
         id:v4(),
         map,
         eventLog: [],
-        players: [{ id: playerId, resources: defaultResources, completedObjectives: []}]
+        player: { resources: defaultResources, completedObjectives: []}
     }
 }
 
@@ -246,7 +246,7 @@ export const canAttractDrone = (leader:RCUnit, drone:RCUnit) => {
         case RCUnitType.HMProcessor:
         case RCUnitType.RIProcessor:
         case RCUnitType.CHProcessor:
-            return drone.droneType === RCUnitType.LightCompactor
+            return drone.droneType === RCUnitType.ToxinExtractor
         case RCUnitType.Defender:
             return drone.droneType === RCUnitType.Defender
     }

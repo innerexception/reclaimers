@@ -6,7 +6,6 @@ import { canAffordBot } from '../util/Util';
 
 interface Props {
     encounter?: MapData
-    onlineAccount?: UserAccount
     selectedBuilding: RCBuildingState
 }
 
@@ -16,7 +15,6 @@ interface State {
 
 @(connect((state: RState) => ({
     encounter: state.activeEncounter,
-    onlineAccount: state.onlineAccount,
     selectedBuilding: state.selectedBuilding
 })) as any)
 export default class BotChooser extends React.Component<Props, State> {
@@ -31,7 +29,7 @@ export default class BotChooser extends React.Component<Props, State> {
     }
 
     render(){
-        const me = this.props.encounter.players.find(p=>p.id === this.props.onlineAccount.id)
+        const me = this.props.encounter.player
         const defaultDesigns = this.props.selectedBuilding.availableDroneDesigns
         const d = defaultDesigns[this.state.selectedIndex]
         return (
@@ -59,8 +57,8 @@ export default class BotChooser extends React.Component<Props, State> {
                             {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
                         </div>
                     </div>
-                    {Button(canAffordBot(me.resources, d), ()=>onChangeProduction(d), 'Change Production')}
-                    {Button(true, onPauseProduction, 'Pause Production')}
+                    {Button(canAffordBot(me.resources, d), ()=>onChangeProduction(d), 'Start')}
+                    {Button(true, onPauseProduction, 'Pause')}
                 </div>
         )
     }
