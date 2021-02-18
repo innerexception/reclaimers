@@ -8,7 +8,7 @@ import EntityInfo from './views/CharacterInfo'
 import EventLog from './views/EventLog'
 import Intro from './views/Intro'
 import Menu from './views/Menu'
-import Objectives from './views/Objectives'
+import ObjectiveView from './views/Objectives'
 import TilePortrait from './views/TilePortrait'
 import Viewscreen from './Viewscreen'
 

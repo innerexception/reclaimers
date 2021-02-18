@@ -1,10 +1,11 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../App";
-import { FONT_DEFAULT, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
+import { FONT_DEFAULT, Objectives, RCObjectType, RCUnitType, Scenarios, TerrainLevels } from '../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import { getNearestDropoffForResource, getSightMap, shuffle } from "./util/Util";
+import ObjectiveView from "./views/Objectives";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 
@@ -127,6 +128,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     const tilei = tileDat.toxins.findIndex(x=>this.scene.entities.find(e=>e.entity.processesItems?.includes(x)))
                     if(tilei!==-1){
                         let tox = tileDat.toxins.splice(tilei,1)
+                        this.scene.checkObjectives()
                         dat.inventory.push(tox[0])
                         const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground') 
                         const toxLength = tileDat.toxins.length

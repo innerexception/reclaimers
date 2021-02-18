@@ -7,7 +7,7 @@ import { onCreateEncounter, onHideModal, onLogoutUser, onUpdateAccount } from '.
 import Footer from '../components/Footer';
 import { getNewAccount, getNewEncounter } from '../util/Util';
 import { v4 } from 'uuid';
-import Objectives from './Objectives';
+import ObjectiveView from './Objectives';
 
 interface Props {
     onlineAccount?: UserAccount
@@ -25,7 +25,7 @@ export default class Menu extends React.Component<Props> {
             <div style={{...AppStyles.modal, height:'66vh', justifyContent:'space-between'}}>
                 <div>
                     <h3>Objectives</h3>
-                    {this.props.match && <Objectives match={this.props.match} objectives={Scenarios.find(s=>s.scenario === this.props.match.map).objectives}/>}
+                    {this.props.match && <ObjectiveView match={this.props.match} objectives={Scenarios.find(s=>s.scenario === this.props.match.map).objectives}/>}
                     <hr/>
                     <div>
                         {Button(true, onLogoutUser, 'Quit')}
