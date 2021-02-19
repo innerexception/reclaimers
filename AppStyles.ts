@@ -64,7 +64,7 @@ export default {
         padding:'10px',
         border: '3px inset',
         boxShadow: '5px 6px 8px 0px black',
-        borderColor: colors.lGreen,
+        borderColor: colors.bronze,
         color: colors.lGreen,
         top:'50%',left:'50%',
         transform: 'translate(-50%,-50%)'

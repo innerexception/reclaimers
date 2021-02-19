@@ -36,14 +36,16 @@ export default class ViewscreenFrame extends React.Component<Props> {
             <div style={{position:'relative', display:'flex', justifyContent:'center', borderRadius:'5px', margin:'1px', width:'100%', height:'100%'}}>
                 {this.props.modalState && this.getModal()}
                 <div style={{display:'flex', flexDirection:'column',alignItems:'center', width:'100%', maxWidth:'1200px'}}>
+                    {this.props.match && 
                     <div style={{position:'absolute', top:0, left:0, pointerEvents:'none'}}>
                         <TilePortrait/>
-                    </div>
+                    </div>}
                     <Viewscreen/>
+                    {this.props.match && 
                     <div style={{position:'absolute', bottom:0, left:0, pointerEvents:'none'}}>
                         <EntityInfo/>
-                        {this.props.match && <Actionbar player={this.props.match.player}/>}
-                    </div>
+                        <Actionbar player={this.props.match.player}/>
+                    </div>}
                 </div>
             </div>
         )

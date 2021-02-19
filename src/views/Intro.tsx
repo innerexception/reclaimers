@@ -24,14 +24,11 @@ export default class Intro extends React.Component {
 
     render(){
         return (
-            <div style={{...AppStyles.modal, width:'700px', height:'66vh', justifyContent:'space-between'}}>
+            <div style={{...AppStyles.modal, transform:'none', top:'unset', left:'unset', bottom:25, right:25, width:'350px', justifyContent:'space-between'}}>
                 <div>
                     <h2>Reclaimers</h2>
                     <h5>Copyright 2068 TechnoSerf LLC</h5>
                     <hr/>
-                    <div>
-                        {Scenarios.map(s=>Button(true, ()=>onCreateEncounter(getNewEncounter(s.scenario)), s.scenario))}
-                    </div>
                     {Button(true, onLogoutUser, 'Quit')}
                 </div>
                 <Footer/>

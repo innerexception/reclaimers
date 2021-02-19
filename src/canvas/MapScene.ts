@@ -55,7 +55,7 @@ export default class MapScene extends Scene {
                     if(this.initCompleted) this.initMap(engineEvent.data.map)
                     else this.waitForRender()
                 break
-                case UIReducerActions.MAP_VIEW:
+                case UIReducerActions.LOGOUT:
                     transitionOut(this, 'map', ()=>transitionIn(this.scene.get('map')))
                 break
                 case UIReducerActions.SPAWN_BOT:
@@ -152,10 +152,11 @@ export default class MapScene extends Scene {
         }
         
         this.cameras.main.setZoom(2)
-        // this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         
         let base = this.getObjects(RCObjectType.Base)[0]
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
+        transitionIn(this)
     }
 
     passableTile = (tileX:number, tileY:number, unit:RCUnit) => {

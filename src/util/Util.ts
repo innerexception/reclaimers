@@ -51,7 +51,7 @@ export const transitionOut = (scene:Scene, nextScene:string, cb:Function) => {
     let cols = scene.cameras.default.height/rect_dim
     for(var i=0; i<=rows; i++){
         for(var j=0; j<=cols; j++){
-            let rect = scene.add.image(i*rect_dim, j*rect_dim, 'rect')
+            let rect = scene.add.image(i*rect_dim, j*rect_dim, 'overlay')
             rect.setDisplaySize(rect_dim,rect_dim).setDepth(5).setVisible(false)
             rects.push(rect)
         } 
@@ -88,7 +88,7 @@ export const transitionIn = (scene:Scene) => {
     let cols = scene.cameras.default.height/rect_dim
     for(var i=0; i<=rows; i++){
         for(var j=0; j<=cols; j++){
-            let rect = scene.add.image(i*rect_dim, j*rect_dim, 'rect')
+            let rect = scene.add.image(i*rect_dim, j*rect_dim, 'overlay')
             rect.setDisplaySize(rect_dim,rect_dim).setDepth(5)
             rects.push(rect)
         } 

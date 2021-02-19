@@ -3,7 +3,10 @@ import { defaults } from "../../assets/Assets";
 import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import RegionSprite from "./RegionSprite"
-import { transitionOut } from "../util/Util";
+import { getNewEncounter, transitionIn, transitionOut } from "../util/Util";
+import { store } from "../../App";
+import { Scenario } from "../../constants";
+import { onCreateEncounter } from "../uiManager/Thunks";
 
 
 export default class WorldScene extends Scene {
@@ -36,15 +39,17 @@ export default class WorldScene extends Scene {
         let town1Tileset = regionMap.addTilesetImage('OverworldTileset_v03', 'tiles', 16,16)
         regionMap.createStaticLayer('ocean', town1Tileset)
         regionMap.createStaticLayer('ground', town1Tileset)
-        regionMap.createStaticLayer('region_sprites', town1Tileset)
         
-        let regionSprites = regionMap.createFromObjects('regions', 'region', { key: 'overlay_white', visible:true })
-        this.regionSprites = regionSprites.map(r=>new RegionSprite(this, r.x,r.y,'overlay_white',r.displayWidth, r.displayHeight, r.data))
+        let regionSprites = regionMap.createFromObjects('regions', 'region', { key: 'overlay', visible:true })
+        this.regionSprites = regionSprites.map(r=>new RegionSprite(this, r.x,r.y,'overlay',r.displayWidth, r.displayHeight, r.data))
         regionSprites.forEach(s=>s.destroy())
         
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, regionMap.widthInPixels, regionMap.heightInPixels)
-        this.cameras.main.setScroll(regionMap.widthInPixels/2,regionMap.heightInPixels/2)
+
+        let regionName = store.getState().onlineAccount.savedMission?.map || Scenario.LightOfTheWorld
+        let reg = this.regionSprites.find(r=>r.mapName === regionName)
+        this.cameras.main.pan(reg.x, reg.y, 2000)
        
         this.input.on('pointerover', (event, gameObjects) => {
             if(gameObjects[0]){
@@ -55,9 +60,24 @@ export default class WorldScene extends Scene {
             this.selectIcon && this.selectIcon.setVisible(false)
         });
         this.input.on('pointerdown', (pointer, gameObjects)=> {
-            if(gameObjects[0]){
+            if(gameObjects[0] && !this.originDragPoint){
                 this.focusedItem = gameObjects[0]
-                transitionOut(this, 'town', ()=>(this.scene.get('town') as MapScene).initMap((this.focusedItem as any).mapName))
+                transitionOut(this, 'town', ()=>onCreateEncounter(getNewEncounter((this.focusedItem as any).mapName)))
+            }
+        })
+        this.input.on('pointermove', ()=>{
+            if (this.game.input.activePointer.isDown) {
+                if (this.originDragPoint) {
+                    // move the camera by the amount the mouse has moved since last update
+                    this.cameras.main.scrollX +=
+                        1*(this.originDragPoint.x - this.game.input.activePointer.position.x);
+                    this.cameras.main.scrollY +=
+                        1*(this.originDragPoint.y - this.game.input.activePointer.position.y);
+                } // set new drag origin to current position
+                this.originDragPoint = this.game.input.activePointer.position.clone();
+            } 
+            else {
+                this.originDragPoint = null;
             }
         })
 
