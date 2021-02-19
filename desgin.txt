@@ -35,8 +35,8 @@ build a network of point to point charging stations to keep the bots moving
     -Scout drones: not available
 
 
+1. Flesh out tutorial map events and polish mission
 
-18. World map with clickable regions to load levels
 19. Objectives are global and can require changing levels to complete
 15.5 Scouts can enter special tiles and trigger events
 16. inactive factories are guarded by fixed groups of creatures
