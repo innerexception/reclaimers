@@ -113,6 +113,8 @@ export default class MapScene extends Scene {
     initMap = (encounter:Scenario) => {
         this.entities.forEach(e=>e.destroy())
         this.entities = []
+        this.buildings.forEach(b=>b.destroy())
+        this.buildings = []
         if(this.map) this.map.destroy()
         this.map = this.add.tilemap(encounter)
         let tiles = this.map.addTilesetImage('OverworldTileset_v03', 'tiles', 16,16) //1,2
@@ -171,6 +173,16 @@ export default class MapScene extends Scene {
 
     create = () =>
     {
+
+        //World map
+        // let regionMap = this.make.tilemap({ key: 'map'})
+        // let town1Tileset = regionMap.addTilesetImage('galletcity_tiles', 'city_packed')
+        // regionMap.createStaticLayer('ocean', town1Tileset)
+        // regionMap.createStaticLayer('ground', town1Tileset)
+        // regionMap.createStaticLayer('region_sprites', town1Tileset)
+        // let regionSprites = regionMap.createFromObjects('regions', 'region', { key: 'overlay_white', visible:true })
+        // this.regionSprites = regionSprites.filter(rs=>findValue(rs.data, 'mapName')).map(r=>new RegionSprite(this, r.x,r.y,'overlay_white',r.displayWidth, r.displayHeight, r.data))
+
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
         this.initMap(Scenario.LightOfTheWorld)

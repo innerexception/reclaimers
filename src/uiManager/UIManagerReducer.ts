@@ -9,7 +9,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.HIDE_MODAL:
             return { ...state, modalState: null }
         case UIReducerActions.LOGOUT:
-            return {...state, activeEncounter: null, modalState: { modal: Modal.Menu} }
+            return getInitialState()
         case UIReducerActions.UPDATE_ACCOUNT:
             return { ...state, onlineAccount: {...action.account}}
         case UIReducerActions.ACTIVATE_ABILITY:
@@ -18,7 +18,6 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, activeAbility: null }
         case UIReducerActions.JOIN_ENCOUNTER:
             let onlineAccount = state.onlineAccount || action.onlineAccount
-            onlineAccount = {...onlineAccount, encounterId: action.match.id}
             return { ...state, activeEncounter: action.match, modalState: { modal: Modal.Intro }, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
