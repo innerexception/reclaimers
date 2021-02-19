@@ -60,12 +60,13 @@ export enum RCUnitType {
 export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.ToxinExtractor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.CHProcessor, RCUnitType.HMProcessor, RCUnitType.RIProcessor]
 
 export enum Modal {
-    BotCreation, CharacterInfo, Menu,Intro,MainMenu
+    BotCreation, CharacterInfo, Menu,MainMenu,Dialog
 }
 
 export enum Scenario {
     LightOfTheWorld="LightOfTheWorld",Ordinaters='Ordinaters'
 }
+
 
 export enum TerrainType {
     Any=-1,
@@ -74,6 +75,21 @@ export enum TerrainType {
     DryForest=16,Barren=17,LBushes=18,SparseGrass=19,Cactus=20,FrozenRocks=21,Hill=22,FrozenHill=23,Huts=24,
     Minerals1=27,Minerals2=28,MediumGrass=29,Rocks=30,FrozenHill2=31,Cave1=35,Cave2=36,Cave3=57,
     Village1=88,Village2=90,Village3=63
+}
+
+export const TileEvents = {
+    [TerrainType.Cave1]: {
+        messages: ['Cave 1!']
+    },
+    [TerrainType.Cave2]: {
+        messages: ['Cave 2!']
+    },
+    [TerrainType.Cave3]: {
+        messages: ['Cave 3!']
+    },
+    [TerrainType.Village1]: {
+        messages: ['Village 1!']
+    }
 }
 
 export const CleanWater = [32,33,34,40,41,42,48,49,50]

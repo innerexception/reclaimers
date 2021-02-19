@@ -27,7 +27,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
         switch(this.props.modalState.modal){
             case Modal.MainMenu: return <Intro/>
             case Modal.Menu: return <Menu/>
-            case Modal.Intro: return <Dialog messages={Scenarios.find(s=>s.scenario === this.props.match.map).intro}/>
+            case Modal.Dialog: return <Dialog messages={this.props.modalState.data}/>
         }
     }
 

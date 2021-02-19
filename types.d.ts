@@ -97,6 +97,7 @@ interface MapData {
 interface RCPlayerState {
     resources: import('./constants').Resources
     completedObjectives: Array<import('./constants').Objectives>
+    completedEvents: Array<import('./constants').TerrainType>
 }
 
 interface RCBuildingState {

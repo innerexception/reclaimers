@@ -1,8 +1,8 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../../App";
-import { FONT_DEFAULT, RCObjectType, RCUnitType, TerrainLevels } from '../../constants'
+import { FONT_DEFAULT, Modal, RCObjectType, RCUnitType, TerrainLevels, TileEvents } from '../../constants'
 import MapScene from "./MapScene";
-import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit } from "../uiManager/Thunks";
+import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
 import { getNearestDropoffForResource, getSightMap, shuffle } from "../util/Util";
 
@@ -52,6 +52,17 @@ export default class CharacterSprite extends GameObjects.Sprite {
         onUpdateSelectedUnit(dat)
         switch(dat.droneType){
                 case RCUnitType.Scout:
+                    //Check if on an event tile we have not triggered
+                    const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground')
+                    const e = TileEvents[tile.index-1]
+                    const player = store.getState().activeEncounter.player
+                    if(!player.completedEvents.includes(tile.index-1)){
+                        onShowModal(Modal.Dialog, e.messages)
+                        player.completedEvents.push(tile.index-1)
+                        onUpdatePlayer({...player})
+                        //TODO: resolve custom event effect(s)
+                        return this.waitOne()
+                    }
                     //Head towards the fog
                     const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
@@ -147,14 +158,18 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             this.executeDroneMove(nextVisibleResource)
                         }
                         else {
-                            this.scene.time.addEvent({
-                                delay: 1000,
-                                callback: this.runUnitTick
-                            })
+                            this.waitOne()
                         }
                     }
                 break
             }
+    }
+
+    waitOne = () => {
+        this.scene.time.addEvent({
+            delay: 1000,
+            callback: this.runUnitTick
+        })
     }
 
     calcVisibleObjects = () => {
