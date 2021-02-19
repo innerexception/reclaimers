@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Body';
-  src: url('./assets/Vastantonius.ttf')  format('truetype')
+  src: url('./assets/GameBoy.ttf')  format('truetype')
 }
 
 * {
@@ -14,8 +14,8 @@ html {
 
 body {
   font-family: 'Body';
-  font-size: 22px;
-  line-height: unset;
+  font-size: 20px;
+  line-height: 1.5em;
   user-select: none;
   image-rendering: pixelated;
   -webkit-font-smoothing: none;
