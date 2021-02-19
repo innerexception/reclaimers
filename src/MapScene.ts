@@ -3,7 +3,7 @@ import { store } from "../App";
 import { defaults } from '../assets/Assets'
 import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, Objectives } from "../constants";
 import CharacterSprite from "./CharacterSprite";
-import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition } from "./util/Util";
+import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "./util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "./uiManager/Thunks";
 import AStar from "./util/AStar";
 import BuildingSprite from "./BuildingSprite";
@@ -54,6 +54,9 @@ export default class MapScene extends Scene {
                 case UIReducerActions.JOIN_ENCOUNTER:
                     if(this.initCompleted) this.initMap(engineEvent.data.map)
                     else this.waitForRender()
+                break
+                case UIReducerActions.MAP_VIEW:
+                    transitionOut(this, 'map', ()=>transitionIn(this.scene.get('map')))
                 break
                 case UIReducerActions.SPAWN_BOT:
                     let bot = engineEvent.data.unit as RCUnit

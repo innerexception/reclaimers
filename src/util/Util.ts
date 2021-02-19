@@ -43,13 +43,9 @@ export const getNewAccount = (name:string, id:string):UserAccount => {
     } 
 }
 
-export const transitionRoom = (scene:Scene) => {
-    transitionOut(scene, ()=>transitionIn(scene))
-}
-
 const rect_dim = 16
 
-export const transitionOut = (scene:Scene, cb:Function) => {
+export const transitionOut = (scene:Scene, nextScene:string, cb:Function) => {
     let rects = []
     let rows = scene.cameras.default.width/rect_dim
     let cols = scene.cameras.default.height/rect_dim
@@ -71,6 +67,10 @@ export const transitionOut = (scene:Scene, cb:Function) => {
     scene.time.addEvent({
         delay: 800,
         callback:()=>{
+            scene.scene.sendToBack(scene.scene.key)
+            scene.scene.sleep(scene.scene.key)
+            scene.scene.wake(nextScene)
+            scene.scene.bringToTop(nextScene)
             cb()
             scene.time.addEvent({
                 delay:200,

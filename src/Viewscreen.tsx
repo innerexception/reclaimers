@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as Phaser from 'phaser'
-import RoomScene from './MapScene'
+import WorldScene from './WorldScene'
 
 interface State {
     phaserInstance?: Phaser.Game
@@ -28,7 +28,7 @@ export default class Viewscreen extends React.Component<State> {
                 pixelArt: true
             },
             scene: [
-                new RoomScene({key: 'map'})
+                new WorldScene({key: 'map'})
             ]
         })
         window.addEventListener("resize", ()=>{
