@@ -1,10 +1,10 @@
 import { GameObjects, Time } from "phaser";
 import { v4 } from "uuid";
-import { store } from "../App";
-import { FONT_DEFAULT, Objectives, RCObjectType, RCUnitType } from '../constants'
-import { NPCData } from "./data/NPCData";
-import MapScene from "./canvas/MapScene";
-import { onSpawnBot, onUpdatePlayer, onUpdateSelectedBuilding } from "./uiManager/Thunks";
+import { store } from "../../App";
+import { FONT_DEFAULT, Objectives, RCObjectType, RCUnitType } from '../../constants'
+import { NPCData } from "../data/NPCData";
+import MapScene from "./MapScene";
+import { onSpawnBot, onUpdatePlayer, onUpdateSelectedBuilding } from "../uiManager/Thunks";
 
 export default class BuildingSprite extends GameObjects.Sprite {
 

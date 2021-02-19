@@ -1,6 +1,6 @@
 import { dispatch, store } from '../../App';
 import { Modal, Scenario, UIReducerActions } from '../../constants';
-import BuildingSprite from '../BuildingSprite';
+import BuildingSprite from '../canvas/BuildingSprite';
 import { canAffordBot } from '../util/Util';
 // const { ipcRenderer } = require('electron');
 

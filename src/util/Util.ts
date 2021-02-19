@@ -4,8 +4,8 @@ import { DIRS } from './AStar'
 import MapScene from '../canvas/MapScene';
 import { defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
-import BuildingSprite from '../BuildingSprite';
-import CharacterSprite from '../CharacterSprite';
+import BuildingSprite from '../canvas/BuildingSprite';
+import CharacterSprite from '../canvas/CharacterSprite';
 
 enum FirebaseAuthError {
     NOT_FOUND='auth/user-not-found',

@@ -1,10 +1,10 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
-import { store } from "../App";
-import { FONT_DEFAULT, RCObjectType, RCUnitType, TerrainLevels } from '../constants'
-import MapScene from "./canvas/MapScene";
-import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit } from "./uiManager/Thunks";
-import AStar from "./util/AStar";
-import { getNearestDropoffForResource, getSightMap, shuffle } from "./util/Util";
+import { store } from "../../App";
+import { FONT_DEFAULT, RCObjectType, RCUnitType, TerrainLevels } from '../../constants'
+import MapScene from "./MapScene";
+import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit } from "../uiManager/Thunks";
+import AStar from "../util/AStar";
+import { getNearestDropoffForResource, getSightMap, shuffle } from "../util/Util";
 
 export default class CharacterSprite extends GameObjects.Sprite {
 

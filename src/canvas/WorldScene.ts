@@ -1,6 +1,6 @@
 import { Scene, GameObjects, Tilemaps } from "phaser";
 import { defaults } from "../../assets/Assets";
-import BuildingSprite from "../BuildingSprite";
+import BuildingSprite from "./BuildingSprite";
 import MapScene from "./MapScene";
 import RegionSprite from "./RegionSprite"
 import { transitionOut } from "../util/Util";
