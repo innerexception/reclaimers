@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
-import MapScene from '../MapScene';
+import MapScene from '../canvas/MapScene';
 import { defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../BuildingSprite';

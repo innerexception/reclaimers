@@ -1,14 +1,14 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
-import { store } from "../App";
-import { defaults } from '../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, Objectives } from "../constants";
-import CharacterSprite from "./CharacterSprite";
-import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "./util/Util";
-import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "./uiManager/Thunks";
-import AStar from "./util/AStar";
-import BuildingSprite from "./BuildingSprite";
-import { defaultDesigns, NPCData } from "./data/NPCData";
-import { Scenarios } from "./data/Scenarios";
+import { store } from "../../App";
+import { defaults } from '../../assets/Assets'
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, Objectives } from "../../constants";
+import CharacterSprite from "../CharacterSprite";
+import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
+import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
+import AStar from "../util/AStar";
+import BuildingSprite from "../BuildingSprite";
+import { defaultDesigns, NPCData } from "../data/NPCData";
+import { Scenarios } from "../data/Scenarios";
 
 enum MouseTarget {
     NONE,MOVE

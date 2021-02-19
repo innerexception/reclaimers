@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as Phaser from 'phaser'
-import WorldScene from './WorldScene'
+import WorldScene from './canvas/WorldScene'
 
 interface State {
     phaserInstance?: Phaser.Game
