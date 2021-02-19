@@ -8,12 +8,13 @@ import { getNewEncounter } from '../util/Util'
 interface Props {
     objectives: Array<Objective>
     match: MapData
+    player: RCPlayerState
 }
 
 export default class ObjectiveView extends React.Component<Props> {
 
     render(){
-        const player = this.props.match.player
+        const player = this.props.player
         const completed = this.props.objectives.filter(e=>player.completedObjectives.includes(e.id))
         const incomplete = this.props.objectives.filter(e=>!player.completedObjectives.includes(e.id))
         return <div style={{overflow:'auto', padding:'10px', background:'black', color: colors.lGreen, fontSize:'18px'}}>

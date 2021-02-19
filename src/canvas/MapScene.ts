@@ -3,7 +3,7 @@ import { store } from "../../App";
 import { defaults } from '../../assets/Assets'
 import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, Objectives } from "../../constants";
 import CharacterSprite from "./CharacterSprite";
-import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
+import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
 import BuildingSprite from "./BuildingSprite";
@@ -26,7 +26,6 @@ export default class MapScene extends Scene {
     initCompleted: boolean
     sounds: Object
     entities: Array<CharacterSprite>
-    targetingAbility: AbilityTargetingData
     mouseTarget: MouseTarget
     tiles: Array<Array<TileInfo>>
     buildings: Array<BuildingSprite>
@@ -52,10 +51,11 @@ export default class MapScene extends Scene {
         if(engineEvent)
             switch(engineEvent.action){
                 case UIReducerActions.JOIN_ENCOUNTER:
-                    if(this.initCompleted) this.initMap(engineEvent.data.map)
+                    if(this.initCompleted) this.initMap(engineEvent.data)
                     else this.waitForRender()
                 break
                 case UIReducerActions.LOGOUT:
+                    this.saveState()
                     transitionOut(this, 'map', ()=>transitionIn(this.scene.get('map')))
                 break
                 case UIReducerActions.SPAWN_BOT:
@@ -63,9 +63,6 @@ export default class MapScene extends Scene {
                     bot.tileX = this.map.worldToTileX(engineEvent.data.building.x)
                     bot.tileY = this.map.worldToTileY(engineEvent.data.building.y)+1
                     this.spawnUnit(bot)
-                break
-                case UIReducerActions.ACTIVATE_ABILITY:
-                    this.startTargetingAbility(engineEvent.data as Ability)
                 break
                 case UIReducerActions.SELECT_DESTINATION:
                     this.mouseTarget = MouseTarget.MOVE
@@ -94,12 +91,23 @@ export default class MapScene extends Scene {
             }
     }
 
-    startTargetingAbility = (ability:Ability) => {
-        if(this.targetingAbility){
-            this.targetingAbility.selectedTargetIds.forEach(id=>this.entities.find(c=>c.entity.id===id).setTargeted(false))
-            this.targetingAbility = null
+    saveState = () => {
+        const state = store.getState()
+        let newState = {
+            map: state.activeEncounter.map,
+            tileData: this.tiles,
+            entities: this.entities.map(e=>e.entity)
         }
-        this.targetingAbility = { type:ability.type, selectedTargetIds: [], validTargetIds: [] }
+        let player = state.onlineAccount
+        let existing = player.savedState.findIndex(s=>s.map === state.activeEncounter.map)
+        if(existing === -1){
+            player.savedState.push({...newState, completedEvents: []})
+        }
+        else player.savedState[existing] = {...player.savedState[existing], ...newState}
+        localStorage.setItem('rc_save', JSON.stringify(player))
+        onUpdatePlayer({...player})
+        this.tweens.killAll()
+        this.time.removeAllEvents()
     }
 
     waitForRender = () => {
@@ -110,51 +118,51 @@ export default class MapScene extends Scene {
                     this.waitForRender()
                 }
             })
-        else this.initMap(store.getState().activeEncounter.map)
+        else this.initMap(store.getState().activeEncounter)
     }
 
-    initMap = (encounter:Scenario) => {
+    initMap = (encounter:MapData) => {
         this.entities.forEach(e=>e.destroy())
         this.entities = []
         this.buildings.forEach(b=>b.destroy())
         this.buildings = []
         if(this.map) this.map.destroy()
-        this.map = this.add.tilemap(encounter)
+        this.map = this.add.tilemap(encounter.map)
         let tiles = this.map.addTilesetImage('OverworldTileset_v03', 'tiles', 16,16) //1,2
         this.map.createDynamicLayer('ground', tiles)
         this.map.createStaticLayer('terrain', tiles)
         this.map.createDynamicLayer('objects', tiles)
         this.map.createDynamicLayer('fog', tiles).setDepth(3)
-        
-        let encounterData = store.getState().activeEncounter
-        if(encounterData){
-            this.map.setLayer('fog').forEachTile(t=>{
-                t.index = RCObjectType.Fog+1
-            })
-            let otherDesigns = [NPCData[RCUnitType.Defender], NPCData[RCUnitType.HMProcessor], NPCData[RCUnitType.RIProcessor]]
-            let base = this.getObjects(RCObjectType.Base)[0]
-            this.carveFogOfWar(4, base.x, base.y)
-            this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y, defaultDesigns))
-            this.getObjects(RCObjectType.InactiveFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveFactory, b.x, b.y, [otherDesigns.pop()])))
-            this.getObjects(RCObjectType.WarFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.WarFactory, b.x, b.y, [otherDesigns.pop()])))
-            
-            //init terrain data
+
+        //init terrain data
+        if(encounter.tileData.length === 0){
             let tileData = new Array<Array<TileInfo>>()
             this.map.setLayer('ground').forEachTile(t=>{
                 if(!tileData[t.x]) tileData[t.x] = []
-                tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index-1), type: t.index }
+                tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index-1), type: t.index, alpha: 1 }
             })
             this.tiles = tileData
+            console.log('new tile data init...')
         }
-        else {
-            //We are loading the prelaunch hub
-            //Run the intro landing tweens
-        }
+        else this.tiles = encounter.tileData
+
+        this.map.setLayer('fog').forEachTile(t=>{
+            t.index = RCObjectType.Fog+1
+            t.alpha = this.tiles[t.x] && this.tiles[t.x][t.y]?.alpha
+        })
+        let otherDesigns = [NPCData[RCUnitType.Defender], NPCData[RCUnitType.HMProcessor], NPCData[RCUnitType.RIProcessor]]
+        let base = this.getObjects(RCObjectType.Base)[0]
+        this.carveFogOfWar(4, base.x, base.y)
+        this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y, defaultDesigns))
+        this.getObjects(RCObjectType.InactiveFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveFactory, b.x, b.y, [otherDesigns.pop()])))
+        this.getObjects(RCObjectType.WarFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.WarFactory, b.x, b.y, [otherDesigns.pop()])))
         
+        encounter.entities.forEach(e=>{
+            this.spawnUnit(e)
+        })
+
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
-        
-        let base = this.getObjects(RCObjectType.Base)[0]
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
         transitionIn(this)
     }
@@ -189,7 +197,7 @@ export default class MapScene extends Scene {
 
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
-        this.initMap(Scenario.LightOfTheWorld)
+        this.initMap(getNewEncounter(Scenario.LightOfTheWorld))
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(5)
         
@@ -326,7 +334,10 @@ export default class MapScene extends Scene {
         for(var i=radius; i>0; i--){
             getCircle(x, y, i).forEach(tuple=>{
                 let tile = this.map.getTileAt(tuple[0], tuple[1])
-                if(tile) tile.alpha = i === radius && tile.alpha === 1 ? 0.5 : 0
+                if(tile){
+                    tile.alpha = i === radius && tile.alpha === 1 ? 0.5 : 0
+                    this.tiles[tuple[0]][tuple[1]].alpha = tile.alpha
+                } 
             })
         }
     }
@@ -353,16 +364,18 @@ export default class MapScene extends Scene {
         scen.objectives.forEach((o:Objective)=>{
             switch(o.id){
                 case Objectives.Purify20:
-                    const p = store.getState().activeEncounter.player
-                    let cleaned = []
-                    this.tiles.forEach(trow=>trow.forEach(tcol=>{
-                        if(tcol.type !== -1 && tcol.toxins.length <= 2)  cleaned.push(tcol)
-                    }))
-                    if(!p.completedObjectives.includes(Objectives.Purify20) && cleaned.length >= 20) {
-                        p.completedObjectives.push(Objectives.Purify20)
-                        onUpdatePlayer({...p})
+                    const p = store.getState().onlineAccount
+                    if(!p.completedObjectives.includes(Objectives.Purify20)){
+                        let cleaned = []
+                        this.tiles.forEach(trow=>trow.forEach(tcol=>{
+                            if(tcol.type !== -1 && tcol.toxins.length <= 2)  cleaned.push(tcol)
+                        }))
+                        if(cleaned.length >= 20) {
+                            p.completedObjectives.push(Objectives.Purify20)
+                            onUpdatePlayer({...p})
+                        }
                     }
-                    break
+                break
             }
         })
     }

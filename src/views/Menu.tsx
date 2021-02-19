@@ -8,7 +8,7 @@ import ObjectiveView from './Objectives';
 import { Scenarios } from '../data/Scenarios';
 
 interface Props {
-    onlineAccount?: UserAccount
+    onlineAccount?: RCPlayerState
     match?: MapData
 }
 
@@ -23,10 +23,14 @@ export default class Menu extends React.Component<Props> {
             <div style={{...AppStyles.modal, width:'400px'}}>
                 <div>
                     <h3>Objectives</h3>
-                    {this.props.match && <ObjectiveView match={this.props.match} objectives={Scenarios.find(s=>s.scenario === this.props.match.map).objectives}/>}
+                    {this.props.match && 
+                    <ObjectiveView 
+                        player={this.props.onlineAccount}
+                        match={this.props.match} 
+                        objectives={Scenarios.find(s=>s.scenario === this.props.match.map).objectives}/>}
                     <hr/>
                     <div style={{marginBottom:'2em'}}>
-                        {Button(true, onLogoutUser, 'Quit')}
+                        {Button(true, onLogoutUser, 'Return to Orbit')}
                     </div>
                     {Button(true, onHideModal, 'Continue')}
                 </div>

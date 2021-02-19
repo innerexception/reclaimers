@@ -1,14 +1,7 @@
-
-interface UserAccount {
-    id:string
-    name:string
-    completedMissionIds: Array<string>
-    savedMission?: MapData
-}
-
 interface TileInfo {
     type: import('./constants').TerrainType
     toxins: Array<import('./constants').ItemType>
+    alpha: number
 }
 
 interface Tuple {
@@ -56,48 +49,19 @@ interface StatusEffectState {
     casterId?: string
 }
 
-interface Ability {
-    type: import('./constants').AbilityType
-    cooldown: number
-    uses: number
-}
-
-interface AbilityData {
-    title: string
-    description: string
-    type: import('./constants').AbilityType
-    cooldownIncrement?: number
-    statusEffects: Array<import('./constants').StatusEffect>
-    damage: number
-    piercing?:number
-    range: number
-    targets: number
-    areaEffectRadius?:number
-    startFrame: number
-    endFrame: number
-    isPassive?: boolean
-    ac?:number
-    weight?:number
-    model?:import('./constants').ItemType
-}
-
-interface AbilityTargetingData {
-    validTargetIds: Array<string>
-    selectedTargetIds: Array<string>
-    type: import('./constants').AbilityType
-}
-
 interface MapData {
-    id:string
-    player: RCPlayerState
     map: import('./constants').Scenario
-    eventLog: Array<string>
+    tileData: Array<Array<TileInfo>>
+    entities: Array<RCUnit>
+    completedEvents: Array<import('./constants').TerrainType>
 }
 
 interface RCPlayerState {
     resources: import('./constants').Resources
     completedObjectives: Array<import('./constants').Objectives>
-    completedEvents: Array<import('./constants').TerrainType>
+    id:string
+    name:string
+    savedState: Array<MapData>
 }
 
 interface RCBuildingState {
@@ -118,25 +82,15 @@ interface Objective {
     purityLevel?:number
 }
 
-interface RCUnitCommand {
-    id:string
-    characterId:string
-    selectedTargetIds?: Array<string>, 
-    type: import('./constants').AbilityType, 
-    path?: Array<Tuple>
-    newUnit?: RCUnit
-}
-
 interface ModalState {
     data?: any
     modal: import('./constants').Modal
 }
 
 interface RState {
-    onlineAccount: UserAccount
+    onlineAccount: RCPlayerState
     modalState: ModalState
     activeEncounter: MapData
-    activeAbility: Ability
     selectedUnit: RCUnit
     selectedTile: TileInfo
     selectedBuilding: RCBuildingState

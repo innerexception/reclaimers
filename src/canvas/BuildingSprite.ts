@@ -47,7 +47,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
             delay: design.buildTime,
             callback: ()=>{
                 onSpawnBot(design, this)
-                const p = store.getState().activeEncounter.player
+                const p = store.getState().onlineAccount
                 if(design.droneType === RCUnitType.ToxinExtractor && !p.completedObjectives.includes(Objectives.BuildExtractor)){
                     p.completedObjectives.push(Objectives.BuildExtractor)
                     onUpdatePlayer({...p})

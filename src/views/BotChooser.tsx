@@ -6,7 +6,8 @@ import { canAffordBot } from '../util/Util';
 
 interface Props {
     encounter?: MapData
-    selectedBuilding: RCBuildingState
+    selectedBuilding?: RCBuildingState
+    player?: RCPlayerState
 }
 
 interface State {
@@ -15,7 +16,8 @@ interface State {
 
 @(connect((state: RState) => ({
     encounter: state.activeEncounter,
-    selectedBuilding: state.selectedBuilding
+    selectedBuilding: state.selectedBuilding,
+    player: state.onlineAccount
 })) as any)
 export default class BotChooser extends React.Component<Props, State> {
 
@@ -29,7 +31,7 @@ export default class BotChooser extends React.Component<Props, State> {
     }
 
     render(){
-        const me = this.props.encounter.player
+        const me = this.props.player
         const defaultDesigns = this.props.selectedBuilding.availableDroneDesigns
         const d = defaultDesigns[this.state.selectedIndex]
         return (

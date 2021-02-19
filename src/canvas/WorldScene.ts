@@ -47,7 +47,7 @@ export default class WorldScene extends Scene {
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, regionMap.widthInPixels, regionMap.heightInPixels)
 
-        let regionName = store.getState().onlineAccount.savedMission?.map || Scenario.LightOfTheWorld
+        let regionName = store.getState().onlineAccount.savedState[0]?.map || Scenario.LightOfTheWorld
         let reg = this.regionSprites.find(r=>r.mapName === regionName)
         this.cameras.main.pan(reg.x, reg.y, 2000)
        
@@ -62,7 +62,10 @@ export default class WorldScene extends Scene {
         this.input.on('pointerdown', (pointer, gameObjects)=> {
             if(gameObjects[0] && !this.originDragPoint){
                 this.focusedItem = gameObjects[0]
-                transitionOut(this, 'town', ()=>onCreateEncounter(getNewEncounter((this.focusedItem as any).mapName)))
+                let scenario = (this.focusedItem as any).mapName as Scenario
+                const player = store.getState().onlineAccount
+                const playerState = player.savedState.find(s=>s.map === scenario)
+                transitionOut(this, 'town', ()=>onCreateEncounter(playerState ? playerState : getNewEncounter(scenario)))
             }
         })
         this.input.on('pointermove', ()=>{

@@ -13,7 +13,7 @@ import Viewscreen from './Viewscreen'
 interface Props {
     modalState?:ModalState
     match?:MapData
-    me?:UserAccount
+    me?:RCPlayerState
 }
 
 @(connect((state: RState) => ({
@@ -44,7 +44,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
                     {this.props.match && 
                     <div style={{position:'absolute', bottom:0, left:0, pointerEvents:'none'}}>
                         <EntityInfo/>
-                        <Actionbar player={this.props.match.player}/>
+                        <Actionbar player={this.props.me}/>
                     </div>}
                 </div>
             </div>

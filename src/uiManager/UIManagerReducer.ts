@@ -10,15 +10,14 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.HIDE_MODAL:
             return { ...state, modalState: null }
         case UIReducerActions.LOGOUT:
-            return {...getInitialState(), engineEvent: {action: UIReducerActions.LOGOUT, data: null }}
+            return { ...state, modalState: {modal: Modal.MainMenu}, engineEvent: {action: UIReducerActions.LOGOUT, data: null }}
         case UIReducerActions.UPDATE_ACCOUNT:
             return { ...state, onlineAccount: {...action.account}}
-        case UIReducerActions.ACTIVATE_ABILITY:
-            return { ...state, activeAbility: action.ability, engineEvent: {action: UIReducerActions.ACTIVATE_ABILITY, data: action.ability } }
-        case UIReducerActions.CLEAR_ABILITY: 
-            return { ...state, activeAbility: null }
         case UIReducerActions.JOIN_ENCOUNTER:
-            let onlineAccount = state.onlineAccount || action.onlineAccount
+            let onlineAccount = state.onlineAccount
+            if(!onlineAccount.savedState.find(s=>s.map)){
+                onlineAccount.savedState.push(action.match)
+            }
             return { ...state, activeEncounter: action.match, modalState: { modal: Modal.Dialog, data: Scenarios.find(s=>s.scenario === action.match.map).intro }, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
@@ -35,14 +34,13 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.SPAWN_BOT:
             const design = action.design as RCUnitData
             design.requiredItems.forEach(i=>{
-                state.activeEncounter.player.resources[i.type] -= i.amount
+                state.onlineAccount.resources[i.type] -= i.amount
             })
             return { ...state, activeEncounter: {...state.activeEncounter}, engineEvent: { action: UIReducerActions.SPAWN_BOT, data: {unit: getUnitFromData(action.design), building: action.building} }}  
         case UIReducerActions.TILE_INFO:
             return { ...state, selectedTile: action.explored ? {...action.tile} : null}
         case UIReducerActions.UPDATE_PLAYER:
-            state.activeEncounter.player=action.player
-            return { ...state, activeEncounter: {...state.activeEncounter} }
+            return { ...state, onlineAccount: action.player, activeEncounter: {...state.activeEncounter} }
         case UIReducerActions.BUILD_PYLON:
             return { ...state, engineEvent: { action: UIReducerActions.BUILD_PYLON, data: null }}
         case UIReducerActions.SELECT_BUILDING:
@@ -68,7 +66,6 @@ const getInitialState = ():RState => {
         onlineAccount: null,
         activeEncounter: null,
         engineEvent: null,
-        activeAbility: null,
         selectedUnit: null,
         selectedTile: null,
         selectedBuilding: null

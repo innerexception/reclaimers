@@ -28,18 +28,20 @@ export const canAffordBot = (resources:Resources, design:RCUnitData) =>
 
 export const getNewEncounter = (map:Scenario):MapData => {
     return {
-        id:v4(),
         map,
-        eventLog: [],
-        player: { resources: defaultResources, completedObjectives: [], completedEvents: []}
+        tileData: [],
+        entities: [],
+        completedEvents: []
     }
 }
 
-export const getNewAccount = (name:string, id:string):UserAccount => {
+export const getNewAccount = (name:string, id:string):RCPlayerState => {
     return {
+        resources: defaultResources,
+        completedObjectives: [],
         id,
         name,
-        completedMissionIds: []
+        savedState: []
     } 
 }
 

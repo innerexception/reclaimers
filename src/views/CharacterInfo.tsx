@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
 import { RCObjectType, RCUnitType } from '../../constants';
 import BotChooser from './BotChooser';
+import { colors } from '../../AppStyles';
 
 interface Props {
     selectedUnit?: RCUnit
@@ -52,6 +53,6 @@ export default class EntityInfo extends React.Component<Props> {
 
 const styles = {
     border: '3px inset',
-    borderColor: 'silver',
+    borderColor: colors.bronze,
     padding:'5px'
 }

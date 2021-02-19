@@ -55,10 +55,11 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     //Check if on an event tile we have not triggered
                     const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground')
                     const e = TileEvents[tile.index-1]
-                    const player = store.getState().activeEncounter.player
-                    if(!player.completedEvents.includes(tile.index-1)){
+                    const player = store.getState().onlineAccount
+                    const mapData = player.savedState.find(s=>s.map === store.getState().activeEncounter.map)
+                    if(e && !mapData.completedEvents.includes(tile.index-1)){
                         onShowModal(Modal.Dialog, e.messages)
-                        player.completedEvents.push(tile.index-1)
+                        mapData.completedEvents.push(tile.index-1)
                         onUpdatePlayer({...player})
                         //TODO: resolve custom event effect(s)
                         return this.waitOne()
@@ -108,7 +109,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                 break
                 case RCUnitType.ToxinExtractor:
                     if(dat.inventory.length === dat.maxInventory){
-                        const player = store.getState().activeEncounter.player
+                        const player = store.getState().onlineAccount
                         let missedDropoff = null
                         let removeResources = []
                         dat.inventory.forEach(i=>{

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
+import { colors } from '../../AppStyles';
 
 interface Props {
     selectedTile?: TileInfo
@@ -35,7 +36,7 @@ export default class TilePortrait extends React.Component<Props> {
 
 const styles = {
     border: '3px inset',
-    borderColor: 'silver',
+    borderColor: colors.bronze,
     padding:'5px',
     minWidth:'200px',
     background:'black'

@@ -1,24 +1,28 @@
 import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles';
 import { Button } from '../util/SharedComponents';
-import { Scenario } from '../../constants';
-import { onCreateEncounter, onLogoutUser, onUpdateAccount } from '../uiManager/Thunks';
 import Footer from '../components/Footer';
-import { getNewAccount, getNewEncounter } from '../util/Util';
+import { getNewAccount } from '../util/Util';
 import { v4 } from 'uuid';
-import { Scenarios } from '../data/Scenarios';
+import { onUpdatePlayer } from '../uiManager/Thunks';
 
 export default class Intro extends React.Component {
 
     componentDidMount(){
-        let account = JSON.parse(localStorage.getItem('rc_save')) as UserAccount
+        let account = JSON.parse(localStorage.getItem('rc_save')) as RCPlayerState
         if(account){
-            onUpdateAccount(account)
+            onUpdatePlayer(account)
         }
         else{
             account = getNewAccount('New Player', v4())
-            onUpdateAccount(account)
+            onUpdatePlayer(account)
         } 
+        localStorage.setItem('rc_save', JSON.stringify(account))
+    }
+
+    clearSave = () => {
+        let account = getNewAccount('New Player', v4())
+        onUpdatePlayer(account)
         localStorage.setItem('rc_save', JSON.stringify(account))
     }
 
@@ -29,7 +33,9 @@ export default class Intro extends React.Component {
                     <h2>Reclaimers</h2>
                     <h5>Copyright 2068 TechnoSerf LLC</h5>
                     <hr/>
-                    {Button(true, onLogoutUser, 'Quit')}
+                    {Button(true, this.clearSave, 'Clear Save')}
+                    <hr/>
+                    {/* {Button(true, onQuit, 'Quit')} */}
                 </div>
                 <Footer/>
             </div>

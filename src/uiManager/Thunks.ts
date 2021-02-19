@@ -17,7 +17,7 @@ export const onHideModal = () => {
     })
 }
 
-export const onLoginUser = (user:UserAccount) => {
+export const onLoginUser = (user:RCPlayerState) => {
     dispatch({
         type: UIReducerActions.LOGIN_SUCCESS,
         user
@@ -44,7 +44,7 @@ export const onLoginFailed = () => {
 
 
 export const onSpawnBot = (design:RCUnitData, building:BuildingSprite) => {
-    const me = store.getState().activeEncounter.player
+    const me = store.getState().onlineAccount
     if(canAffordBot(me.resources, design))
         dispatch({
             type: UIReducerActions.SPAWN_BOT,
@@ -69,14 +69,6 @@ export const onPauseProduction = () => {
 export const onStartBuildPylon = () => {
     dispatch({
         type: UIReducerActions.BUILD_PYLON
-    })
-}
-
-export const onJoinEncounter = (match:MapData, onlineAccount?:UserAccount) => {
-    dispatch({
-        type: UIReducerActions.JOIN_ENCOUNTER,
-        match,
-        onlineAccount
     })
 }
 
@@ -172,23 +164,8 @@ export const onEncounterUpdated = (encounter:MapData) => {
     })
 }
 
-export const onActivateAbility = (ability:Ability) => {
-    dispatch({
-        type: UIReducerActions.ACTIVATE_ABILITY,
-        ability
-    })
-}
-
 export const onClearActiveAbility = () => {
     dispatch({
         type: UIReducerActions.CLEAR_ABILITY
     })
 }
-
-export const onUpdateAccount = (account:UserAccount) => {
-    dispatch({
-        type: UIReducerActions.UPDATE_ACCOUNT,
-        account
-    })
-}
-
