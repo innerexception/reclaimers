@@ -12,8 +12,7 @@ export default class AnimalSprite extends GameObjects.Sprite {
     constructor(scene:MapScene,x:number,y:number, character:RCAnimal){
         super(scene, x,y, character.animalType)
         this.entity = character
-        this.setDisplaySize(16,16)
-        this.play(character.animalType)
+        this.setScale(0.2)
         scene.add.existing(this)
         scene.time.addEvent({
             delay:1000,
@@ -68,6 +67,7 @@ export default class AnimalSprite extends GameObjects.Sprite {
         } 
 
         if(this.visible){
+            this.play(this.entity.animalType, true)
             if(this.currentMove) this.currentMove.stop()
             this.currentMove = this.scene.tweens.timeline({
                 targets: this,    
@@ -82,6 +82,7 @@ export default class AnimalSprite extends GameObjects.Sprite {
                             const pos = path[i]
                             dat.tileX = pos.x
                             dat.tileY = pos.y
+                            this.play(this.entity.animalType, true)
                         }
                     }
                 }),

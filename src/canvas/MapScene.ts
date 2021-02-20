@@ -166,9 +166,11 @@ export default class MapScene extends Scene {
             t.alpha = this.tiles[t.x] && this.tiles[t.x][t.y]?.alpha
         })
         let otherDesigns = [NPCData[RCDroneType.Defender], NPCData[RCDroneType.HMProcessor], NPCData[RCDroneType.RIProcessor]]
-        let base = this.getObjects(RCObjectType.Base)[0]
-        this.carveFogOfWar(4, base.x, base.y)
-        this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y, defaultDesigns))
+        let bases = this.getObjects(RCObjectType.Base)
+        bases.forEach(b=>{
+            this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.Base, b.x, b.y, defaultDesigns))
+            this.carveFogOfWar(4, b.x, b.y)
+        })
         this.getObjects(RCObjectType.InactiveFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveFactory, b.x, b.y, [otherDesigns.pop()])))
         this.getObjects(RCObjectType.WarFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.WarFactory, b.x, b.y, [otherDesigns.pop()])))
         
@@ -178,7 +180,7 @@ export default class MapScene extends Scene {
 
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
-        this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
+        this.cameras.main.centerOn(bases[0].getCenterX(), bases[0].getCenterY())
 
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
         this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(5)
@@ -190,6 +192,12 @@ export default class MapScene extends Scene {
             ease: 'Stepped',
             easeParams: [3],
             yoyo: true
+        })
+
+        this.time.addEvent({
+            delay: 500,
+            loop: true,
+            callback: this.updateFogOfWar
         })
 
         transitionIn(this)
@@ -335,11 +343,17 @@ export default class MapScene extends Scene {
     }
 
     updateFogOfWar = () => {
+        console.log('fog update')
+        this.map.setLayer('fog').forEachTile(t=>{
+            t.alpha = 1
+        })
         this.drones.filter(e=>!e.entity.isAI).forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
+        this.buildings.filter(b=>b.building.type === RCObjectType.Base).forEach(b=>{
+            this.carveFogOfWar(4, b.building.tileX, b.building.tileY)
+        })
     }
 
     carveFogOfWar = (radius:number, x:number, y:number) => {
-        this.map.setLayer('fog')
         this.map.getTileAt(x, y).alpha = 0
         for(var i=radius; i>0; i--){
             getCircle(x, y, i).forEach(tuple=>{

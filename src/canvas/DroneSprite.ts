@@ -147,9 +147,9 @@ export default class DroneSprite extends GameObjects.Sprite {
                         if(toxLength < 3){
                             if(TerrainLevels[tileDat.type-1]){
                                 tile.index = TerrainLevels[tileDat.type-1].reverse()[toxLength]+1
-                                if(Phaser.Math.Between(0, 33)===15){
+                                if(Phaser.Math.Between(0, 1)===1){
                                     const type = RCAnimalTypes[Phaser.Math.Between(0,RCAnimalTypes.length-1)]
-                                    this.scene.spawnAnimal(getAnimalFromData(CreatureData[type]))
+                                    this.scene.spawnAnimal(getAnimalFromData(tile.x, tile.y, CreatureData[type]))
                                 }
                             }
                         }
@@ -236,7 +236,6 @@ export default class DroneSprite extends GameObjects.Sprite {
                             dat.tileX = pos.x
                             dat.tileY = pos.y
                             onUpdateSelectedUnit(dat)
-                            this.scene.updateFogOfWar()
                         }
                     }
                 }),
@@ -246,7 +245,6 @@ export default class DroneSprite extends GameObjects.Sprite {
                     dat.tileX = pos.x
                     dat.tileY = pos.y
                     onUpdateSelectedUnit(dat)
-                    this.scene.updateFogOfWar()
                     this.runUnitTick()
                 }
             });

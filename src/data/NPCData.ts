@@ -7,14 +7,14 @@ export const CreatureData:{[key in RCAnimalType]:RCAnimalData} = {
         name: 'Anchient Sentry',
         animalType: RCAnimalType.Bear,
         maxHp: 2,
-        speed: 1,
+        speed: 0.5,
         sight: 3
     },
     [RCAnimalType.Deer]: {
         name: 'Anchient Sentry',
         animalType: RCAnimalType.Deer,
         maxHp: 2,
-        speed: 1,
+        speed: 0.75,
         sight: 3
     },
     [RCAnimalType.Fox]: {
@@ -35,7 +35,7 @@ export const CreatureData:{[key in RCAnimalType]:RCAnimalData} = {
         name: 'Anchient Sentry',
         animalType: RCAnimalType.Wolf,
         maxHp: 2,
-        speed: 1,
+        speed: 0.8,
         sight: 3
     },
 }
@@ -67,7 +67,7 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         unitType: RCDroneType.ToxinExtractor,
         maxHp: 1,
         speed: 1,
-        sight: 1,
+        sight: 2,
         buildTime: 15000,
         maxInventory: 2,
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
@@ -76,7 +76,7 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         name: 'Ordinater',
         unitType: RCDroneType.Ordinater,
         maxHp: 100,
-        speed: 1,
+        speed: 0.5,
         sight: 2,
         buildTime: 10000,
         maxInventory: 0,

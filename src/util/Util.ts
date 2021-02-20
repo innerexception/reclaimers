@@ -210,13 +210,13 @@ export const getUnitFromData = (data:RCUnitData):RCUnit => {
     }
 }
 
-export const getAnimalFromData = (data:RCAnimalData):RCAnimal => {
+export const getAnimalFromData = (tileX, tileY, data:RCAnimalData):RCAnimal => {
     return {
         ...data, 
         id:v4(),
         hp: data.maxHp,
-        tileX: 0,
-        tileY: 0
+        tileX,
+        tileY
     }
 }
 
