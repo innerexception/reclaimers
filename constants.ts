@@ -52,12 +52,18 @@ export enum RCObjectType {
     Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Town3=90,Fog=87,Pylon=68,WarFactory=91,InactiveFactory=92,LeaderBadge=86
 }
 
-export enum RCUnitType {
+export enum RCDroneType {
     Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, RIProcessor=32, CHProcessor=40, HMProcessor=48,
     AncientSentry=160
 }
 
-export const RCUnitTypes = [RCUnitType.Scout, RCUnitType.ToxinExtractor, RCUnitType.Ordinater, RCUnitType.Defender, RCUnitType.CHProcessor, RCUnitType.HMProcessor, RCUnitType.RIProcessor]
+export const RCUnitTypes = [RCDroneType.Scout, RCDroneType.ToxinExtractor, RCDroneType.Ordinater, RCDroneType.Defender, RCDroneType.CHProcessor, RCDroneType.HMProcessor, RCDroneType.RIProcessor]
+
+export enum RCAnimalType {
+    Rabbit='rabbit',Fox='fox',Bear='bear',Deer='deer',Wolf='wolf'
+}
+
+export const RCAnimalTypes = [RCAnimalType.Bear,RCAnimalType.Deer,RCAnimalType.Fox,RCAnimalType.Rabbit,RCAnimalType.Wolf]
 
 export enum Modal {
     BotCreation, CharacterInfo, Menu,MainMenu,Dialog

@@ -34,6 +34,7 @@ export default class WorldScene extends Scene {
         // this.sounds.gameplay.play({loop: true, volume: 0.2})
 
         this.scene.add('town', new MapScene({ key: 'town'}), true)
+        this.scene.sleep('town')
         this.scene.bringToTop('map')
         let regionMap = this.make.tilemap({ key: 'map'})
         let town1Tileset = regionMap.addTilesetImage('OverworldTileset_v03', 'tiles', 16,16)

@@ -2,10 +2,10 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../canvas/MapScene';
-import { defaultResources, ItemType, RCUnitType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
+import { defaultResources, ItemType, RCDroneType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../canvas/BuildingSprite';
-import CharacterSprite from '../canvas/CharacterSprite';
+import DroneSprite from '../canvas/DroneSprite';
 
 enum FirebaseAuthError {
     NOT_FOUND='auth/user-not-found',
@@ -188,7 +188,7 @@ export const getCircle = (cx: number, cy: number, r: number, topology?:number) =
     return result;
 }
 
-export const canPassTerrainType = (unit:RCUnit, terrainIndex:number) => false
+export const canPassTerrainType = (unit:RCUnit|RCAnimal, terrainIndex:number) => false
 
 export const getSightMap = (x,y,radius, map:Phaser.Tilemaps.Tilemap) => {
     let sightArray = []
@@ -205,7 +205,18 @@ export const getUnitFromData = (data:RCUnitData):RCUnit => {
         hp: data.maxHp,
         tileX: 0,
         tileY: 0,
-        isSwarmLeader: false
+        isSwarmLeader: false,
+        inventory: []
+    }
+}
+
+export const getAnimalFromData = (data:RCAnimalData):RCAnimal => {
+    return {
+        ...data, 
+        id:v4(),
+        hp: data.maxHp,
+        tileX: 0,
+        tileY: 0
     }
 }
 
@@ -215,7 +226,7 @@ interface BaseEntity {
     id: string
 }
 
-export const getNearestDropoffForResource = (processors:Array<CharacterSprite>, res:ItemType, dat:RCUnit) => {
+export const getNearestDropoffForResource = (processors:Array<DroneSprite>, res:ItemType, dat:RCUnit) => {
     let closest = 1000
     let entities = processors.filter(p=>p.entity.processesItems.includes(res)).map(p=>p.entity as BaseEntity)
     let pylon = entities[0]
@@ -229,7 +240,7 @@ export const getNearestDropoffForResource = (processors:Array<CharacterSprite>, 
     return pylon
 }
 
-export const getNearestDrone = (pylons:Array<CharacterSprite>, dat:RCUnit) => {
+export const getNearestDrone = (pylons:Array<DroneSprite>, dat:RCUnit) => {
     let closest = 1000
     let pylon = pylons[0]
     pylons.forEach(p=>{
@@ -244,13 +255,13 @@ export const getNearestDrone = (pylons:Array<CharacterSprite>, dat:RCUnit) => {
 
 export const canAttractDrone = (leader:RCUnit, drone:RCUnit) => {
     if(drone.swarmLeaderId || drone.id ===leader.id) return false
-    switch(leader.droneType){
-        case RCUnitType.HMProcessor:
-        case RCUnitType.RIProcessor:
-        case RCUnitType.CHProcessor:
-            return drone.droneType === RCUnitType.ToxinExtractor
-        case RCUnitType.Defender:
-            return drone.droneType === RCUnitType.Defender
+    switch(leader.unitType){
+        case RCDroneType.HMProcessor:
+        case RCDroneType.RIProcessor:
+        case RCDroneType.CHProcessor:
+            return drone.unitType === RCDroneType.ToxinExtractor
+        case RCDroneType.Defender:
+            return drone.unitType === RCDroneType.Defender
     }
     return false
 }

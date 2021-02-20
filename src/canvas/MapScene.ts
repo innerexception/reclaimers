@@ -1,14 +1,15 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../../App";
 import { defaults } from '../../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCUnitType, Objectives } from "../../constants";
-import CharacterSprite from "./CharacterSprite";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes } from "../../constants";
+import DroneSprite from "./DroneSprite";
 import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
 import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
 import BuildingSprite from "./BuildingSprite";
 import { defaultDesigns, NPCData } from "../data/NPCData";
 import { Scenarios } from "../data/Scenarios";
+import AnimalSprite from "./AnimalSprite";
 
 enum MouseTarget {
     NONE,MOVE
@@ -25,14 +26,16 @@ export default class MapScene extends Scene {
     g: GameObjects.Graphics
     initCompleted: boolean
     sounds: Object
-    entities: Array<CharacterSprite>
+    drones: Array<DroneSprite>
+    animals: Array<AnimalSprite>
     mouseTarget: MouseTarget
     tiles: Array<Array<TileInfo>>
     buildings: Array<BuildingSprite>
 
     constructor(config){
         super(config)
-        this.entities = []
+        this.drones = []
+        this.animals = []
         this.buildings = []
         this.unsubscribeRedux = store.subscribe(this.onReduxUpdate)
     }
@@ -75,16 +78,16 @@ export default class MapScene extends Scene {
                 break
                 case UIReducerActions.GATHER:
                     //add next closest drone
-                    const leader = this.entities.find(e=>e.entity.id === engineEvent.data)
+                    const leader = this.drones.find(e=>e.entity.id === engineEvent.data)
                     leader.setSwarmLeader(true)
-                    const eligibleDrones = this.entities.filter(e=>canAttractDrone(leader.entity, e.entity))
+                    const eligibleDrones = this.drones.filter(e=>canAttractDrone(leader.entity, e.entity))
                     const nextDrone = getNearestDrone(eligibleDrones, leader.entity)
                     if(nextDrone) nextDrone.swarmLeaderId = leader.entity.id
                 break
                 case UIReducerActions.UNGATHER:
-                    const oldLeader = this.entities.find(e=>e.entity.id === engineEvent.data)
+                    const oldLeader = this.drones.find(e=>e.entity.id === engineEvent.data)
                     oldLeader.setSwarmLeader(false)
-                    this.entities.forEach(e=>{
+                    this.drones.forEach(e=>{
                         if(e.entity.swarmLeaderId === engineEvent.data) e.entity.swarmLeaderId = null
                     })
                 break
@@ -93,10 +96,13 @@ export default class MapScene extends Scene {
 
     saveState = () => {
         const state = store.getState()
+        this.map.setLayer('ground').forEachTile(t=>{
+            this.tiles[t.x][t.y].type = t.index
+        })
         let newState = {
             map: state.activeEncounter.map,
             tileData: this.tiles,
-            entities: this.entities.map(e=>e.entity)
+            entities: this.drones.map(e=>e.entity)
         }
         let player = state.onlineAccount
         let existing = player.savedState.findIndex(s=>s.map === state.activeEncounter.map)
@@ -106,7 +112,10 @@ export default class MapScene extends Scene {
         else player.savedState[existing] = {...player.savedState[existing], ...newState}
         localStorage.setItem('rc_save', JSON.stringify(player))
         onUpdatePlayer({...player})
-        this.tweens.killAll()
+        this.tweens.getAllTweens().forEach(t=>{
+            t.stop()
+            t.targets?.forEach(t=>(t as any).destroy())
+        })
         this.time.removeAllEvents()
     }
 
@@ -122,8 +131,9 @@ export default class MapScene extends Scene {
     }
 
     initMap = (encounter:MapData) => {
-        this.entities.forEach(e=>e.destroy())
-        this.entities = []
+        
+        this.drones.forEach(e=>e.destroy())
+        this.drones = []
         this.buildings.forEach(b=>b.destroy())
         this.buildings = []
         if(this.map) this.map.destroy()
@@ -144,13 +154,18 @@ export default class MapScene extends Scene {
             this.tiles = tileData
             console.log('new tile data init...')
         }
-        else this.tiles = encounter.tileData
+        else{
+            this.tiles = encounter.tileData
+            this.map.setLayer('ground').forEachTile(t=>{
+                t.index = this.tiles[t.x][t.y].type
+            })
+        } 
 
         this.map.setLayer('fog').forEachTile(t=>{
             t.index = RCObjectType.Fog+1
             t.alpha = this.tiles[t.x] && this.tiles[t.x][t.y]?.alpha
         })
-        let otherDesigns = [NPCData[RCUnitType.Defender], NPCData[RCUnitType.HMProcessor], NPCData[RCUnitType.RIProcessor]]
+        let otherDesigns = [NPCData[RCDroneType.Defender], NPCData[RCDroneType.HMProcessor], NPCData[RCDroneType.RIProcessor]]
         let base = this.getObjects(RCObjectType.Base)[0]
         this.carveFogOfWar(4, base.x, base.y)
         this.buildings.push(new BuildingSprite(this, base.getCenterX(), base.getCenterY(), RCObjectType.Base, base.x, base.y, defaultDesigns))
@@ -164,13 +179,26 @@ export default class MapScene extends Scene {
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         this.cameras.main.centerOn(base.getCenterX(), base.getCenterY())
+
+        this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
+        this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(5)
+        this.add.tween({
+            targets: [this.selectIcon],
+            scale: 0.5,
+            duration: 1000,
+            repeat: -1,
+            ease: 'Stepped',
+            easeParams: [3],
+            yoyo: true
+        })
+
         transitionIn(this)
     }
 
-    passableTile = (tileX:number, tileY:number, unit:RCUnit) => {
+    passableTile = (tileX:number, tileY:number, unit:RCUnit|RCAnimal) => {
         const tile = this.map.getTileAt(tileX, tileY, false, 'ground')
         if(tile){
-            if(this.entities.find(c=>{
+            if(this.drones.find(c=>{
                 const dat = c.entity
                 if(dat.tileX === unit.tileX && dat.tileY === unit.tileY) return false
                 return c.entity.id !== unit.id && dat.tileX === tileX && dat.tileY === tileY
@@ -185,21 +213,9 @@ export default class MapScene extends Scene {
 
     create = () =>
     {
-
-        //World map
-        // let regionMap = this.make.tilemap({ key: 'map'})
-        // let town1Tileset = regionMap.addTilesetImage('galletcity_tiles', 'city_packed')
-        // regionMap.createStaticLayer('ocean', town1Tileset)
-        // regionMap.createStaticLayer('ground', town1Tileset)
-        // regionMap.createStaticLayer('region_sprites', town1Tileset)
-        // let regionSprites = regionMap.createFromObjects('regions', 'region', { key: 'overlay_white', visible:true })
-        // this.regionSprites = regionSprites.filter(rs=>findValue(rs.data, 'mapName')).map(r=>new RegionSprite(this, r.x,r.y,'overlay_white',r.displayWidth, r.displayHeight, r.data))
-
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
         this.initMap(getNewEncounter(Scenario.LightOfTheWorld))
-        this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
-        this.selectIcon = this.add.image(this.selectedTile.x, this.selectedTile.y, 'selected').setDepth(5)
         
         // this.sounds = {
         //     border: this.sound.add('border'),
@@ -208,21 +224,19 @@ export default class MapScene extends Scene {
         
         RCUnitTypes.forEach(type=>{
             this.anims.create({
-                key: type.toString(),
+                key: 'bot-sprites'+type,
                 frames: this.anims.generateFrameNumbers('bot-sprites', { start: type, end: type+6 }),
                 frameRate: 4,
                 repeat: -1
             });
         })
-        
-        this.add.tween({
-            targets: [this.selectIcon],
-            scale: 0.5,
-            duration: 1000,
-            repeat: -1,
-            ease: 'Stepped',
-            easeParams: [3],
-            yoyo: true
+        RCAnimalTypes.forEach(type=>{
+            this.anims.create({
+                key: type,
+                frames: this.anims.generateFrameNumbers(type, { start: 0, end: 6 }),
+                frameRate: 4,
+                repeat: 1
+            });
         })
         
         this.input.mouse.disableContextMenu()
@@ -259,19 +273,19 @@ export default class MapScene extends Scene {
             if(!state.activeEncounter) return
             let object = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'objects')
             if(GameObjects[0]){
-                if((GameObjects[0] as CharacterSprite).entity){
-                    const entity = (GameObjects[0] as CharacterSprite).entity
+                if((GameObjects[0] as DroneSprite).entity){
+                    const entity = (GameObjects[0] as DroneSprite).entity
                     if(entity.isAI) return 
-                    if(state.selectedUnit) this.entities.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
+                    if(state.selectedUnit) this.drones.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
                     if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
-                    this.entities.find(e=>e.entity.id === entity.id).setTargeted(true)
+                    this.drones.find(e=>e.entity.id === entity.id).setTargeted(true)
                     onSelectedUnit(entity)
                     this.mouseTarget = MouseTarget.MOVE
                     return
                 } 
                 else if((GameObjects[0] as BuildingSprite).building){
                     const building = (GameObjects[0] as BuildingSprite).building
-                    if(state.selectedUnit) this.entities.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
+                    if(state.selectedUnit) this.drones.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
                     if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
                     this.buildings.find(e=>e.building.id === building.id).setTargeted(true)
                     onSelectedBuilding(building)
@@ -305,7 +319,7 @@ export default class MapScene extends Scene {
         let targetTile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
         if(targetTile && state.selectedUnit){
             const img = this.add.image(targetTile.getCenterX(), targetTile.getCenterY(), 'selected').setTint(0x00ff00).setDepth(5)
-            const unit = this.entities.find(e=>e.entity.id === state.selectedUnit.id)
+            const unit = this.drones.find(e=>e.entity.id === state.selectedUnit.id)
             const dat = unit.entity
             const tile = this.map.getTileAtWorldXY(unit.x, unit.y, false, undefined, 'ground')
             const path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.passableTile(tileX, tileY, dat)).compute(tile.x, tile.y)
@@ -316,16 +330,12 @@ export default class MapScene extends Scene {
                 duration: 500,
                 onComplete: ()=>img.destroy()
             })
-            this.entities.find(e=>e.entity.id === state.selectedUnit.id).executeDroneMove(targetTile)
+            this.drones.find(e=>e.entity.id === state.selectedUnit.id).executeMove(targetTile)
         }
     }
 
-    onCompleteMove = (unit:RCUnit)=> {
-        this.entities.find(e=>e.entity.id === unit.id)?.runUnitTick()
-    }
-
     updateFogOfWar = () => {
-        this.entities.filter(e=>!e.entity.isAI).forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
+        this.drones.filter(e=>!e.entity.isAI).forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
     }
 
     carveFogOfWar = (radius:number, x:number, y:number) => {
@@ -382,11 +392,11 @@ export default class MapScene extends Scene {
 
     spawnUnit = (unit:RCUnit) => {
         let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
-        this.entities.push(new CharacterSprite(this, tile.getCenterX(), tile.getCenterY(), unit.droneType, unit))
+        this.drones.push(new DroneSprite(this, tile.getCenterX(), tile.getCenterY(), unit.unitType, unit))
     }
 
-    destroyUnit = (unitId:string) => {
-        const i = this.entities.findIndex(u=>u.entity.id === unitId)
-        this.entities.splice(i,1)[0].destroy()
+    spawnAnimal = (unit:RCAnimal) => {
+        let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
+        this.animals.push(new AnimalSprite(this, tile.getCenterX(), tile.getCenterY(), unit))
     }
 }

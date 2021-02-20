@@ -2,8 +2,8 @@ import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
-import { RCObjectType, RCUnitType } from '../../constants';
-import BotChooser from './BotChooser';
+import { RCObjectType, RCDroneType } from '../../constants';
+import BuildingInfo from './BuildingInfo';
 import { colors } from '../../AppStyles';
 
 interface Props {
@@ -35,7 +35,7 @@ export default class EntityInfo extends React.Component<Props> {
                         </div>)}
                     </h5>
                     <div>
-                        {(unitData.droneType == RCUnitType.Defender || unitData.processesItems)
+                        {(unitData.unitType == RCDroneType.Defender || unitData.processesItems)
                             && Button(true, ()=>onGatherUnits(unitData.id), 'Swarm')}
                         {unitData.isSwarmLeader && Button(true, ()=>onUnGatherUnits(unitData.id), 'Release')}
                     </div>
@@ -43,7 +43,7 @@ export default class EntityInfo extends React.Component<Props> {
                 {buildDat &&
                 <div>
                     {buildDat.type === RCObjectType.Base && 
-                        <BotChooser selectedBuilding={buildDat}/>}
+                        <BuildingInfo selectedBuilding={buildDat}/>}
                 </div>}
                 {!buildDat && !unitData && <h4>No Selection</h4>}
             </div>
@@ -54,5 +54,6 @@ export default class EntityInfo extends React.Component<Props> {
 const styles = {
     border: '3px inset',
     borderColor: colors.bronze,
+    background:'black',
     padding:'5px'
 }

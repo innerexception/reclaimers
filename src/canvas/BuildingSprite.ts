@@ -1,7 +1,7 @@
 import { GameObjects, Time } from "phaser";
 import { v4 } from "uuid";
 import { store } from "../../App";
-import { FONT_DEFAULT, Objectives, RCObjectType, RCUnitType } from '../../constants'
+import { FONT_DEFAULT, Objectives, RCObjectType, RCDroneType } from '../../constants'
 import { NPCData } from "../data/NPCData";
 import MapScene from "./MapScene";
 import { onSpawnBot, onUpdatePlayer, onUpdateSelectedBuilding } from "../uiManager/Thunks";
@@ -31,7 +31,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
         scene.add.existing(this)
 
         if(building === RCObjectType.WarFactory){
-            this.resetProduction(NPCData[RCUnitType.AncientSentry])
+            this.resetProduction(NPCData[RCDroneType.AncientSentry])
         }
     }
         
@@ -48,11 +48,11 @@ export default class BuildingSprite extends GameObjects.Sprite {
             callback: ()=>{
                 onSpawnBot(design, this)
                 const p = store.getState().onlineAccount
-                if(design.droneType === RCUnitType.ToxinExtractor && !p.completedObjectives.includes(Objectives.BuildExtractor)){
+                if(design.unitType === RCDroneType.ToxinExtractor && !p.completedObjectives.includes(Objectives.BuildExtractor)){
                     p.completedObjectives.push(Objectives.BuildExtractor)
                     onUpdatePlayer({...p})
                 }
-                if(design.droneType === RCUnitType.CHProcessor && !p.completedObjectives.includes(Objectives.BuildProcessor)){
+                if(design.unitType === RCDroneType.CHProcessor && !p.completedObjectives.includes(Objectives.BuildProcessor)){
                     p.completedObjectives.push(Objectives.BuildProcessor)
                     onUpdatePlayer({...p})
                 }

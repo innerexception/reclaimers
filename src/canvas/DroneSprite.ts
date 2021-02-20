@@ -1,12 +1,13 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../../App";
-import { FONT_DEFAULT, Modal, RCObjectType, RCUnitType, TerrainLevels, TileEvents } from '../../constants'
+import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEvents, RCAnimalTypes } from '../../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
-import { getNearestDropoffForResource, getSightMap, shuffle } from "../util/Util";
+import { getAnimalFromData, getNearestDropoffForResource, getSightMap, getUnitFromData, shuffle } from "../util/Util";
+import { CreatureData, NPCData } from "../data/NPCData";
 
-export default class CharacterSprite extends GameObjects.Sprite {
+export default class DroneSprite extends GameObjects.Sprite {
 
     entity: RCUnit
     reticle: GameObjects.Image
@@ -22,7 +23,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         this.g.lineStyle(1, 0xff0000, 1)
         this.entity = character
         this.setDisplaySize(16,16)
-        this.play(character.droneType.toString())
+        this.play('bot-sprites'+character.unitType)
         this.setInteractive()
         scene.add.existing(this)
         scene.time.addEvent({
@@ -36,10 +37,10 @@ export default class CharacterSprite extends GameObjects.Sprite {
             this.setTargeted(false)
             unSelectedUnit()
         }
-        this.scene.entities.forEach(e=>{
+        this.scene.drones.forEach(e=>{
             if(e.entity.swarmLeaderId === this.entity.id) e.entity.swarmLeaderId=''
         })
-        this.scene.entities.splice(this.scene.entities.findIndex(e=>e.entity.id===this.entity.id), 1)
+        this.scene.drones.splice(this.scene.drones.findIndex(e=>e.entity.id===this.entity.id), 1)
         this.destroy()
     }
 
@@ -50,8 +51,8 @@ export default class CharacterSprite extends GameObjects.Sprite {
         }
         let dat = this.entity
         onUpdateSelectedUnit(dat)
-        switch(dat.droneType){
-                case RCUnitType.Scout:
+        switch(dat.unitType){
+                case RCDroneType.Scout:
                     //Check if on an event tile we have not triggered
                     const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground')
                     const e = TileEvents[tile.index-1]
@@ -68,13 +69,13 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
                     const nextVisible = fogTiles.find(t=>t.alpha === 1)
                     if(nextVisible){
-                        this.executeDroneMove(nextVisible)
+                        this.executeMove(nextVisible)
                     }
                     else {
                         this.roam()
                     }
                 break
-                case RCUnitType.Ordinater:
+                case RCDroneType.Ordinater:
                     //1. Check if dormant factory in sight range
                     const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
                     const fac = visibleTiles.find(t=>this.scene.buildings.find(b=>b.building.type === RCObjectType.WarFactory && b.building.tileX === t.x && b.building.tileY === t.y))
@@ -89,31 +90,31 @@ export default class CharacterSprite extends GameObjects.Sprite {
                             this.gc()
                         }
                         else {
-                            this.executeDroneMove(fac)
+                            this.executeMove(fac)
                         }
                     }
                 break
-                case RCUnitType.Defender:
+                case RCDroneType.Defender:
                     //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
-                    const target = this.calcVisibleObjects().find(c=>c.entity.droneType === RCUnitType.AncientSentry)
+                    const target = this.calcVisibleObjects().find(c=>c.entity.unitType === RCDroneType.AncientSentry)
                     if(target) this.damageToTarget(target)
                     this.roam()
                 break
-                case RCUnitType.AncientSentry:
+                case RCDroneType.AncientSentry:
                     //Basically any mechanical runs this branch
                     //Same as defender ai with paramter mods
-                    const target2 = this.calcVisibleObjects().find(c=>c.entity.droneType !== RCUnitType.AncientSentry)
+                    const target2 = this.calcVisibleObjects().find(c=>c.entity.unitType !== RCDroneType.AncientSentry)
                     if(target2) this.damageToTarget(target2)
                     this.roam()
                     //Sometimes drops lore when killed
                 break
-                case RCUnitType.ToxinExtractor:
+                case RCDroneType.ToxinExtractor:
                     if(dat.inventory.length === dat.maxInventory){
                         const player = store.getState().onlineAccount
                         let missedDropoff = null
                         let removeResources = []
                         dat.inventory.forEach(i=>{
-                            let base = getNearestDropoffForResource(this.scene.entities.filter(e=>e.entity.processesItems),i,dat)
+                            let base = getNearestDropoffForResource(this.scene.drones.filter(e=>e.entity.processesItems),i,dat)
                             if(base.tileX === dat.tileX && base.tileY === dat.tileY){
                                 if(player.resources[i] !== undefined) {
                                     player.resources[i]++
@@ -129,14 +130,14 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
                         onUpdatePlayer(player)
                         if(missedDropoff){
-                            return this.executeDroneMove(this.scene.map.getTileAt(missedDropoff.tileX, missedDropoff.tileY, false, 'ground'))
+                            return this.executeMove(this.scene.map.getTileAt(missedDropoff.tileX, missedDropoff.tileY, false, 'ground'))
                         } 
                         return this.runUnitTick()
                     }
                     
                     //Head towards a revealed resource patch that you can extract:
                     const tileDat = this.scene.tiles[dat.tileX][dat.tileY]
-                    const tilei = tileDat.toxins.findIndex(x=>this.scene.entities.find(e=>e.entity.processesItems?.includes(x)))
+                    const tilei = tileDat.toxins.findIndex(x=>this.scene.drones.find(e=>e.entity.processesItems?.includes(x)))
                     if(tilei!==-1){
                         let tox = tileDat.toxins.splice(tilei,1)
                         this.scene.checkObjectives()
@@ -144,19 +145,25 @@ export default class CharacterSprite extends GameObjects.Sprite {
                         const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground') 
                         const toxLength = tileDat.toxins.length
                         if(toxLength < 3){
-                            tile.index = TerrainLevels[tileDat.type-1].reverse()[toxLength]+1
+                            if(TerrainLevels[tileDat.type-1]){
+                                tile.index = TerrainLevels[tileDat.type-1].reverse()[toxLength]+1
+                                if(Phaser.Math.Between(0, 33)===15){
+                                    const type = RCAnimalTypes[Phaser.Math.Between(0,RCAnimalTypes.length-1)]
+                                    this.scene.spawnAnimal(getAnimalFromData(CreatureData[type]))
+                                }
+                            }
                         }
                         this.floatResourceAndContinue(tox[0], this.runUnitTick)
                     }
                     else {
-                        const visibleTiles = shuffle(this.scene.getVisibleTiles(dat, 'ground'))
-                        const nextVisibleResource = visibleTiles.find(t=>
+                        const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
+                        const nextVisibleResource = shuffle(visibleTiles).find(t=>
                             this.scene.tiles[t.x][t.y].toxins.some(x=>
-                                this.scene.entities.find(e=>e.entity.processesItems?.includes(x))
+                                this.scene.drones.find(e=>e.entity.processesItems?.includes(x))
                                 && this.scene.passableTile(t.x, t.y, dat)
                         ))
                         if(nextVisibleResource){
-                            this.executeDroneMove(nextVisibleResource)
+                            this.executeMove(nextVisibleResource)
                         }
                         else {
                             this.waitOne()
@@ -175,7 +182,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
 
     calcVisibleObjects = () => {
         const visibilityMap = getSightMap(this.entity.tileX, this.entity.tileY, this.entity.sight, this.scene.map)
-        return this.scene.entities.filter(c=>c.entity.id !== this.entity.id).filter(c=>
+        return this.scene.drones.filter(c=>c.entity.id !== this.entity.id).filter(c=>
             visibilityMap[c.entity.tileX] && visibilityMap[c.entity.tileX][c.entity.tileY]
         )
     }
@@ -187,22 +194,19 @@ export default class CharacterSprite extends GameObjects.Sprite {
         let y = Phaser.Math.Between(0,1)
         let candidate = {x: x===1 ?dat.tileX-1 : dat.tileX+1, y: y===1 ? dat.tileY-1 : dat.tileY+1}
         let t = this.scene.map.getTileAt(candidate.x, candidate.y, false, 'ground')
-        if(t && this.scene.passableTile(t.x, t.y, dat)) this.executeDroneMove(t)
+        if(t && this.scene.passableTile(t.x, t.y, dat)) this.executeMove(t)
         else{
-            this.scene.time.addEvent({
-                delay: 1000,
-                callback: this.runUnitTick
-            })
+            this.waitOne()
         } 
     }
 
-    executeDroneMove = (targetTile:Tilemaps.Tile) => {
+    executeMove = (targetTile:Tilemaps.Tile) => {
         const dat = this.entity
         let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
         
         if(dat.swarmLeaderId){
             //TODO: if more than 3 tiles from leader, move towards leader
-            const leader = this.scene.entities.find(c=>c.entity.id === dat.swarmLeaderId)
+            const leader = this.scene.drones.find(c=>c.entity.id === dat.swarmLeaderId)
             const dist = Phaser.Math.Distance.Between(leader.entity.tileX, leader.entity.tileY, dat.tileX, dat.tileY)
             if(dist > 3){
                 path = new AStar(leader.entity.tileX, leader.entity.tileY, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
@@ -211,10 +215,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
               
         if(path.length === 0){
             //This unit is currently blocked and has no valid movement path, so we wait one and see if we are unblocked
-            this.scene.time.addEvent({
-                delay: 1000,
-                callback: this.roam
-            })
+            this.waitOne()
             return 
         } 
 
@@ -246,7 +247,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
                     dat.tileY = pos.y
                     onUpdateSelectedUnit(dat)
                     this.scene.updateFogOfWar()
-                    this.scene.onCompleteMove(dat)
+                    this.runUnitTick()
                 }
             });
         }
@@ -254,7 +255,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
             const pos = path[path.length-1]
             dat.tileX = pos.x
             dat.tileY = pos.y
-            this.scene.onCompleteMove(dat)
+            this.runUnitTick()
         }
     }
 
@@ -271,7 +272,7 @@ export default class CharacterSprite extends GameObjects.Sprite {
         })
     }
 
-    damageToTarget = (target:CharacterSprite) => {
+    damageToTarget = (target:DroneSprite) => {
         this.g.strokeLineShape(new Geom.Line(this.x, this.y, target.getCenter().x, target.getCenter().y))
         this.scene.time.addEvent({
             delay: 75,

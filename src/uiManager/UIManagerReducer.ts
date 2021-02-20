@@ -15,10 +15,12 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, onlineAccount: {...action.account}}
         case UIReducerActions.JOIN_ENCOUNTER:
             let onlineAccount = state.onlineAccount
+            let modalState = { modal: Modal.Menu }
             if(!onlineAccount.savedState.find(s=>s.map)){
                 onlineAccount.savedState.push(action.match)
+                modalState = { modal: Modal.Dialog, data: Scenarios.find(s=>s.scenario === action.match.map).intro } as any
             }
-            return { ...state, activeEncounter: action.match, modalState: { modal: Modal.Dialog, data: Scenarios.find(s=>s.scenario === action.match.map).intro }, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
+            return { ...state, activeEncounter: action.match, modalState, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
         case UIReducerActions.ENCOUNTER_UPDATED:
             return { ...state, activeEncounter: {...action.encounter}, engineEvent: { action: UIReducerActions.ENCOUNTER_UPDATED, data: action.encounter } }  
         case UIReducerActions.SELECT_UNIT:
@@ -40,7 +42,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.TILE_INFO:
             return { ...state, selectedTile: action.explored ? {...action.tile} : null}
         case UIReducerActions.UPDATE_PLAYER:
-            return { ...state, onlineAccount: action.player, activeEncounter: {...state.activeEncounter} }
+            return { ...state, onlineAccount: action.player}
         case UIReducerActions.BUILD_PYLON:
             return { ...state, engineEvent: { action: UIReducerActions.BUILD_PYLON, data: null }}
         case UIReducerActions.SELECT_BUILDING:

@@ -14,7 +14,7 @@ interface UnitMove {
     route: Array<Tuple>
 }
 
-interface RCUnit extends BasePCData {
+interface RCUnit extends RCUnitData {
     id:string
     isAI?:boolean
     isSwarmLeader: boolean
@@ -22,24 +22,36 @@ interface RCUnit extends BasePCData {
     hp:number
     tileX: number
     tileY: number
+    unitType: import('./constants').RCDroneType
+    inventory: Array<import('./constants').ItemType>
 }
 
-interface RCUnitData extends BasePCData {
+interface RCAnimal extends RCAnimalData {
+    id:string
+    hp:number
+    tileX: number
+    tileY: number
+}
+
+interface RCAnimalData {
+    animalType: import('./constants').RCAnimalType
+    name:string 
+    speed: number
+    sight: number
+    maxHp: number
+}
+
+interface RCUnitData {
+    unitType: import('./constants').RCDroneType
     discovered?:boolean
     isAI?:boolean
     buildTime: number
     requiredItems: Array<{type: import('./constants').ItemType, amount:number}>
-}
-
-interface BasePCData {
     name: string
-    droneType: import('./constants').RCUnitType
     maxHp: number
     speed: number
     sight: number
-    statusEffect: Array<StatusEffectState>
     processesItems?: Array<import('./constants').ItemType>
-    inventory: Array<import('./constants').ItemType>
     maxInventory: number
 }
 

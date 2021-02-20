@@ -19,7 +19,7 @@ interface State {
     selectedBuilding: state.selectedBuilding,
     player: state.onlineAccount
 })) as any)
-export default class BotChooser extends React.Component<Props, State> {
+export default class BuildingInfo extends React.Component<Props, State> {
 
     state:State = { selectedIndex: 0 }
 
