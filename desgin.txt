@@ -38,7 +38,6 @@ build a network of point to point charging stations to keep the bots moving
 1. Flesh out tutorial map events and polish mission
 
 19. Objectives are global and can require changing levels to complete
-15.5 Scouts can enter special tiles and trigger events
 16. inactive factories are guarded by fixed groups of creatures
 15. villages and caves sometimes produce enemy creatures (creature probability table is tile based)
 11. If swarm leader is selected, draw lines to swarm members?
@@ -102,3 +101,35 @@ Cleanse enough land for the people to grow enough food for 500 population
 
 Map 6: The war at home
 Defend the people & increase population to 1000
+
+
+Objectives are global
+
+1. Tutorial set
+    -Basic scouting
+    -Discovery events
+        -Origin story
+        -Human remains -> leads to
+    -Basic processor pattern (build it)
+    -Basic extractor pattern (build it)
+    -Coordinates of new base (unlock a map area)
+       
+2. Combat set
+    -First unit lost -> search for a defender pattern
+    -Build a defender
+    -Discover first War Factory -> build an Ordinater
+    -Capture a War Factory -> Origin story -> unlock a new region
+    
+3. Reclaiming set
+    -Clean X tiles to Y purity
+    -Restore X fauna of Y type
+    -With enough fauna -> humans emerge from caves
+    -IF enough humans -> villages begin to be restored
+        -> choose if you let humans develop, kill them, or limit their development
+    -If hands off and enough humans, they attack. Kill of be killed.
+    -If you kill them early, the planet thrives and the drones rust away.
+    -If you limit development -> the planet thrives and the drones are repaired occasionally.
+    -At some point you need the humans to repair drones. If they are dead this is a problem.
+
+    
+        
