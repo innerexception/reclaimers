@@ -19,7 +19,7 @@ interface State {
     selectedBuilding: state.selectedBuilding,
     player: state.onlineAccount
 })) as any)
-export default class BuildingInfo extends React.Component<Props, State> {
+export default class FactoryInfo extends React.Component<Props, State> {
 
     state:State = { selectedIndex: 0 }
 
@@ -59,7 +59,7 @@ export default class BuildingInfo extends React.Component<Props, State> {
                             {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
                         </div>
                     </div>
-                    {Button(canAffordBot(me.resources, d), ()=>onChangeProduction(d), 'Start')}
+                    {Button(canAffordBot(me.resources, d.requiredItems), ()=>onChangeProduction(d), 'Start')}
                     {Button(true, onPauseProduction, 'Pause')}
                 </div>
         )

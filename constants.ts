@@ -1,8 +1,4 @@
-export const CharAppearanceStart = 5074
-export const CharAppearanceEnd = 5189
-export const WeaponBackground = 1806
 
-export const MAX_TURN_TIMER=100
 export const FONT_DEFAULT = {
     fontFamily: 'Body', 
     fontSize: '8px',
@@ -49,15 +45,14 @@ export const StatusEffectData = {
 }
 
 export enum RCObjectType {
-    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Town3=90,Fog=87,Pylon=68,WarFactory=91,InactiveFactory=92,LeaderBadge=86
+    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Fog=87,Pylon=68,WarFactory=91,InactiveFactory=92,LeaderBadge=86,Lab=90,InactiveLab=93
 }
 
 export enum RCDroneType {
-    Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, RIProcessor=32, CHProcessor=40, HMProcessor=48,
-    AncientSentry=160
+    Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, Processor=40, AncientSentry=160
 }
 
-export const RCUnitTypes = [RCDroneType.Scout, RCDroneType.ToxinExtractor, RCDroneType.Ordinater, RCDroneType.Defender, RCDroneType.CHProcessor, RCDroneType.HMProcessor, RCDroneType.RIProcessor]
+export const RCUnitTypes = [RCDroneType.Scout, RCDroneType.ToxinExtractor, RCDroneType.Ordinater, RCDroneType.Defender, RCDroneType.Processor]
 
 export enum RCAnimalType {
     Rabbit='rabbit',Fox='fox',Bear='bear',Deer='deer',Wolf='wolf'
@@ -116,14 +111,14 @@ export const TerrainToxins = {
 }
 
 export const TerrainLevels:{[key:number]: Array<TerrainType>} = {
-    [TerrainType.Dunes1]: [TerrainType.DesertGrass, TerrainType.Cactus, TerrainType.SparseGrass],
-    [TerrainType.Dunes2]: [TerrainType.DesertGrass, TerrainType.Cactus, TerrainType.SparseGrass],
-    [TerrainType.Barren]: [TerrainType.DesertGrass, TerrainType.SparseGrass, TerrainType.MediumGrass],
-    [TerrainType.DryForest]: [TerrainType.Woods2, TerrainType.DenseWoods, TerrainType.DenseWoods],
-    [TerrainType.Minerals1]: [TerrainType.SBushes, TerrainType.MBushes, TerrainType.LBushes],
-    [TerrainType.Minerals2]: [TerrainType.SBushes, TerrainType.MBushes, TerrainType.LBushes],
-    [TerrainType.Rocks]: [TerrainType.SBushes, TerrainType.MBushes, TerrainType.LBushes],
-    [TerrainType.DesertGrass]: [TerrainType.SparseGrass, TerrainType.MediumGrass, TerrainType.ThickGrass]
+    [TerrainType.Dunes1]: [TerrainType.SparseGrass, TerrainType.Cactus, TerrainType.DesertGrass],
+    [TerrainType.Dunes2]: [TerrainType.SparseGrass, TerrainType.Cactus, TerrainType.DesertGrass],
+    [TerrainType.Barren]: [TerrainType.MediumGrass, TerrainType.SparseGrass,TerrainType.DesertGrass],
+    [TerrainType.DryForest]: [TerrainType.DenseWoods, TerrainType.DenseWoods, TerrainType.Woods2],
+    [TerrainType.Minerals1]: [TerrainType.LBushes, TerrainType.MBushes,TerrainType.SBushes],
+    [TerrainType.Minerals2]: [TerrainType.LBushes,TerrainType.MBushes,TerrainType.SBushes],
+    [TerrainType.Rocks]: [TerrainType.LBushes, TerrainType.MBushes, TerrainType.SBushes],
+    [TerrainType.DesertGrass]: [TerrainType.ThickGrass, TerrainType.MediumGrass, TerrainType.SparseGrass]
 }
 
 export type Resources = {

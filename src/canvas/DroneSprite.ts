@@ -81,15 +81,21 @@ export default class DroneSprite extends GameObjects.Sprite {
                     //1. Check if dormant factory in sight range
                     const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
                     const fac = visibleTiles.find(t=>this.scene.buildings
-                        .find(b=>(b.building.type === RCObjectType.WarFactory || b.building.type === RCObjectType.InactiveFactory)
+                        .find(b=>(b.building.type === RCObjectType.WarFactory || b.building.type === RCObjectType.InactiveFactory || RCObjectType.InactiveLab)
                             && b.building.tileX === t.x && b.building.tileY === t.y))
                     //2. If so, move towards. 
                     if(fac){
                         //If on top of, merge with it to activate (remove self)
                         if(fac.x === dat.tileX && fac.y === dat.tileY){
                             const base = this.scene.buildings.find(b=>b.building.tileX === fac.x && b.building.tileY === fac.y)
-                            base.setFrame(RCObjectType.Base)
-                            base.building.type = RCObjectType.Base
+                            if(base.building.type === RCObjectType.InactiveLab){
+                                base.setFrame(RCObjectType.Lab)
+                                base.building.type = RCObjectType.Lab
+                            } 
+                            else {
+                                base.setFrame(RCObjectType.Base)
+                                base.building.type = RCObjectType.Base
+                            }
                             base.pauseProduction()
                             this.gc()
                         }
@@ -150,7 +156,7 @@ export default class DroneSprite extends GameObjects.Sprite {
                         const toxLength = tileDat.toxins.length
                         if(toxLength < 3){
                             if(TerrainLevels[tileDat.type-1]){
-                                tile.index = TerrainLevels[tileDat.type-1].reverse()[toxLength]+1
+                                tile.index = TerrainLevels[tileDat.type-1][toxLength]+1
                                 if(Phaser.Math.Between(0, 1)===1){
                                     const type = RCAnimalTypes[Phaser.Math.Between(0,RCAnimalTypes.length-1)]
                                     this.scene.spawnAnimal(getAnimalFromData(tile.x, tile.y, CreatureData[type]))

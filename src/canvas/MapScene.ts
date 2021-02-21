@@ -165,7 +165,7 @@ export default class MapScene extends Scene {
             t.index = RCObjectType.Fog+1
             t.alpha = this.tiles[t.x] && this.tiles[t.x][t.y]?.alpha
         })
-        let otherDesigns = [NPCData[RCDroneType.Defender], NPCData[RCDroneType.HMProcessor], NPCData[RCDroneType.RIProcessor]]
+        let otherDesigns = [NPCData[RCDroneType.Defender]]
         let bases = this.getObjects(RCObjectType.Base)
         bases.forEach(b=>{
             this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.Base, b.x, b.y, defaultDesigns))

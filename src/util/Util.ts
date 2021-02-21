@@ -22,9 +22,8 @@ export const getErrorMessage = (error:string) => {
     }
 }
 
-export const canAffordBot = (resources:Resources, design:RCUnitData) => 
-    !design.requiredItems.find(i=>resources[i.type] < i.amount)
-
+export const canAffordBot = (resources:Resources, requiredItems:Array<{amount:number, type:ItemType}>) => 
+    !requiredItems.find(i=>resources[i.type] < i.amount)
 
 export const getNewEncounter = (map:Scenario):MapData => {
     return {
@@ -256,9 +255,7 @@ export const getNearestDrone = (pylons:Array<DroneSprite>, dat:RCUnit) => {
 export const canAttractDrone = (leader:RCUnit, drone:RCUnit) => {
     if(drone.swarmLeaderId || drone.id ===leader.id) return false
     switch(leader.unitType){
-        case RCDroneType.HMProcessor:
-        case RCDroneType.RIProcessor:
-        case RCDroneType.CHProcessor:
+        case RCDroneType.Processor:
             return drone.unitType === RCDroneType.ToxinExtractor
         case RCDroneType.Defender:
             return drone.unitType === RCDroneType.Defender

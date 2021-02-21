@@ -82,8 +82,10 @@ interface RCBuildingState {
     tileX:number
     tileY:number
     timer: number
-    activeDroneDesign: RCUnitData
-    availableDroneDesigns: Array<RCUnitData>
+    activeDroneDesign?: RCUnitData
+    availableDroneDesigns?: Array<RCUnitData>
+    activeResearch?: import('./constants').ItemType
+    availableResearch?: Array<import('./constants').ItemType>
 }
 
 interface Objective {

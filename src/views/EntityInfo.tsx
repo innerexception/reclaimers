@@ -3,8 +3,9 @@ import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
 import { RCObjectType, RCDroneType } from '../../constants';
-import BuildingInfo from './BuildingInfo';
+import FactoryInfo from './FactoryInfo';
 import { colors } from '../../AppStyles';
+import LabInfo from './LabInfo';
 
 interface Props {
     selectedUnit?: RCUnit
@@ -42,8 +43,10 @@ export default class EntityInfo extends React.Component<Props> {
                 </div>}
                 {buildDat &&
                 <div>
-                    {buildDat.type === RCObjectType.Base && 
-                        <BuildingInfo selectedBuilding={buildDat}/>}
+                    {(buildDat.type === RCObjectType.Base) && 
+                        <FactoryInfo selectedBuilding={buildDat}/>}
+                    {(buildDat.type === RCObjectType.Lab) && 
+                        <LabInfo selectedBuilding={buildDat}/>}
                 </div>}
                 {!buildDat && !unitData && <h4>No Selection</h4>}
             </div>

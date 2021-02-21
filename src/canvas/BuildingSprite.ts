@@ -52,7 +52,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
                     p.completedObjectives.push(Objectives.BuildExtractor)
                     onUpdatePlayer({...p})
                 }
-                if(design.unitType === RCDroneType.CHProcessor && !p.completedObjectives.includes(Objectives.BuildProcessor)){
+                if(design.unitType === RCDroneType.Processor && !p.completedObjectives.includes(Objectives.BuildProcessor)){
                     p.completedObjectives.push(Objectives.BuildProcessor)
                     onUpdatePlayer({...p})
                 }

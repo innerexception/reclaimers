@@ -92,41 +92,19 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         maxInventory: 0,
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
-    [RCDroneType.HMProcessor]: {
-        name: 'HM Processor',
-        unitType: RCDroneType.HMProcessor,
+    [RCDroneType.Processor]: {
+        name: 'Toxin Processor',
+        unitType: RCDroneType.Processor,
         maxHp: 1,
         speed: 0.5,
         sight: 1,
         buildTime: 10000,
         maxInventory: 0,
-        processesItems: [ItemType.Cadmium, ItemType.Lead, ItemType.Gold, ItemType.Lithium, ItemType.Mercury, ItemType.Manganese, ItemType.Palladium].concat(defaultItems),
-        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
-    },
-    [RCDroneType.RIProcessor]: {
-        name: 'RI Processor',
-        unitType: RCDroneType.RIProcessor,
-        maxHp: 1,
-        speed: 0.5,
-        sight: 1,
-        buildTime: 10000,
-        maxInventory: 0,
-        processesItems: [ItemType.Cobalt, ItemType.Uranium, ItemType.Plutonium].concat(defaultItems),
-        requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
-    },
-    [RCDroneType.CHProcessor]: {
-        name: 'Chem Processor',
-        unitType: RCDroneType.CHProcessor,
-        maxHp: 1,
-        speed: 0.5,
-        sight: 1,
-        buildTime: 10000,
-        maxInventory: 0,
-        processesItems: [ItemType.Arsenic, ItemType.Asbestos, ItemType.Benzene, ItemType.Petroleum, ItemType.Pesticides, ItemType.Plastics].concat(defaultItems),
+        processesItems: [ItemType.Petroleum, ItemType.Pesticides, ItemType.Plastics].concat(defaultItems),
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }
 
 
 
-export const defaultDesigns = [NPCData[RCDroneType.Scout], NPCData[RCDroneType.ToxinExtractor], NPCData[RCDroneType.CHProcessor], NPCData[RCDroneType.Ordinater]]
+export const defaultDesigns = [NPCData[RCDroneType.Scout], NPCData[RCDroneType.ToxinExtractor], NPCData[RCDroneType.Processor], NPCData[RCDroneType.Ordinater]]
