@@ -345,7 +345,7 @@ export default class MapScene extends Scene {
     updateFogOfWar = () => {
         console.log('fog update')
         this.map.setLayer('fog').forEachTile(t=>{
-            t.alpha = 1
+            if(t.alpha === 0) t.alpha = 0.5
         })
         this.drones.filter(e=>!e.entity.isAI).forEach(c=>{const dat = c.entity; this.carveFogOfWar(dat.sight, dat.tileX, dat.tileY)})
         this.buildings.filter(b=>b.building.type === RCObjectType.Base).forEach(b=>{

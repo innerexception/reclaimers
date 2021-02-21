@@ -54,20 +54,22 @@ export default class DroneSprite extends GameObjects.Sprite {
         switch(dat.unitType){
                 case RCDroneType.Scout:
                     //Check if on an event tile we have not triggered
-                    const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground')
-                    const e = TileEvents[tile.index-1]
-                    const player = store.getState().onlineAccount
-                    const mapData = player.savedState.find(s=>s.map === store.getState().activeEncounter.map)
-                    if(e && !mapData.completedEvents.includes(tile.index-1)){
-                        onShowModal(Modal.Dialog, e.messages)
-                        mapData.completedEvents.push(tile.index-1)
-                        onUpdatePlayer({...player})
-                        //TODO: resolve custom event effect(s)
-                        return this.waitOne()
+                    const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'objects')
+                    if(tile){
+                        const e = TileEvents[tile.index-1]
+                        const player = store.getState().onlineAccount
+                        const mapData = player.savedState.find(s=>s.map === store.getState().activeEncounter.map)
+                        if(e && !mapData.completedEvents.includes(tile.index-1)){
+                            onShowModal(Modal.Dialog, e.messages)
+                            mapData.completedEvents.push(tile.index-1)
+                            onUpdatePlayer({...player})
+                            //TODO: resolve custom event effect(s)
+                            return this.waitOne()
+                        }
                     }
                     //Head towards the fog
                     const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
-                    const nextVisible = fogTiles.find(t=>t.alpha === 1)
+                    const nextVisible = fogTiles.find(t=>t.alpha === 1 && this.scene.passableTile(t.x, t.y, this.entity))
                     if(nextVisible){
                         this.executeMove(nextVisible)
                     }
@@ -78,7 +80,9 @@ export default class DroneSprite extends GameObjects.Sprite {
                 case RCDroneType.Ordinater:
                     //1. Check if dormant factory in sight range
                     const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
-                    const fac = visibleTiles.find(t=>this.scene.buildings.find(b=>b.building.type === RCObjectType.WarFactory && b.building.tileX === t.x && b.building.tileY === t.y))
+                    const fac = visibleTiles.find(t=>this.scene.buildings
+                        .find(b=>(b.building.type === RCObjectType.WarFactory || b.building.type === RCObjectType.InactiveFactory)
+                            && b.building.tileX === t.x && b.building.tileY === t.y))
                     //2. If so, move towards. 
                     if(fac){
                         //If on top of, merge with it to activate (remove self)
@@ -96,14 +100,14 @@ export default class DroneSprite extends GameObjects.Sprite {
                 break
                 case RCDroneType.Defender:
                     //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
-                    const target = this.calcVisibleObjects().find(c=>c.entity.unitType === RCDroneType.AncientSentry)
+                    const target = this.calcVisibleObjects().find(c=>c.entity.isAI)
                     if(target) this.damageToTarget(target)
                     this.roam()
                 break
                 case RCDroneType.AncientSentry:
                     //Basically any mechanical runs this branch
                     //Same as defender ai with paramter mods
-                    const target2 = this.calcVisibleObjects().find(c=>c.entity.unitType !== RCDroneType.AncientSentry)
+                    const target2 = this.calcVisibleObjects().find(c=>!c.entity.isAI)
                     if(target2) this.damageToTarget(target2)
                     this.roam()
                     //Sometimes drops lore when killed

@@ -93,7 +93,7 @@ export const TileEvents = {
     [TerrainType.Cave3]: {
         messages: ['Cave 3!']
     },
-    [TerrainType.Village1]: {
+    [TerrainType.Village3]: {
         messages: ['Village 1!']
     }
 }
