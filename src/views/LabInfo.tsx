@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
+import { onStartResearch } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
 import { ItemType } from '../../constants';
 

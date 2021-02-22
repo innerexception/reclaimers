@@ -49,6 +49,8 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, selectedBuilding: action.unit, selectedUnit: null }
         case UIReducerActions.CHANGE_PRODUCTION:
             return { ...state, engineEvent: { action: UIReducerActions.CHANGE_PRODUCTION, data: action.design }}
+        case UIReducerActions.START_RESEARCH:
+            return { ...state, engineEvent: { action: UIReducerActions.START_RESEARCH, data: action.design }}
         case UIReducerActions.PAUSE_PRODUCTION:
             return { ...state, engineEvent: { action: UIReducerActions.PAUSE_PRODUCTION, data: action.unitId }}
         case UIReducerActions.GATHER:

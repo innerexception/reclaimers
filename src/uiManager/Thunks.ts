@@ -1,5 +1,5 @@
 import { dispatch, store } from '../../App';
-import { Modal, Scenario, UIReducerActions } from '../../constants';
+import { ItemType, Modal, Scenario, UIReducerActions } from '../../constants';
 import BuildingSprite from '../canvas/BuildingSprite';
 import { canAffordBot } from '../util/Util';
 // const { ipcRenderer } = require('electron');
@@ -59,6 +59,14 @@ export const onChangeProduction = (design:RCUnitData) => {
         design
     })
 }
+
+export const onStartResearch = (design:ItemType) => {
+    dispatch({
+        type: UIReducerActions.START_RESEARCH,
+        design
+    })
+}
+
 
 export const onPauseProduction = () => {
     dispatch({
