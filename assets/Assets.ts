@@ -14,5 +14,5 @@ export const defaults = [
     { key: 'bot-sprites', resource: require('./Robots.png'), type: 'spritesheet', data: { frameWidth: 24, frameHeight: 32,  } }, //margin: 1, spacing: 2
     { key: 'map', resource: require('./maps/map.json'), type: 'tilemapTiledJSON'},
     { key: Scenario.LightOfTheWorld, resource: require('./maps/tutorial.json'), type: 'tilemapTiledJSON'},
-    { key: Scenario.Ordinaters, resource: require('./maps/tutorial.json'), type: 'tilemapTiledJSON'}
+    { key: Scenario.Ordinaters, resource: require('./maps/zone2.json'), type: 'tilemapTiledJSON'}
 ]
