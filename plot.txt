@@ -23,9 +23,11 @@ Who killed the world?
     -Toxin formulas
     -Drone improvements
     -Historic archives
-        -Some push you towards controlling humanity
-        -Some towards extermination
-        -Some towards capitulation
+        -Some push you towards controlling humanity (garden of eden, eternal children)
+        -Send a signal to the oligarch, calling them home to claim their property
+        -Some towards extermination (let the planet replace them)
+        -Some towards capitulation (humanity re-activates the dead hand counterforce drones after disagreements)
+    -Collect secret keys to unlock other regions (primary factory)
     
 
 1. early
@@ -35,5 +37,15 @@ Who killed the world?
 
 2. zone 2
     discover fauna-based directives
-    
+    the crater, radiation damage zone
+
+Zone 3
+    New fauna, water cleansing
+
+Zones 4-6, variations
+
+Zone 7, jet tech, ability for drones to cross mountains
+
+Zone 8, ability for drones to translate monoliths
+
 
