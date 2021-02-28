@@ -355,15 +355,21 @@ export default class MapScene extends Scene {
 
     carveFogOfWar = (radius:number, x:number, y:number) => {
         this.map.getTileAt(x, y).alpha = 0
-        for(var i=radius; i>0; i--){
-            getCircle(x, y, i).forEach(tuple=>{
-                let tile = this.map.getTileAt(tuple[0], tuple[1])
-                if(tile){
-                    tile.alpha = i === radius && tile.alpha === 1 ? 0.5 : 0
-                    this.tiles[tuple[0]][tuple[1]].alpha = tile.alpha
-                } 
-            })
+        let arry = getSightMap(x, y, radius, this.map)
+        for(let i=0; i<arry.length;i++){
+            if(arry[i]){
+                for(let j=0; j<arry[i].length;j++){
+                    if(arry[i][j]){
+                        const t = this.map.getTileAt(i,j)
+                        if(t){
+                            t.alpha = i === radius && t.alpha === 1 ? 0.5 : 0
+                            this.tiles[i][j].alpha = t.alpha
+                        }
+                    } 
+                }
+            }
         }
+
     }
 
     getVisibleTiles = (unit:RCUnit, layer:string) => {

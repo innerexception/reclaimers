@@ -58,7 +58,7 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         maxHp: 1,
         speed: 2,
         sight: 5,
-        buildTime: 30000,
+        buildTime: 10000,
         maxInventory: 0,
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}],
     },
