@@ -39,6 +39,6 @@ export default class Viewscreen extends React.Component<State> {
     }
 
     render() {
-        return <div ref={this.state.containerRef} id='canvasEl' style={{width:'100vw', height:'100vh', border:'1px solid black'}}/>
+        return <div ref={this.state.containerRef} id='canvasEl' style={{width:'calc(100vw - 350px)', height:'100vh', border:'1px solid black'}}/>
     }
 }

@@ -178,7 +178,7 @@ export default class MapScene extends Scene {
             this.spawnUnit(e)
         })
 
-        this.cameras.main.setZoom(2)
+        this.cameras.main.setZoom(3)
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         this.cameras.main.centerOn(bases[0].getCenterX(), bases[0].getCenterY())
 

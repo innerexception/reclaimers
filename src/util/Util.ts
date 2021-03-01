@@ -44,7 +44,7 @@ export const getNewAccount = (name:string, id:string):RCPlayerState => {
     } 
 }
 
-const rect_dim = 16
+const rect_dim = 32
 
 export const transitionOut = (scene:Scene, nextScene:string, cb:Function) => {
     let rects = []

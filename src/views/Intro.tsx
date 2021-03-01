@@ -28,7 +28,7 @@ export default class Intro extends React.Component {
 
     render(){
         return (
-            <div style={{...AppStyles.modal, transform:'none', top:'unset', left:'unset', bottom:25, right:25, width:'350px', justifyContent:'space-between'}}>
+            <div style={{...AppStyles.modal, transform:'none', top:'33%', left:0, width:'350px', justifyContent:'space-between'}}>
                 <div>
                     <h2>Reclaimers</h2>
                     <h5>Copyright 2068 TechnoSerf LLC</h5>

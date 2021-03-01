@@ -35,33 +35,33 @@ export default class FactoryInfo extends React.Component<Props, State> {
         const defaultDesigns = this.props.selectedBuilding.availableDroneDesigns
         const d = defaultDesigns[this.state.selectedIndex]
         return (
-                <div>
-                    {this.props.selectedBuilding.activeDroneDesign ? <h6>Producing: {this.props.selectedBuilding.activeDroneDesign.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h6>:<h6>Producing nothing</h6>}
-                    <hr/>
-                    <div>
+                    <div style={{height:'250px', display:'flex', flexDirection:"column", justifyContent:"space-between"}}>
                         <div>
-                            <h4>{d.name}</h4>
-                            <h6>hp: {d.maxHp}</h6>
-                            <h6>speed: {d.speed}</h6>
+                            {this.props.selectedBuilding.activeDroneDesign ? <h6 style={{textAlign:'center'}}>Producing: {this.props.selectedBuilding.activeDroneDesign.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h6>:<h6>Producing nothing</h6>}
+                            <hr/>
+                            <div style={{display:'flex', width:'100%', justifyContent:'space-between'}}>
+                                {Button(this.state.selectedIndex > 0, ()=>this.setState({selectedIndex: this.state.selectedIndex-1}), '<')}
+                                <h4>{d.name}</h4>
+                                {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
+                            </div>
                             {d.processesItems && <h6>processes</h6>}
                             <div style={{display:'flex'}}>
                                 {d.processesItems?.map(a=>CssIcon(a, true))}
                             </div>
-                            <h6>requires:</h6>
-                            <div style={{display:'flex'}}>
-                                {d.requiredItems.map(i=>
-                                    <h6 style={{display:'flex', alignItems:'center'}}>{i.amount}x {CssIcon(i.type, true)}</h6>
-                                )}
+                            <div style={{display:'flex', alignItems:'center'}}>
+                                <h6>requires:</h6>
+                                <div style={{display:'flex', alignItems:'center'}}>
+                                    {d.requiredItems.map(i=>
+                                        <h6 style={{display:'flex', alignItems:'center'}}>{i.amount}x {CssIcon(i.type, true)}</h6>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                        <div style={{display:'flex'}}>
-                            {Button(this.state.selectedIndex > 0, ()=>this.setState({selectedIndex: this.state.selectedIndex-1}), '<')}
-                            {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
+                        <div style={{display:'flex', justifyContent:'space-evenly'}}>
+                            {Button(canAffordBot(me.resources, d.requiredItems), ()=>onChangeProduction(d), 'Build')}
+                            {Button(true, onPauseProduction, 'Cancel')}
                         </div>
                     </div>
-                    {Button(canAffordBot(me.resources, d.requiredItems), ()=>onChangeProduction(d), 'Start')}
-                    {Button(true, onPauseProduction, 'Pause')}
-                </div>
         )
     }
 }

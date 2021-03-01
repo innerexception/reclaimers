@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
 import { RCObjectType, RCDroneType } from '../../constants';
 import FactoryInfo from './FactoryInfo';
-import { colors } from '../../AppStyles';
+import AppStyles, { colors } from '../../AppStyles';
 import LabInfo from './LabInfo';
 
 interface Props {
@@ -24,7 +24,7 @@ export default class EntityInfo extends React.Component<Props> {
         const unitData =  this.props.selectedUnit
         const buildDat = this.props.selectedBuilding
         return (
-            <div style={{...styles, width:'250px', minHeight:'200px', pointerEvents:'all'}}>
+            <div style={{...AppStyles.dialog, minHeight:'200px'}}>
                 {unitData &&
                 <div>
                     <h2>{unitData.name}</h2>
@@ -48,15 +48,8 @@ export default class EntityInfo extends React.Component<Props> {
                     {(buildDat.type === RCObjectType.Lab) && 
                         <LabInfo selectedBuilding={buildDat}/>}
                 </div>}
-                {!buildDat && !unitData && <h4>No Selection</h4>}
+                {!buildDat && !unitData && <h4 style={{textAlign:"center"}}>No Selection</h4>}
             </div>
         )
     }
-}
-
-const styles = {
-    border: '3px inset',
-    borderColor: colors.bronze,
-    background:'black',
-    padding:'5px'
 }

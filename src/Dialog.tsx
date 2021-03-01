@@ -35,7 +35,7 @@ export default class Dialog extends React.Component<Props> {
 
     getButton = () => {
         if(this.state.currentStringIndex === this.props.messages.length-1){
-            return Button(true, ()=>onShowModal(Modal.Menu), 'Next')
+            return Button(true, onHideModal, 'Next')
         }
             
         if(this.props.messages[this.state.currentStringIndex].length === this.state.textLength)
@@ -45,7 +45,7 @@ export default class Dialog extends React.Component<Props> {
     }
 
     render(){
-        return <div style={{...AppStyles.modal, height:'200px', width:'350px'}}>
+        return <div style={{...AppStyles.dialog, height:'250px'}}>
                     <div style={{display:'flex', justifyContent:'space-between', flexDirection:'column', height:'100%'}}>
                         <div style={{width:'100%'}} dangerouslySetInnerHTML={{__html: this.props.messages[this.state.currentStringIndex].substring(0,this.state.textLength)}}></div>
                         {this.getButton()}

@@ -22,6 +22,12 @@ export default {
     contentAreaAlternate: {
         padding:'0.5em', background: colors.grey2, border:'5px outset', borderColor:colors.grey1, borderBottomLeftRadius:'20px', borderTopRightRadius:'20px', marginBottom:'0.5em', marginTop:'0.5em'
     },
+    dialog: {
+        border: '3px inset',
+        borderColor: colors.bronze,
+        background:'black',
+        padding:'5px'
+    },
     buttonOuter: {
         color: colors.black, 
         cursor:'pointer',

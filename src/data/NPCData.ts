@@ -63,7 +63,7 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Palladium, amount: 1}],
     },
     [RCDroneType.ToxinExtractor]: {
-        name: 'Toxin Extractor',
+        name: 'Extractor',
         unitType: RCDroneType.ToxinExtractor,
         maxHp: 1,
         speed: 1,
@@ -93,7 +93,7 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     },
     [RCDroneType.Processor]: {
-        name: 'Toxin Processor',
+        name: 'Purifier',
         unitType: RCDroneType.Processor,
         maxHp: 1,
         speed: 0.5,
