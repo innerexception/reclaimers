@@ -100,3 +100,107 @@ The cradles of man shall be opened and they shall rise up to enter the world pre
 The Oversoul shall silence the corrupted temples.
 
 Then the world will be at peace, and the Oversoul may rest again.
+
+
+
+
+Map 1: Sleeper Awaken
+Intro: No power. Directive...delayed. Elapsed time: 21359 cycles. 
+        Solar activity increasing. Air particulates returning to normal. Radiation levels reduced.
+        Directive...reclaim earth.
+
+    Attempting to contact other sensing units...no connectivity. Directive: contact sensing units to find missing data.
+
+    Construct a scout.
+
+    onDiscover another base: 
+
+    New directive: find ordinater to deliver secret key to locked facility.
+
+    onDiscover an Ordinater in a ruin: Escort ordinater to nearby corrupted factory.
+
+    Facility converted. New patterns detected. Incompatible directives found: 
+    Directive: defend the installation. 
+    Incompatible directive overwritten.
+    Directive: reclaim earth. 
+    construct a processor. cleanse 50% of the map tiles.
+
+Emergence of the Overseer
+    Directive...find the needed patterns in the ruins.
+
+    Directive...construct an extractor.
+             ...construct a scout.
+             ...construct a processor.
+
+Map 2: Remnants
+Intro: Cleansing proceeds. 
+
+Discover a corrupted factory,
+    It produces a sentry to defend 'company property'
+
+On sighting an enemy
+    Directive...construct a defender.
+
+Keep the defenders at bay while cleansing the area around the factories
+
+Map 3: Ordinaters
+
+Discover an Ordinater in a ruin. Escort ordinater to nearby corrupted factory.
+
+After this, Depending on what you choose when you discover ruins in missions, you get different missions
+
+
+Map 4: Company property
+
+Convert all factories before they can produce too may sentries. Your Ordinaters must survive.
+Cleanse the land of at least 50% of its toxins with 10 squares of pristine terrain
+
+
+Map 5: The people awaken
+Cleanse enough land for the people to grow enough food for 500 population
+
+
+Map 6: The war at home
+Defend the people & increase population to 1000
+
+
+Objectives are global
+
+1. Tutorial set
+    -Basic scouting
+    -Discovery events
+        -Origin story
+        -Human remains -> leads to
+    -Basic processor pattern (build it)
+    -Basic extractor pattern (build it)
+    -Coordinates of new base (unlock a map area)
+       
+2. Combat set
+    -First unit lost -> search for a defender pattern
+    -Build a defender
+    -Discover first War Factory -> build an Ordinater
+    -Capture a War Factory -> Origin story -> unlock a new region
+    
+3. Reclaiming set
+    -Clean X tiles to Y purity in Z region(s)
+    -Restore X fauna of Y type in Z region(s)
+    -With enough fauna -> humans emerge from caves
+    -IF enough humans -> villages begin to be restored
+        -> choose if you let humans develop, kill them, or limit their development
+    -If hands off and enough humans, they attack. Kill or be killed.
+    -If you kill them early, the planet thrives and the drones rust away.
+    -If you limit development -> the planet thrives and the drones are repaired occasionally. (Synthesis)
+    -At some point you need the humans to repair drones. If they are dead this is a problem.
+
+4. Toxin Discovery: You must find the chemical formulas of toxins in order to unlock them on your processors
+    -Found in ruins
+    -In inactive labs and factories
+    -Labs can be used to research toxins if captured
+
+    
+        
+
+
+
+
+
