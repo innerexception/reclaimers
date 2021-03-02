@@ -1,6 +1,7 @@
 import { Objectives, Scenario } from "../../constants";
 
 export const ObjectiveList = [
+    //Tutorials
     {
         description: "Construct a processor drone.",
         id: Objectives.BuildProcessor,
@@ -9,37 +10,70 @@ export const ObjectiveList = [
     {
         description: "Construct an extraction drone.",
         id: Objectives.BuildExtractor,
-        requires: []
+        requires: [Objectives.BuildExtractor]
     },
     {
         description: "Purify 20 square miles of terrain down to 2 toxins or less.",
         id: Objectives.Purify20,
-        requires: []
+        requires: [Objectives.BuildExtractor]
     },
     {
-        description: "Construct a scout drone and find a backup data source.",
+        description: "Prepare the Way for the All-Maker",
+        id: Objectives.PurifyWorld,
+        requires: [Objectives.Purify20]
+    },
+    {
+        description: "Construct a scout drone and find backup data.",
         id: Objectives.BackupDisk,
         requires: []
     },
     {
         id: Objectives.DiscoveredOrdinater,
-        description: "Use the ordinater drone to deliver the secret key to another facility",
+        description: "Convert the temple of Reason using an Ordinater",
         requires: [Objectives.FindAnOrdinater]
     },
     {
         id: Objectives.FindAnOrdinater,
-        description: "Find a way to discover the secret key of this facility",
+        description: "Find a way to discover the secret key of this temple",
         requires: [Objectives.BaseDiscovered]
     },
     {
         id: Objectives.BaseDiscovered,
-        description: "This facility is locked by a secret key.",
-        requires: []
+        description: "The temple is locked by a secret key.",
+        requires: [Objectives.BaseDiscovered]
     },
     {
         id: Objectives.BaseConverted,
-        description: "This facility is now under our control. Downloading directives...incompatible directive format found.",
-        requires: [Objectives.DiscoveredOrdinater]
+        description: "The temple is now under our control. Research new directives.",
+        requires: [Objectives.BaseConverted]
+    },
+    //Corrutped machines
+    {
+        id: Objectives.ForbiddenFactoryDiscovered,
+        description: "The temple must be redeemed by an Ordinater.",
+        requires: [Objectives.ForbiddenFactoryDiscovered]
+    },
+    {
+        id: Objectives.BuildDefender,
+        description: "Construct defenders to protect the Ordinater.",
+        requires: [Objectives.ForbiddenFactoryDiscovered]
+    },
+    {
+        id: Objectives.ForbiddenFactoryConverted,
+        description: "The temple has been cleansed.",
+        requires: [Objectives.ForbiddenFactoryDiscovered]
+    },
+    //Tile Event Chains
+    //1. Under the Earth
+    {
+        id: Objectives.UnderEarth1,
+        description: "",
+        requires: [Objectives.UnderEarth1]
+    },
+    {
+        id: Objectives.UnderEarth2,
+        description: "",
+        requires: [Objectives.UnderEarth1]
     }
 ]
 
