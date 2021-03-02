@@ -14,6 +14,11 @@ interface UnitMove {
     route: Array<Tuple>
 }
 
+interface Technology {
+    messages: Array<string>
+    type: import('./constants').Technologies
+}
+
 interface RCUnit extends RCUnitData {
     id:string
     isAI?:boolean
@@ -71,6 +76,7 @@ interface MapData {
 interface RCPlayerState {
     resources: import('./constants').Resources
     completedObjectives: Array<import('./constants').Objectives>
+    technologies: Array<Technology>
     id:string
     name:string
     savedState: Array<MapData>

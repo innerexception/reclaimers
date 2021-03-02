@@ -2,9 +2,9 @@ import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../../App";
 import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEvents, RCAnimalTypes } from '../../constants'
 import MapScene from "./MapScene";
-import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal } from "../uiManager/Thunks";
+import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal, onDiscoverPlayerTech } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
-import { getAnimalFromData, getNearestDropoffForResource, getSightMap, getUnitFromData, shuffle } from "../util/Util";
+import { getAnimalFromData, getNearestDropoffForResource, getNextTechnology, getSightMap, getUnitFromData, shuffle } from "../util/Util";
 import { CreatureData, NPCData } from "../data/NPCData";
 
 export default class DroneSprite extends GameObjects.Sprite {
@@ -91,6 +91,7 @@ export default class DroneSprite extends GameObjects.Sprite {
                             if(base.building.type === RCObjectType.InactiveLab){
                                 base.setFrame(RCObjectType.Lab)
                                 base.building.type = RCObjectType.Lab
+                                onDiscoverPlayerTech(getNextTechnology(store.getState().onlineAccount))
                             } 
                             else {
                                 base.setFrame(RCObjectType.Base)

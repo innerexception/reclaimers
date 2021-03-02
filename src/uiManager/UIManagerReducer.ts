@@ -49,14 +49,15 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, selectedBuilding: action.unit, selectedUnit: null }
         case UIReducerActions.CHANGE_PRODUCTION:
             return { ...state, engineEvent: { action: UIReducerActions.CHANGE_PRODUCTION, data: action.design }}
-        case UIReducerActions.START_RESEARCH:
-            return { ...state, engineEvent: { action: UIReducerActions.START_RESEARCH, data: action.design }}
         case UIReducerActions.PAUSE_PRODUCTION:
             return { ...state, engineEvent: { action: UIReducerActions.PAUSE_PRODUCTION, data: action.unitId }}
         case UIReducerActions.GATHER:
             return { ...state, engineEvent: { action: UIReducerActions.GATHER, data: action.unitId }}
         case UIReducerActions.UNGATHER:
             return { ...state, engineEvent: { action: UIReducerActions.UNGATHER, data: action.unitId }}
+        case UIReducerActions.RESEARCH:
+            state.onlineAccount.technologies.push(action.tech)
+            return { ...state, modalState: { modal: Modal.Dialog, data: action.tech.messages }, onlineAccount: {...state.onlineAccount}}
         default:
             return state
     }

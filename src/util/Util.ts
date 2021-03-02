@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../canvas/MapScene';
-import { defaultResources, ItemType, RCDroneType, Resources, Scenario, TerrainToxins, TerrainType } from '../../constants';
+import { defaultResources, ItemType, RCDroneType, Resources, Scenario, Technologies, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../canvas/BuildingSprite';
 import DroneSprite from '../canvas/DroneSprite';
@@ -34,10 +34,16 @@ export const getNewEncounter = (map:Scenario):MapData => {
     }
 }
 
+export const getNextTechnology = (p:RCPlayerState):Technology => {
+    const possible = Technologies.filter(t=>!p.technologies.find(pt=>pt.type === t))
+    return possible[Phaser.Math.Between(0,possible.length-1)]
+}
+
 export const getNewAccount = (name:string, id:string):RCPlayerState => {
     return {
         resources: defaultResources,
         completedObjectives: [],
+        technologies: [],
         id,
         name,
         savedState: []

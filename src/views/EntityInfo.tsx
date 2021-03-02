@@ -41,13 +41,7 @@ export default class EntityInfo extends React.Component<Props> {
                         {unitData.isSwarmLeader && Button(true, ()=>onUnGatherUnits(unitData.id), 'Release')}
                     </div>
                 </div>}
-                {buildDat &&
-                <div>
-                    {(buildDat.type === RCObjectType.Base) && 
-                        <FactoryInfo selectedBuilding={buildDat}/>}
-                    {(buildDat.type === RCObjectType.Lab) && 
-                        <LabInfo selectedBuilding={buildDat}/>}
-                </div>}
+                {buildDat && <FactoryInfo selectedBuilding={buildDat}/>}
                 {!buildDat && !unitData && <h4 style={{textAlign:"center"}}>No Selection</h4>}
             </div>
         )

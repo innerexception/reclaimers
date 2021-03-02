@@ -63,8 +63,7 @@ export const ObjectiveList = [
         description: "The temple has been cleansed.",
         requires: [Objectives.ForbiddenFactoryDiscovered]
     },
-    //Tile Event Chains
-    //1. Under the Earth
+    //Tile Events
     {
         id: Objectives.UnderEarth1,
         description: "",
