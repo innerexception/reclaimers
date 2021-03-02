@@ -8,7 +8,7 @@ import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, 
 import AStar from "../util/AStar";
 import BuildingSprite from "./BuildingSprite";
 import { defaultDesigns, NPCData } from "../data/NPCData";
-import { Scenarios } from "../data/Scenarios";
+import { ObjectiveList, Scenarios } from "../data/Scenarios";
 import AnimalSprite from "./AnimalSprite";
 
 enum MouseTarget {
@@ -390,8 +390,7 @@ export default class MapScene extends Scene {
     }
 
     checkObjectives = () => {
-        let scen = Scenarios.find(s=>s.scenario === store.getState().activeEncounter.map)
-        scen.objectives.forEach((o:Objective)=>{
+        ObjectiveList.forEach((o:Objective)=>{
             switch(o.id){
                 case Objectives.Purify20:
                     const p = store.getState().onlineAccount

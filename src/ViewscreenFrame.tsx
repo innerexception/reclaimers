@@ -45,8 +45,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
                                 <Dialog messages={this.props.modalState.data}/> :
                                 <ObjectiveView 
                                     player={this.props.me}
-                                    match={this.props.activeMap} 
-                                    objectives={Scenarios.find(s=>s.scenario === this.props.activeMap.map).objectives}/>
+                                    match={this.props.activeMap} />
                             }
                             <EntityInfo/>
                             <Actionbar player={this.props.me}/>

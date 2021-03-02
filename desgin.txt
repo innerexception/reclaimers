@@ -37,7 +37,6 @@ build a network of point to point charging stations to keep the bots moving
 2. Labs are used to unlock drone improvements such as new toxins for your purifiers
 
 1. Flesh out tutorial map events and polish mission
-19. Objectives are global and can require changing levels to complete
 16. inactive factories are guarded by fixed groups of creatures
 15. villages and caves sometimes produce enemy creatures (creature probability table is tile based)
 11. If swarm leader is selected, draw lines to swarm members?

@@ -100,7 +100,7 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         sight: 1,
         buildTime: 10000,
         maxInventory: 0,
-        processesItems: [ItemType.Petroleum, ItemType.Pesticides, ItemType.Plastics].concat(defaultItems),
+        processesItems: [ItemType.Petroleum, ItemType.Plastics].concat(defaultItems),
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }

@@ -26,7 +26,8 @@ export default {
         border: '3px inset',
         borderColor: colors.bronze,
         background:'black',
-        padding:'5px'
+        padding:'5px',
+        overflow:"hidden"
     },
     buttonOuter: {
         color: colors.black, 

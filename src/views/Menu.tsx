@@ -26,8 +26,7 @@ export default class Menu extends React.Component<Props> {
                     {this.props.match && 
                     <ObjectiveView 
                         player={this.props.onlineAccount}
-                        match={this.props.match} 
-                        objectives={Scenarios.find(s=>s.scenario === this.props.match.map).objectives}/>}
+                        match={this.props.match} />}
                     <hr/>
                     <div style={{marginBottom:'2em'}}>
                         {Button(true, onLogoutUser, 'Return to Orbit')}

@@ -1,27 +1,45 @@
 import * as React from 'react'
 import AppStyles, { colors } from '../../AppStyles'
-import { Scenarios } from '../data/Scenarios'
+import { ObjectiveList, Scenarios } from '../data/Scenarios'
 import { onCreateEncounter } from '../uiManager/Thunks'
 import { Button } from '../util/SharedComponents'
 import { getNewEncounter } from '../util/Util'
 
 interface Props {
-    objectives: Array<Objective>
     match: MapData
     player: RCPlayerState
 }
 
-export default class ObjectiveView extends React.Component<Props> {
+interface State {
+    ref: HTMLDivElement
+}
+
+export default class ObjectiveView extends React.Component<Props, State> {
+
+    state:State = { ref: null }
+
+    scroller = (ref:HTMLDivElement) => {
+        this.setState({ref})
+    }
 
     render(){
         const player = this.props.player
-        const completed = this.props.objectives.filter(e=>player.completedObjectives.includes(e.id))
-        const incomplete = this.props.objectives.filter(e=>!player.completedObjectives.includes(e.id))
-        return <div style={AppStyles.dialog}>
-                    {incomplete.map(e=><h5 style={{color:colors.bronze}}>- {e.description}</h5>)}
-                    {completed.map(e=><h5 style={{color:colors.lGreen}}>- {e.description}</h5>)}
-                    {incomplete.length === 0 && Button(true, ()=>onCreateEncounter(getNewEncounter(Scenarios[Scenarios.findIndex(s=>s.scenario === this.props.match.map)+1].scenario)), 'Continue ->')}
-               </div>
+        const validObjectives = ObjectiveList.filter(e=>e.requires.every(o=>player.completedObjectives.includes(o)) || e.requires.length === 0)
+        const completed = validObjectives.filter(e=>player.completedObjectives.includes(e.id))
+        const incomplete = validObjectives.filter(e=>!player.completedObjectives.includes(e.id))
+        return <div style={{...AppStyles.dialog, display:"flex", maxHeight:'25%'}}>
+                    <div ref={this.scroller} style={{overflow:"hidden"}}>
+                        <div>
+                            {incomplete.map(e=><h5 style={{color:colors.bronze}}>- {e.description}</h5>)}
+                            {completed.map(e=><h5 style={{color:colors.lGreen}}>- {e.description}</h5>)}
+                            {incomplete.length === 0 && Button(true, ()=>onCreateEncounter(getNewEncounter(Scenarios[Scenarios.findIndex(s=>s.scenario === this.props.match.map)+1].scenario)), 'Continue ->')}
+                        </div>
+                    </div>
+                    <div style={{display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
+                        {Button(true, ()=>this.state.ref.scrollBy(0,-40), '^')}
+                        {Button(true, ()=>this.state.ref.scrollBy(0,40), 'V')}
+                    </div>
+                </div>
     }
 }
     
