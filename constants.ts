@@ -5,10 +5,9 @@ export const FONT_DEFAULT = {
     color:'white'
 }
 
-//TODO: much later on if we do custom drone designer
-// export enum AbilityType {
-//     Destroy,Create,SensorMk1,ExtractorMk1,Decrypter,Disruptor
-// }
+export enum TechnologyType {
+    
+}
 
 export const Technologies:Array<Technology> = [
     

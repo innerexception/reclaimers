@@ -16,7 +16,7 @@ interface UnitMove {
 
 interface Technology {
     messages: Array<string>
-    type: import('./constants').Technologies
+    type: import('./constants').TechnologyType
 }
 
 interface RCUnit extends RCUnitData {
