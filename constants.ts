@@ -1,4 +1,3 @@
-
 export const FONT_DEFAULT = {
     fontFamily: 'Body', 
     fontSize: '8px',
@@ -6,18 +5,45 @@ export const FONT_DEFAULT = {
 }
 
 export enum TechnologyType {
-    
+    ExtractorScoutJets, ExtractorRange, DefenderWeapons, DefenderWeapons2, DefenderArmor,
+    ProcessingGroup1, ProcessingGroup2, ProcessingGroup3
 }
-
-export const Technologies:Array<Technology> = [
-    
-]
 
 export enum ItemType {
     Lead=1, Manganese=3, Gold=4, Arsenic=7, Titanium=8, Mercury=9, Cadmium=13, Benzene=14, 
     Copper=17, Cobalt=18,Asbestos=20,Petroleum=29,Rock=32,Move=81,Mine=85,Lithium=64,
     Palladium=24,Plastics=89,Pesticides=15,Uranium,Plutonium
 }
+
+export const Technologies:Array<Technology> = [
+    {
+        type: TechnologyType.DefenderArmor,
+        messages: ['The defenders become hardened...'] 
+        //TODO: Double hp, flashes blueish instead of red
+    },
+    {
+        type: TechnologyType.DefenderWeapons,
+        messages: ['The defenders gained new weapons!'] 
+        //TODO: Shoots red lasers instead of green, Can defeat red enemies now, and destroy red boulders
+    },
+    {
+        messages: ['Purifiers learn the secrets of new toxins!'],
+        type: TechnologyType.ProcessingGroup1,
+        extractItems: [ItemType.Manganese, ItemType.Gold, ItemType.Arsenic, ItemType.Mercury, ItemType.Cadmium]
+    },
+    {
+        messages: ['Purifiers learn the secrets of new toxins!'],
+        type: TechnologyType.ProcessingGroup2,
+        extractItems: [ItemType.Benzene, ItemType.Copper, ItemType.Cobalt, ItemType.Asbestos, ItemType.Lithium]
+    },
+    {
+        messages: ['Purifiers learn the secrets of new toxins!'],
+        type: TechnologyType.ProcessingGroup3,
+        extractItems: [ItemType.Palladium, ItemType.Uranium, ItemType.Plutonium]
+    },
+]
+
+export const defaultProcessing = [ItemType.Titanium, ItemType.Plastics, ItemType.Pesticides, ItemType.Petroleum]
 
 export enum StatusEffect {
     Invulnerable=3544,ColdBlooded=3522,Fear=3595,Poison=3658,Stun=3654,Chains,Charm,Steelskin,Mulch
@@ -98,8 +124,6 @@ export const TileEvents = {
 
 export const CleanWater = [32,33,34,40,41,42,48,49,50]
 export const PollutedWater = [64,65,66,72,73,74,80,81,82]
-
-export const defaultProcessing = [ItemType.Titanium, ItemType.Plastics, ItemType.Pesticides, ItemType.Petroleum]
 
 export const TerrainToxins = {
     [TerrainType.Any]: [ItemType.Pesticides, ItemType.Plastics, ItemType.Petroleum],

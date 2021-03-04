@@ -1,6 +1,4 @@
-import { ItemType, RCAnimalType, RCDroneType } from "../../constants";
-
-const defaultItems = [ItemType.Titanium, ItemType.Copper, ItemType.Gold]
+import { defaultProcessing, ItemType, RCAnimalType, RCDroneType } from "../../constants";
 
 export const CreatureData:{[key in RCAnimalType]:RCAnimalData} = {
     [RCAnimalType.Bear]: {
@@ -100,7 +98,7 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         sight: 1,
         buildTime: 10000,
         maxInventory: 0,
-        processesItems: [ItemType.Petroleum, ItemType.Plastics].concat(defaultItems),
+        processesItems: defaultProcessing,
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }
