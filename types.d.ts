@@ -81,6 +81,7 @@ interface MapData {
 interface RCPlayerState {
     resources: import('./constants').Resources
     completedObjectives: Array<import('./constants').Objectives>
+    cleanedTileCount: number
     technologies: Array<Technology>
     id:string
     name:string

@@ -1,6 +1,6 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../../App";
-import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEvents, RCAnimalTypes, TechnologyType, RCUnitTypes, ItemType } from '../../constants'
+import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEvents, RCAnimalTypes, TechnologyType, RCUnitTypes, ItemType, Objectives } from '../../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal, onDiscoverPlayerTech } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
@@ -161,7 +161,12 @@ export default class DroneSprite extends GameObjects.Sprite {
                     const tilei = tileDat.toxins.findIndex(x=>this.scene.drones.find(e=>e.entity.processesItems?.includes(x)))
                     if(tilei!==-1){
                         let tox = tileDat.toxins.splice(tilei,1)
-                        this.scene.checkObjectives()
+                        
+                        const p = store.getState().onlineAccount
+                        p.cleanedTileCount+=1
+                        if(p.cleanedTileCount >= 20) p.completedObjectives.push(Objectives.Purify20)
+                        onUpdatePlayer({...p})
+
                         dat.inventory.push(tox[0])
                         const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground') 
                         const toxLength = tileDat.toxins.length

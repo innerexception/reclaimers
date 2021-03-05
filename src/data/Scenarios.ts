@@ -5,7 +5,7 @@ export const ObjectiveList = [
     {
         description: "Construct a processor drone.",
         id: Objectives.BuildProcessor,
-        requires: []
+        requires: [Objectives.BackupDisk]
     },
     {
         description: "Construct an extraction drone.",
@@ -80,14 +80,12 @@ export const Scenarios = [
     {
         scenario: Scenario.LightOfTheWorld,
         intro: [
-            "Solar activity increasing. Air particulates returning to normal. Radiation levels reduced.",
             "Sensing unit power restored. Retrieving directives...",
-            "Err: Directory not found! No connectivity detected. Seek backup data.",
-            "Temporary directive activated: Reclaim the Earth."
+            "Err: Directory not found! No connectivity detected. Seek backup data."
         ]
     },
     {
         scenario: Scenario.Ordinaters,
-        intro: ["Man went down into the earth, sealing the way behind."]
+        intro: ["Man the All-Maker went down into the earth, sealing the way behind."]
     }
 ]

@@ -155,7 +155,6 @@ export default class MapScene extends Scene {
     }
 
     initMap = (encounter:MapData) => {
-        
         this.drones.forEach(e=>e.destroy())
         this.drones = []
         this.buildings.forEach(b=>b.destroy())
@@ -412,26 +411,6 @@ export default class MapScene extends Scene {
             }
         }
         return tiles.filter(t=>t ? true : false)
-    }
-
-    checkObjectives = () => {
-        ObjectiveList.forEach((o:Objective)=>{
-            switch(o.id){
-                case Objectives.Purify20:
-                    const p = store.getState().onlineAccount
-                    if(!p.completedObjectives.includes(Objectives.Purify20)){
-                        let cleaned = []
-                        this.tiles.forEach(trow=>trow.forEach(tcol=>{
-                            if(tcol.type !== -1 && tcol.toxins.length <= 2)  cleaned.push(tcol)
-                        }))
-                        if(cleaned.length >= 20) {
-                            p.completedObjectives.push(Objectives.Purify20)
-                            onUpdatePlayer({...p})
-                        }
-                    }
-                break
-            }
-        })
     }
 
     spawnUnit = (unit:RCUnit) => {
