@@ -26,6 +26,9 @@ export default class BuildingSprite extends GameObjects.Sprite {
             activeDroneDesign: null,
             availableDroneDesigns: designs
         }
+        if(building === RCObjectType.WarFactory){
+            this.building.maxProduction = 3
+        }
         this.setDisplaySize(16,16)
         this.setInteractive()
         scene.add.existing(this)
@@ -57,7 +60,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
                     onUpdatePlayer({...p})
                 }
             },
-            loop: true
+            repeat: this.building.maxProduction ? this.building.maxProduction : -1
         })
     }
 

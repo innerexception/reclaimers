@@ -95,8 +95,7 @@ interface RCBuildingState {
     timer: number
     activeDroneDesign?: RCUnitData
     availableDroneDesigns?: Array<RCUnitData>
-    activeResearch?: import('./constants').ItemType
-    availableResearch?: Array<import('./constants').ItemType>
+    maxProduction?:number
 }
 
 interface Objective {
