@@ -27,12 +27,10 @@ export default class ObjectiveView extends React.Component<Props, State> {
         const validObjectives = ObjectiveList.filter(e=>e.requires.every(o=>player.completedObjectives.includes(o)) || e.requires.length === 0)
         const completed = validObjectives.filter(e=>player.completedObjectives.includes(e.id))
         const incomplete = validObjectives.filter(e=>!player.completedObjectives.includes(e.id))
-        return <div style={{...AppStyles.dialog, display:"flex", maxHeight:'25%'}}>
+        return <div style={{...AppStyles.dialog, display:"flex", height:'250px'}}>
                     <div ref={this.scroller} style={{overflow:"hidden"}}>
                         <div>
-                            {incomplete.map(e=><h5 style={{color:colors.bronze}}>- {e.description}</h5>)}
-                            {completed.map(e=><h5 style={{color:colors.lGreen}}>- {e.description}</h5>)}
-                            {incomplete.length === 0 && Button(true, ()=>onCreateEncounter(getNewEncounter(Scenarios[Scenarios.findIndex(s=>s.scenario === this.props.match.map)+1].scenario)), 'Continue ->')}
+                            {incomplete.map(e=><h5 style={{color:colors.lGreen}}>- {e.description}</h5>)}
                         </div>
                     </div>
                     <div style={{display:'flex', flexDirection:'column', justifyContent:'space-between'}}>

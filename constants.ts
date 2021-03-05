@@ -164,11 +164,11 @@ export type Resources = {
 }
 
 export const defaultResources = {
-    [ItemType.Lead]: 10,
-    [ItemType.Lithium]: 10,
-    [ItemType.Palladium]: 10,
-    [ItemType.Titanium]: 10,
-    [ItemType.Copper]: 10
+    [ItemType.Lead]: 9,
+    [ItemType.Lithium]: 9,
+    [ItemType.Palladium]: 9,
+    [ItemType.Titanium]: 9,
+    [ItemType.Copper]: 9
 }
 
 export enum Objectives {

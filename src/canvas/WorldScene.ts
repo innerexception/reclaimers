@@ -50,7 +50,7 @@ export default class WorldScene extends Scene {
 
         let regionName = store.getState().onlineAccount.savedState[0]?.map || Scenario.LightOfTheWorld
         let reg = this.regionSprites.find(r=>r.mapName === regionName)
-        this.cameras.main.pan(reg.x, reg.y, 2000)
+        this.cameras.main.centerOn(reg.x, reg.y)
        
         this.input.on('pointerover', (event, gameObjects) => {
             if(gameObjects[0]){

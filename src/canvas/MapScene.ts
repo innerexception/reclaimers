@@ -189,7 +189,7 @@ export default class MapScene extends Scene {
             t.index = RCObjectType.Fog+1
             t.alpha = this.tiles[t.x] && this.tiles[t.x][t.y]?.alpha
         })
-        let otherDesigns = [NPCData[RCDroneType.Defender]]
+        let otherDesigns = [NPCData[RCDroneType.Defender], NPCData[RCDroneType.Processor]]
         let bases = this.getObjects(RCObjectType.Base)
         bases.forEach(b=>{
             this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.Base, b.x, b.y, defaultDesigns))
@@ -279,8 +279,8 @@ export default class MapScene extends Scene {
             if(!encounter) return
             let tile = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'ground')
             if(tile || gameObjects.length > 0){
-                if(gameObjects.length > 0) tile = this.map.getTileAtWorldXY((gameObjects[0] as any).x, (gameObjects[0] as any).y, false, undefined, 'ground')
-                setSelectIconPosition(this, tile)
+                if(gameObjects.length > 0) this.selectIcon.setPosition((gameObjects[0] as any).x, (gameObjects[0] as any).y)
+                else setSelectIconPosition(this, tile)
                 const fog = this.map.getTileAt(tile.x, tile.y, false, 'fog')
                 onShowTileInfo(this.tiles[tile.x][tile.y], fog.alpha !== 1)
             }

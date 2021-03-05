@@ -10,7 +10,7 @@ const appReducer = (state = getInitialState(), action:any):RState => {
         case UIReducerActions.HIDE_MODAL:
             return { ...state, modalState: null }
         case UIReducerActions.LOGOUT:
-            return { ...state, modalState: {modal: Modal.MainMenu}, engineEvent: {action: UIReducerActions.LOGOUT, data: null }}
+            return { ...state, selectedUnit: null, selectedBuilding: null, modalState: {modal: Modal.MainMenu}, engineEvent: {action: UIReducerActions.LOGOUT, data: null }}
         case UIReducerActions.UPDATE_ACCOUNT:
             return { ...state, onlineAccount: {...action.account}}
         case UIReducerActions.JOIN_ENCOUNTER:

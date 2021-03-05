@@ -3,6 +3,7 @@ import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
+import { RCObjectType } from '../../constants';
 
 interface Props {
     encounter?: MapData
@@ -34,8 +35,8 @@ export default class FactoryInfo extends React.Component<Props, State> {
         const me = this.props.player
         const defaultDesigns = this.props.selectedBuilding.availableDroneDesigns
         const d = defaultDesigns[this.state.selectedIndex]
-        return (
-                    <div style={{height:'250px', display:'flex', flexDirection:"column", justifyContent:"space-between"}}>
+        return this.props.selectedBuilding.type === RCObjectType.Base ? (
+                    <div style={{height:'100%', display:'flex', flexDirection:"column", justifyContent:"space-between"}}>
                         <div>
                             {this.props.selectedBuilding.activeDroneDesign ? <h6 style={{textAlign:'center'}}>Producing: {this.props.selectedBuilding.activeDroneDesign.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h6>:<h6>Producing nothing</h6>}
                             <hr/>
@@ -44,9 +45,11 @@ export default class FactoryInfo extends React.Component<Props, State> {
                                 <h4>{d.name}</h4>
                                 {Button(this.state.selectedIndex < defaultDesigns.length-1, ()=>this.setState({selectedIndex: this.state.selectedIndex+1}), '>')}
                             </div>
-                            {d.processesItems && <h6>processes</h6>}
                             <div style={{display:'flex'}}>
-                                {d.processesItems?.map(a=>CssIcon(a, true))}
+                                {d.processesItems && <h6>processes</h6>}
+                                <div style={{display:'flex'}}>
+                                    {d.processesItems?.map(a=>CssIcon(a, true))}
+                                </div>
                             </div>
                             <div style={{display:'flex', alignItems:'center'}}>
                                 <h6>requires:</h6>
@@ -57,11 +60,11 @@ export default class FactoryInfo extends React.Component<Props, State> {
                                 </div>
                             </div>
                         </div>
-                        <div style={{display:'flex', justifyContent:'space-evenly'}}>
+                        <div style={{display:'flex', justifyContent:'space-between'}}>
                             {Button(canAffordBot(me.resources, d.requiredItems), ()=>onChangeProduction(d), 'Build')}
                             {Button(true, onPauseProduction, 'Cancel')}
                         </div>
                     </div>
-        )
+        ) : <h5 style={{textAlign:'center'}}>Unknown</h5>
     }
 }

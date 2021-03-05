@@ -81,7 +81,7 @@ export default class DroneSprite extends GameObjects.Sprite {
                     //1. Check if dormant factory in sight range
                     const visibleTiles = this.scene.getVisibleTiles(dat, 'ground')
                     const fac = visibleTiles.find(t=>this.scene.buildings
-                        .find(b=>(b.building.type === RCObjectType.WarFactory || b.building.type === RCObjectType.InactiveFactory || RCObjectType.InactiveLab)
+                        .find(b=>(b.building.type === RCObjectType.WarFactory || b.building.type === RCObjectType.InactiveFactory)
                             && b.building.tileX === t.x && b.building.tileY === t.y))
                     //2. If so, move towards. 
                     if(fac){

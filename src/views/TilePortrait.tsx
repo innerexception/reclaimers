@@ -38,6 +38,6 @@ const styles = {
     border: '3px inset',
     borderColor: colors.bronze,
     padding:'5px',
-    minHeight:'100px',
+    height:'100px',
     background:'black'
 }
