@@ -85,7 +85,7 @@ export enum RCObjectType {
 }
 
 export enum RCDroneType {
-    Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, Processor=40, AncientSentry=160
+    Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, Processor=40, AncientSentry=160, RedSentry=168
 }
 
 export const RCUnitTypes = [RCDroneType.Scout, RCDroneType.ToxinExtractor, RCDroneType.Ordinater, RCDroneType.Defender, RCDroneType.Processor]
@@ -172,7 +172,9 @@ export const defaultResources = {
 }
 
 export enum Objectives {
-    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted,Purify20,BuildExtractor,BuildProcessor
+    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted,Purify20,
+    BuildExtractor,BuildProcessor,PurifyWorld,ForbiddenFactoryDiscovered,BuildDefender,
+    ForbiddenFactoryConverted,UnderEarth1,UnderEarth2
 }
 
 export enum UIReducerActions {

@@ -50,6 +50,17 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         requiredItems: [],
         isAI: true
     },
+    [RCDroneType.RedSentry]: {
+        name: 'Anchient Defender',
+        unitType: RCDroneType.RedSentry,
+        maxHp: 12,
+        speed: 1,
+        sight: 4,
+        maxInventory: 1,
+        buildTime: 30000,
+        requiredItems: [],
+        isAI: true
+    },
     [RCDroneType.Scout]: {
         name: 'Scout',
         unitType: RCDroneType.Scout,

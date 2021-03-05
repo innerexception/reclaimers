@@ -5,7 +5,6 @@ import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
 import { RCObjectType, RCDroneType } from '../../constants';
 import FactoryInfo from './FactoryInfo';
 import AppStyles, { colors } from '../../AppStyles';
-import LabInfo from './LabInfo';
 
 interface Props {
     selectedUnit?: RCUnit
