@@ -35,7 +35,7 @@ export const getNewEncounter = (map:Scenario):MapData => {
 }
 
 export const getNextTechnology = (p:RCPlayerState):Technology => {
-    const possible = Technologies.filter(t=>!p.technologies.find(pt=>pt.type === t))
+    const possible = Technologies.filter(t=>!p.technologies.find(pt=>pt.type === t.type))
     return possible[Phaser.Math.Between(0,possible.length-1)]
 }
 
@@ -193,7 +193,7 @@ export const getCircle = (cx: number, cy: number, r: number, topology?:number) =
     return result;
 }
 
-export const canPassTerrainType = (unit:RCUnit|RCAnimal, terrainIndex:number) => false
+export const canPassTerrainType = (unit:RCUnit|RCAnimal, terrainIndex:number) => unit.hover
 
 export const getSightMap = (x,y,radius, map:Phaser.Tilemaps.Tilemap) => {
     let sightArray = []
@@ -211,7 +211,8 @@ export const getUnitFromData = (data:RCUnitData):RCUnit => {
         tileX: 0,
         tileY: 0,
         isSwarmLeader: false,
-        inventory: []
+        inventory: [],
+        weaponLevel: 0
     }
 }
 

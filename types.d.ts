@@ -26,6 +26,9 @@ interface RCUnit extends RCUnitData {
     isSwarmLeader: boolean
     swarmLeaderId?:string
     hp:number
+    hover?:boolean
+    regenerater?:boolean
+    weaponLevel:number
     tileX: number
     tileY: number
     unitType: import('./constants').RCDroneType
@@ -45,6 +48,7 @@ interface RCAnimalData {
     speed: number
     sight: number
     maxHp: number
+    hover?:boolean
 }
 
 interface RCUnitData {

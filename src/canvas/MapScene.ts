@@ -1,10 +1,10 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../../App";
 import { defaults } from '../../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes } from "../../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes, TechnologyType } from "../../constants";
 import DroneSprite from "./DroneSprite";
-import { canAttractDrone, canPassTerrainType, getCircle, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
-import { onEncounterUpdated, onUpdateSelectedUnit, onShowModal, onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
+import { canAttractDrone, canPassTerrainType, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
+import { onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
 import BuildingSprite from "./BuildingSprite";
 import { defaultDesigns, NPCData } from "../data/NPCData";
@@ -65,6 +65,30 @@ export default class MapScene extends Scene {
                     let bot = engineEvent.data.unit as RCUnit
                     bot.tileX = this.map.worldToTileX(engineEvent.data.building.x)
                     bot.tileY = this.map.worldToTileY(engineEvent.data.building.y)+1
+                    uiState.onlineAccount.technologies.forEach(t=>{
+                        switch(t.type){
+                            case TechnologyType.DefenderArmor:
+                                if(bot.unitType === RCDroneType.Defender){
+                                    bot.maxHp*=2
+                                    bot.hp = bot.maxHp
+                                }
+                            break
+                            case TechnologyType.DefenderWeapons:
+                                if(bot.unitType === RCDroneType.Defender) bot.weaponLevel = 2
+                            break
+                            case TechnologyType.Jets:
+                                if(bot.unitType === RCDroneType.Defender || bot.unitType === RCDroneType.Scout) bot.hover = true
+                            break
+                            case TechnologyType.ProcessingGroup1:
+                            case TechnologyType.ProcessingGroup2:
+                            case TechnologyType.ProcessingGroup3:
+                                if(bot.unitType === RCDroneType.Processor) bot.processesItems = bot.processesItems.concat(t.extractItems)
+                            break
+                            case TechnologyType.Regeneration:
+                                if(bot.unitType === RCDroneType.Ordinater) bot.regenerater = true
+                            break
+                        }
+                    })
                     this.spawnUnit(bot)
                 break
                 case UIReducerActions.SELECT_DESTINATION:

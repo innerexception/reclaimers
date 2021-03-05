@@ -5,26 +5,33 @@ export const FONT_DEFAULT = {
 }
 
 export enum TechnologyType {
-    ExtractorScoutJets, ExtractorRange, DefenderWeapons, DefenderWeapons2, DefenderArmor,
+    Jets, Regeneration, DefenderWeapons, DefenderArmor,
     ProcessingGroup1, ProcessingGroup2, ProcessingGroup3
 }
 
 export enum ItemType {
     Lead=1, Manganese=3, Gold=4, Arsenic=7, Titanium=8, Mercury=9, Cadmium=13, Benzene=14, 
-    Copper=17, Cobalt=18,Asbestos=20,Petroleum=29,Rock=32,Move=81,Mine=85,Lithium=64,
+    Copper=17, Cobalt=18,Asbestos=20,Petroleum=29,Lithium=64,Rock=62,
     Palladium=24,Plastics=89,Pesticides=15,Uranium,Plutonium
 }
 
 export const Technologies:Array<Technology> = [
     {
+        type: TechnologyType.Jets,
+        messages: ['Extractors and scouts can travel anywhere!'] 
+    },
+    {
+        type: TechnologyType.Regeneration,
+        messages: ['Ordinaters heal drones near them!'] 
+        //TODO: Ords regenerate nearby drones
+    },
+    {
         type: TechnologyType.DefenderArmor,
         messages: ['The defenders become hardened...'] 
-        //TODO: Double hp, flashes blueish instead of red
     },
     {
         type: TechnologyType.DefenderWeapons,
-        messages: ['The defenders gained new weapons!'] 
-        //TODO: Shoots red lasers instead of green, Can defeat red enemies now, and destroy red boulders
+        messages: ['The defenders gained new weapons!']
     },
     {
         messages: ['Purifiers learn the secrets of new toxins!'],

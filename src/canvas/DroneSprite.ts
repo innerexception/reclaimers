@@ -1,6 +1,6 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import { store } from "../../App";
-import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEvents, RCAnimalTypes } from '../../constants'
+import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEvents, RCAnimalTypes, TechnologyType, RCUnitTypes, ItemType } from '../../constants'
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal, onDiscoverPlayerTech } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
@@ -20,7 +20,7 @@ export default class DroneSprite extends GameObjects.Sprite {
     constructor(scene:MapScene,x:number,y:number, frame:number, character:RCUnit){
         super(scene, x,y, 'bot-sprites', frame)
         this.g = scene.add.graphics()
-        this.g.lineStyle(1, 0xff0000, 1)
+        this.g.lineStyle(1, 0xff00ff, 1)
         this.entity = character
         this.setDisplaySize(16,16)
         this.play('bot-sprites'+character.unitType)
@@ -107,14 +107,24 @@ export default class DroneSprite extends GameObjects.Sprite {
                 break
                 case RCDroneType.Defender:
                     //Can be ordered to generate a swarm. Also targets enemies in sight range with ranged attacks.
-                    const target = this.calcVisibleObjects().find(c=>c.entity.isAI)
-                    if(target) this.damageToTarget(target)
+                    const target = this.calcVisibleDrones().find(c=>c.entity.isAI)
+                    if(target && target.entity.unitType !== RCDroneType.RedSentry) this.damageToTarget(target)
+                    else if(target && this.entity.weaponLevel === 2) this.damageToTarget(target)
+                    else {
+                        const visibleTiles = this.scene.getVisibleTiles(dat, 'objects')
+                        const rock = visibleTiles.find(t=>t.index-1 === ItemType.Rock)
+                        if(rock){
+                            rock.index = -1
+                            //TODO, shoot laser
+                        }
+                    }
                     this.roam()
                 break
                 case RCDroneType.AncientSentry:
+                case RCDroneType.RedSentry:
                     //Basically any mechanical runs this branch
                     //Same as defender ai with paramter mods
-                    const target2 = this.calcVisibleObjects().find(c=>!c.entity.isAI)
+                    const target2 = this.calcVisibleDrones().find(c=>!c.entity.isAI)
                     if(target2) this.damageToTarget(target2)
                     this.roam()
                     //Sometimes drops lore when killed
@@ -191,7 +201,7 @@ export default class DroneSprite extends GameObjects.Sprite {
         })
     }
 
-    calcVisibleObjects = () => {
+    calcVisibleDrones = () => {
         const visibilityMap = getSightMap(this.entity.tileX, this.entity.tileY, this.entity.sight, this.scene.map)
         return this.scene.drones.filter(c=>c.entity.id !== this.entity.id).filter(c=>
             visibilityMap[c.entity.tileX] && visibilityMap[c.entity.tileX][c.entity.tileY]
@@ -282,6 +292,7 @@ export default class DroneSprite extends GameObjects.Sprite {
     }
 
     damageToTarget = (target:DroneSprite) => {
+        if(this.entity.weaponLevel === 2) this.g.lineStyle(1, 0xff0000, 1)
         this.g.strokeLineShape(new Geom.Line(this.x, this.y, target.getCenter().x, target.getCenter().y))
         this.scene.time.addEvent({
             delay: 75,
