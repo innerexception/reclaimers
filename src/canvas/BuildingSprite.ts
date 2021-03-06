@@ -59,6 +59,10 @@ export default class BuildingSprite extends GameObjects.Sprite {
                     p.completedObjectives.push(Objectives.BuildProcessor)
                     onUpdatePlayer({...p})
                 }
+                if(design.unitType === RCDroneType.Ordinater && !p.completedObjectives.includes(Objectives.BuiltOrdinater)){
+                    p.completedObjectives.push(Objectives.BuiltOrdinater)
+                    onUpdatePlayer({...p})
+                }
             },
             repeat: this.building.maxProduction ? this.building.maxProduction : -1
         })

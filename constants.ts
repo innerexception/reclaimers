@@ -114,6 +114,12 @@ export enum TerrainType {
     Village1=88,Village2=90,Village3=63
 }
 
+export enum Objectives {
+    BackupDisk,BuiltOrdinater,BaseDiscovered,BaseConverted,Purify20,
+    BuildExtractor,BuildProcessor,PurifyWorld,ForbiddenFactoryDiscovered,BuildDefender,
+    ForbiddenFactoryConverted,UnderEarth1,UnderEarth2
+}
+
 export const TileEvents = {
     [TerrainType.Cave1]: {
         messages: ['Cave 1!']
@@ -125,7 +131,16 @@ export const TileEvents = {
         messages: ['Cave 3!']
     },
     [TerrainType.Village3]: {
-        messages: ['Village 1!']
+        messages: ['The drone discovered a backup shard in the ruins.'],
+        objective: Objectives.BackupDisk
+    },
+    [RCObjectType.InactiveFactory]: {
+        messages: ['This temple is asleep, it must be awakened by an Ordinater.'],
+        objective: Objectives.BaseDiscovered
+    },
+    [RCObjectType.WarFactory]: {
+        messages: ['This temple is corrupted, it must be cleansed by an Ordinater.'],
+        objective: Objectives.ForbiddenFactoryDiscovered
     }
 }
 
@@ -169,12 +184,6 @@ export const defaultResources = {
     [ItemType.Palladium]: 9,
     [ItemType.Titanium]: 9,
     [ItemType.Copper]: 9
-}
-
-export enum Objectives {
-    BackupDisk,DiscoveredOrdinater,FindAnOrdinater,BaseDiscovered,BaseConverted,Purify20,
-    BuildExtractor,BuildProcessor,PurifyWorld,ForbiddenFactoryDiscovered,BuildDefender,
-    ForbiddenFactoryConverted,UnderEarth1,UnderEarth2
 }
 
 export enum UIReducerActions {

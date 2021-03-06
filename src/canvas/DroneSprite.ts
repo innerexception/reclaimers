@@ -62,8 +62,8 @@ export default class DroneSprite extends GameObjects.Sprite {
                         if(e && !mapData.completedEvents.includes(tile.index-1)){
                             onShowModal(Modal.Dialog, e.messages)
                             mapData.completedEvents.push(tile.index-1)
+                            if(e.objective) player.completedObjectives.push(e.objective)
                             onUpdatePlayer({...player})
-                            //TODO: resolve custom event effect(s)
                             return this.waitOne()
                         }
                     }
@@ -94,6 +94,19 @@ export default class DroneSprite extends GameObjects.Sprite {
                                 onDiscoverPlayerTech(getNextTechnology(store.getState().onlineAccount))
                             } 
                             else {
+                                let p = store.getState().onlineAccount
+                                if(base.building.type === RCObjectType.InactiveFactory){
+                                    if(!p.completedObjectives.includes(Objectives.BaseConverted)){
+                                        p.completedObjectives.push(Objectives.BaseConverted)
+                                        onUpdatePlayer({...p})
+                                    }
+                                }
+                                if(base.building.type === RCObjectType.WarFactory){
+                                    if(!p.completedObjectives.includes(Objectives.ForbiddenFactoryConverted)){
+                                        p.completedObjectives.push(Objectives.ForbiddenFactoryConverted)
+                                        onUpdatePlayer({...p})
+                                    }
+                                }
                                 base.setFrame(RCObjectType.Base)
                                 base.building.type = RCObjectType.Base
                             }
@@ -165,6 +178,7 @@ export default class DroneSprite extends GameObjects.Sprite {
                         const p = store.getState().onlineAccount
                         p.cleanedTileCount+=1
                         if(p.cleanedTileCount >= 20) p.completedObjectives.push(Objectives.Purify20)
+                        if(p.cleanedTileCount >= 1000) p.completedObjectives.push(Objectives.PurifyWorld)
                         onUpdatePlayer({...p})
 
                         dat.inventory.push(tox[0])

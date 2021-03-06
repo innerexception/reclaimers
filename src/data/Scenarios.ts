@@ -10,12 +10,12 @@ export const ObjectiveList = [
     {
         description: "Construct an extraction drone.",
         id: Objectives.BuildExtractor,
-        requires: [Objectives.BuildExtractor]
+        requires: [Objectives.BackupDisk]
     },
     {
         description: "Purify 20 square miles of terrain down to 2 toxins or less.",
         id: Objectives.Purify20,
-        requires: [Objectives.BuildExtractor]
+        requires: [Objectives.BuildExtractor, Objectives.BuildProcessor]
     },
     {
         description: "Prepare the Way for the All-Maker",
@@ -28,18 +28,13 @@ export const ObjectiveList = [
         requires: []
     },
     {
-        id: Objectives.DiscoveredOrdinater,
+        id: Objectives.BuiltOrdinater,
         description: "Convert the temple of Reason using an Ordinater",
-        requires: [Objectives.FindAnOrdinater]
-    },
-    {
-        id: Objectives.FindAnOrdinater,
-        description: "Find a way to discover the secret key of this temple",
         requires: [Objectives.BaseDiscovered]
     },
     {
         id: Objectives.BaseDiscovered,
-        description: "The temple is locked by a secret key.",
+        description: "The temple is corrupted by a secret key.",
         requires: [Objectives.BaseDiscovered]
     },
     {
