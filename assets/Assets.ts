@@ -13,6 +13,7 @@ export const defaults = [
     { key: RCAnimalType.Wolf, resource: require('./animals/Wolf/Wolf_Walk.png'), type: 'spritesheet', data: { frameWidth: 64, frameHeight: 40 }},
     { key: 'bot-sprites', resource: require('./Robots.png'), type: 'spritesheet', data: { frameWidth: 24, frameHeight: 32,  } }, //margin: 1, spacing: 2
     { key: 'map', resource: require('./maps/map.json'), type: 'tilemapTiledJSON'},
-    { key: Scenario.LightOfTheWorld, resource: require('./maps/tutorial.json'), type: 'tilemapTiledJSON'},
-    { key: Scenario.Ordinaters, resource: require('./maps/zone2.json'), type: 'tilemapTiledJSON'}
+    { key: Scenario.zone1, resource: require('./maps/tutorial.json'), type: 'tilemapTiledJSON'},
+    { key: Scenario.zone2, resource: require('./maps/zone2.json'), type: 'tilemapTiledJSON'},
+    { key: Scenario.zone3, resource: require('./maps/zone3.json'), type: 'tilemapTiledJSON'}
 ]

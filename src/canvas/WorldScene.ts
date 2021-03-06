@@ -48,7 +48,7 @@ export default class WorldScene extends Scene {
         this.cameras.main.setZoom(2)
         this.cameras.main.setBounds(0, 0, regionMap.widthInPixels, regionMap.heightInPixels)
 
-        let regionName = store.getState().onlineAccount.savedState[0]?.map || Scenario.LightOfTheWorld
+        let regionName = store.getState().onlineAccount.savedState[0]?.map || Scenario.zone1
         let reg = this.regionSprites.find(r=>r.mapName === regionName)
         this.cameras.main.centerOn(reg.x, reg.y)
        

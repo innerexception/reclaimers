@@ -73,14 +73,18 @@ export const ObjectiveList = [
 
 export const Scenarios = [
     {
-        scenario: Scenario.LightOfTheWorld,
+        scenario: Scenario.zone1,
         intro: [
             "Sensing unit power restored. Retrieving directives...",
             "Err: Directory not found! No connectivity detected. Seek backup data."
         ]
     },
     {
-        scenario: Scenario.Ordinaters,
+        scenario: Scenario.zone2,
         intro: ["Man the All-Maker went down into the earth, sealing the way behind."]
+    },
+    {
+        scenario: Scenario.zone3,
+        intro: ["Too late, the power is out."]
     }
 ]

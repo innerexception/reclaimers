@@ -101,7 +101,7 @@ export enum Modal {
 }
 
 export enum Scenario {
-    LightOfTheWorld="LightOfTheWorld",Ordinaters='Ordinaters'
+    zone1='zone1', zone2='zone2', zone3='zone3', zone4='zone4'
 }
 
 

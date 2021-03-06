@@ -241,6 +241,12 @@
                  "height":80,
                  "id":87,
                  "name":"region",
+                 "properties":[
+                        {
+                         "name":"mapName",
+                         "type":"string",
+                         "value":"zone4"
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -252,6 +258,12 @@
                  "height":64,
                  "id":89,
                  "name":"region",
+                 "properties":[
+                        {
+                         "name":"mapName",
+                         "type":"string",
+                         "value":"zone3"
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -267,7 +279,7 @@
                         {
                          "name":"mapName",
                          "type":"string",
-                         "value":"Ordinaters"
+                         "value":"zone2"
                         }],
                  "rotation":0,
                  "type":"",
@@ -284,7 +296,7 @@
                         {
                          "name":"mapName",
                          "type":"string",
-                         "value":"LightOfTheWorld"
+                         "value":"zone1"
                         }],
                  "rotation":0,
                  "type":"",

@@ -247,7 +247,7 @@ export default class MapScene extends Scene {
     {
         this.g = this.add.graphics().setDepth(3)
         this.effects = this.add.group()
-        this.initMap(getNewEncounter(Scenario.LightOfTheWorld))
+        this.initMap(getNewEncounter(Scenario.zone1))
         
         // this.sounds = {
         //     border: this.sound.add('border'),
