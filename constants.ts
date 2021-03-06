@@ -120,16 +120,7 @@ export enum Objectives {
     ForbiddenFactoryConverted,UnderEarth1,UnderEarth2
 }
 
-export const TileEvents = {
-    [TerrainType.Cave1]: {
-        messages: ['Cave 1!']
-    },
-    [TerrainType.Cave2]: {
-        messages: ['Cave 2!']
-    },
-    [TerrainType.Cave3]: {
-        messages: ['Cave 3!']
-    },
+export const TileEvents:{[key:number]: { messages: Array<string>, objective:Objectives }} = {
     [TerrainType.Village3]: {
         messages: ['The drone discovered a backup shard in the ruins.'],
         objective: Objectives.BackupDisk

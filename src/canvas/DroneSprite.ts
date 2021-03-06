@@ -4,7 +4,7 @@ import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEven
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal, onDiscoverPlayerTech } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
-import { getAnimalFromData, getNearestDropoffForResource, getNextTechnology, getSightMap, getUnitFromData, shuffle } from "../util/Util";
+import { addObjective, getAnimalFromData, getNearestDropoffForResource, getNextTechnology, getSightMap, getUnitFromData, shuffle } from "../util/Util";
 import { CreatureData, NPCData } from "../data/NPCData";
 
 export default class DroneSprite extends GameObjects.Sprite {
@@ -58,12 +58,9 @@ export default class DroneSprite extends GameObjects.Sprite {
                     if(tile){
                         const e = TileEvents[tile.index-1]
                         const player = store.getState().onlineAccount
-                        const mapData = player.savedState.find(s=>s.map === store.getState().activeEncounter.map)
-                        if(e && !mapData.completedEvents.includes(tile.index-1)){
+                        if(e && !player.completedObjectives.includes(e.objective)){
                             onShowModal(Modal.Dialog, e.messages)
-                            mapData.completedEvents.push(tile.index-1)
-                            if(e.objective) player.completedObjectives.push(e.objective)
-                            onUpdatePlayer({...player})
+                            addObjective(e.objective, player)
                             return this.waitOne()
                         }
                     }
@@ -96,16 +93,10 @@ export default class DroneSprite extends GameObjects.Sprite {
                             else {
                                 let p = store.getState().onlineAccount
                                 if(base.building.type === RCObjectType.InactiveFactory){
-                                    if(!p.completedObjectives.includes(Objectives.BaseConverted)){
-                                        p.completedObjectives.push(Objectives.BaseConverted)
-                                        onUpdatePlayer({...p})
-                                    }
+                                    addObjective(Objectives.BaseConverted, p)
                                 }
                                 if(base.building.type === RCObjectType.WarFactory){
-                                    if(!p.completedObjectives.includes(Objectives.ForbiddenFactoryConverted)){
-                                        p.completedObjectives.push(Objectives.ForbiddenFactoryConverted)
-                                        onUpdatePlayer({...p})
-                                    }
+                                    addObjective(Objectives.ForbiddenFactoryConverted, p)
                                 }
                                 base.setFrame(RCObjectType.Base)
                                 base.building.type = RCObjectType.Base
@@ -177,8 +168,8 @@ export default class DroneSprite extends GameObjects.Sprite {
                         
                         const p = store.getState().onlineAccount
                         p.cleanedTileCount+=1
-                        if(p.cleanedTileCount >= 20) p.completedObjectives.push(Objectives.Purify20)
-                        if(p.cleanedTileCount >= 1000) p.completedObjectives.push(Objectives.PurifyWorld)
+                        if(p.cleanedTileCount >= 20) addObjective(Objectives.Purify20, p)
+                        if(p.cleanedTileCount >= 1000) addObjective(Objectives.PurifyWorld, p)
                         onUpdatePlayer({...p})
 
                         dat.inventory.push(tox[0])
@@ -187,7 +178,7 @@ export default class DroneSprite extends GameObjects.Sprite {
                         if(toxLength < 3){
                             if(TerrainLevels[tileDat.type-1]){
                                 tile.index = TerrainLevels[tileDat.type-1][toxLength]+1
-                                if(Phaser.Math.Between(0, 1)===1){
+                                if(Phaser.Math.Between(0, 25)===1){
                                     const type = RCAnimalTypes[Phaser.Math.Between(0,RCAnimalTypes.length-1)]
                                     this.scene.spawnAnimal(getAnimalFromData(tile.x, tile.y, CreatureData[type]))
                                 }

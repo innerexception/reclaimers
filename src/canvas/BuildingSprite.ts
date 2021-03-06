@@ -5,6 +5,7 @@ import { FONT_DEFAULT, Objectives, RCObjectType, RCDroneType } from '../../const
 import { NPCData } from "../data/NPCData";
 import MapScene from "./MapScene";
 import { onSpawnBot, onUpdatePlayer, onUpdateSelectedBuilding } from "../uiManager/Thunks";
+import { addObjective } from "../util/Util";
 
 export default class BuildingSprite extends GameObjects.Sprite {
 
@@ -51,17 +52,14 @@ export default class BuildingSprite extends GameObjects.Sprite {
             callback: ()=>{
                 onSpawnBot(design, this)
                 const p = store.getState().onlineAccount
-                if(design.unitType === RCDroneType.ToxinExtractor && !p.completedObjectives.includes(Objectives.BuildExtractor)){
-                    p.completedObjectives.push(Objectives.BuildExtractor)
-                    onUpdatePlayer({...p})
+                if(design.unitType === RCDroneType.ToxinExtractor){
+                    addObjective(Objectives.BuildExtractor, p)
                 }
-                if(design.unitType === RCDroneType.Processor && !p.completedObjectives.includes(Objectives.BuildProcessor)){
-                    p.completedObjectives.push(Objectives.BuildProcessor)
-                    onUpdatePlayer({...p})
+                if(design.unitType === RCDroneType.Processor){
+                    addObjective(Objectives.BuildProcessor, p)
                 }
-                if(design.unitType === RCDroneType.Ordinater && !p.completedObjectives.includes(Objectives.BuiltOrdinater)){
-                    p.completedObjectives.push(Objectives.BuiltOrdinater)
-                    onUpdatePlayer({...p})
+                if(design.unitType === RCDroneType.Ordinater){
+                    addObjective(Objectives.BuiltOrdinater, p)
                 }
             },
             repeat: this.building.maxProduction ? this.building.maxProduction : -1

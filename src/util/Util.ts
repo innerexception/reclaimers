@@ -2,10 +2,11 @@ import { v4 } from 'uuid'
 import { Scene, Tilemaps } from 'phaser';
 import { DIRS } from './AStar'
 import MapScene from '../canvas/MapScene';
-import { defaultResources, ItemType, RCDroneType, Resources, Scenario, Technologies, TerrainToxins, TerrainType } from '../../constants';
+import { defaultResources, ItemType, Objectives, RCDroneType, Resources, Scenario, Technologies, TerrainToxins, TerrainType } from '../../constants';
 import { computeFOV } from './Fov';
 import BuildingSprite from '../canvas/BuildingSprite';
 import DroneSprite from '../canvas/DroneSprite';
+import { onUpdatePlayer } from '../uiManager/Thunks';
 
 enum FirebaseAuthError {
     NOT_FOUND='auth/user-not-found',
@@ -30,7 +31,6 @@ export const getNewEncounter = (map:Scenario):MapData => {
         map,
         tileData: [],
         entities: [],
-        completedEvents: []
     }
 }
 
@@ -46,7 +46,8 @@ export const getNewAccount = (name:string, id:string):RCPlayerState => {
         technologies: [],
         id,
         name,
-        savedState: []
+        savedState: [],
+        cleanedTileCount: 0
     } 
 }
 
@@ -268,4 +269,11 @@ export const canAttractDrone = (leader:RCUnit, drone:RCUnit) => {
             return drone.unitType === RCDroneType.Defender
     }
     return false
+}
+
+export const addObjective = (obj:Objectives, p:RCPlayerState) => {
+    if(!p.completedObjectives.includes(obj)){
+        p.completedObjectives.push(obj)
+        onUpdatePlayer({...p})
+    }
 }

@@ -75,7 +75,6 @@ interface MapData {
     map: import('./constants').Scenario
     tileData: Array<Array<TileInfo>>
     entities: Array<RCUnit>
-    completedEvents: Array<import('./constants').TerrainType>
 }
 
 interface RCPlayerState {
