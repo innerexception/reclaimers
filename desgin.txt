@@ -39,7 +39,6 @@ build a network of point to point charging stations to keep the bots moving
 3. Design more region maps tied to objective chains
 1. Implement ord regeneration ability
 
-1. Flesh out tutorial map events and polish mission
 16. inactive factories are guarded by fixed groups of creatures
 15. villages and caves sometimes produce enemy creatures (creature probability table is tile based)
 11. If swarm leader is selected, draw lines to swarm members?
