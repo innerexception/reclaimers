@@ -34,8 +34,9 @@ build a network of point to point charging stations to keep the bots moving
     -Defense drones: rallies other defense drones
     -Scout drones: not available
 
-
 2. Finish objective chains & triggers
+1. Final objective: disassemble all structures and drones, leaving only nature behind.
+
 3. Design more region maps tied to objective chains
 1. Implement ord regeneration ability
 

@@ -23,6 +23,11 @@ export const ObjectiveList = [
         requires: [Objectives.Purify20]
     },
     {
+        description: "Begin again...deconstruct all drones and facilities.",
+        id: Objectives.Degrowth,
+        requires: [Objectives.PurifyWorld]
+    },
+    {
         description: "Construct a scout drone and find backup data.",
         id: Objectives.BackupDisk,
         requires: []
