@@ -130,7 +130,8 @@ export default class MapScene extends Scene {
         let newState = {
             map: state.activeEncounter.map,
             tileData: this.tiles,
-            entities: this.drones.map(e=>e.entity)
+            entities: this.drones.map(e=>e.entity),
+            buildings: this.buildings.map(b=>b.building)
         }
         let player = state.onlineAccount
         let existing = player.savedState.findIndex(s=>s.map === state.activeEncounter.map)
@@ -179,28 +180,37 @@ export default class MapScene extends Scene {
                 tileData[t.x][t.y] = { toxins: getToxinsOfTerrain(t.index-1), type: t.index, alpha: 1 }
             })
             this.tiles = tileData
-            console.log('new tile data init...')
+
+            let otherDesigns = [NPCData[RCDroneType.Defender], NPCData[RCDroneType.Processor]]
+            let bases = this.getObjects(RCObjectType.Base)
+            bases.forEach(b=>{
+                this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.Base, b.x, b.y, defaultDesigns))
+                this.carveFogOfWar(4, b.x, b.y)
+            })
+            this.getObjects(RCObjectType.InactiveFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveFactory, b.x, b.y, [otherDesigns.pop()])))
+            this.getObjects(RCObjectType.WarFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.WarFactory, b.x, b.y, [otherDesigns.pop()])))
+            this.getObjects(RCObjectType.InactiveLab).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveLab, b.x, b.y, [])))
+            
+            console.log('new data init...')
         }
         else{
             this.tiles = encounter.tileData
             this.map.setLayer('ground').forEachTile(t=>{
                 t.index = this.tiles[t.x][t.y].type
             })
+
+            this.buildings = encounter.buildings.map(b=>{
+                let tile = this.map.getTileAt(b.tileX, b.tileY,false, 'ground')
+                return new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), b.type, b.tileX, b.tileY, b.availableDroneDesigns)
+            })
+
+            console.log('restored saved state...')
         } 
 
         this.map.setLayer('fog').forEachTile(t=>{
             t.index = RCObjectType.Fog+1
             t.alpha = this.tiles[t.x] && this.tiles[t.x][t.y]?.alpha
         })
-        let otherDesigns = [NPCData[RCDroneType.Defender], NPCData[RCDroneType.Processor]]
-        let bases = this.getObjects(RCObjectType.Base)
-        bases.forEach(b=>{
-            this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.Base, b.x, b.y, defaultDesigns))
-            this.carveFogOfWar(4, b.x, b.y)
-        })
-        this.getObjects(RCObjectType.InactiveFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveFactory, b.x, b.y, [otherDesigns.pop()])))
-        this.getObjects(RCObjectType.WarFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.WarFactory, b.x, b.y, [otherDesigns.pop()])))
-        this.getObjects(RCObjectType.InactiveLab).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveLab, b.x, b.y, [])))
         
         encounter.entities.forEach(e=>{
             this.spawnUnit(e)
@@ -208,6 +218,7 @@ export default class MapScene extends Scene {
 
         this.cameras.main.setZoom(3)
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
+        let bases = this.getObjects(RCObjectType.Base)
         this.cameras.main.centerOn(bases[0].getCenterX(), bases[0].getCenterY())
 
         this.selectedTile = this.map.getTileAt(Math.round(this.map.width/2), Math.round(this.map.height/2), false, 'ground')
@@ -447,7 +458,7 @@ export default class MapScene extends Scene {
          //TODO: spawn a human for every hut
 
          //TODO: chance for enemy spawns
-         
+
     }
 
 }
