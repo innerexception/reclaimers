@@ -75,6 +75,7 @@ interface MapData {
     map: import('./constants').Scenario
     tileData: Array<Array<TileInfo>>
     entities: Array<RCUnit>
+    cleanedTileCount: number
 }
 
 interface RCPlayerState {

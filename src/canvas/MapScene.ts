@@ -131,7 +131,7 @@ export default class MapScene extends Scene {
         let player = state.onlineAccount
         let existing = player.savedState.findIndex(s=>s.map === state.activeEncounter.map)
         if(existing === -1){
-            player.savedState.push({...newState})
+            player.savedState.push({...newState, cleanedTileCount: 0})
         }
         else player.savedState[existing] = {...player.savedState[existing], ...newState}
         localStorage.setItem('rc_save', JSON.stringify(player))

@@ -31,6 +31,7 @@ export const getNewEncounter = (map:Scenario):MapData => {
         map,
         tileData: [],
         entities: [],
+        cleanedTileCount: 0
     }
 }
 

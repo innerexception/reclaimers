@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
-import { RCObjectType, RCDroneType } from '../../constants';
+import { RCObjectType, RCDroneType, TechnologyType } from '../../constants';
 import FactoryInfo from './FactoryInfo';
 import AppStyles, { colors } from '../../AppStyles';
 
@@ -10,12 +10,14 @@ interface Props {
     selectedUnit?: RCUnit
     selectedBuilding?:RCBuildingState
     encounter?:MapData
+    player: RCPlayerState
 }
 
 @(connect((state: RState) => ({
     selectedUnit: state.selectedUnit,
     selectedBuilding: state.selectedBuilding,
-    encounter: state.activeEncounter
+    encounter: state.activeEncounter,
+    player: state.onlineAccount
 })) as any)
 export default class EntityInfo extends React.Component<Props> {
 
@@ -38,6 +40,7 @@ export default class EntityInfo extends React.Component<Props> {
                         {(unitData.unitType == RCDroneType.Defender || unitData.processesItems)
                             && Button(true, ()=>onGatherUnits(unitData.id), 'Swarm')}
                         {unitData.isSwarmLeader && Button(true, ()=>onUnGatherUnits(unitData.id), 'Release')}
+                        {this.props.player.technologies.find(t=>t.type === TechnologyType.Recycling && Button(true, ()=>onRecycleUnit(unitData.id), 'Reclaim'))}
                     </div>
                 </div>}
                 {buildDat && <FactoryInfo selectedBuilding={buildDat}/>}

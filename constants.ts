@@ -6,7 +6,8 @@ export const FONT_DEFAULT = {
 
 export enum TechnologyType {
     Jets, Regeneration, DefenderWeapons, DefenderArmor,
-    ProcessingGroup1, ProcessingGroup2, ProcessingGroup3
+    ProcessingGroup1, ProcessingGroup2, ProcessingGroup3,
+    Recycling
 }
 
 export enum ItemType {
@@ -16,6 +17,10 @@ export enum ItemType {
 }
 
 export const Technologies:Array<Technology> = [
+    {
+        type: TechnologyType.Recycling,
+        messages: ['You can now recycle drones and return materials to the earth.']
+    },
     {
         type: TechnologyType.Jets,
         messages: ['Extractors and scouts can travel anywhere!'] 
@@ -91,7 +96,7 @@ export enum RCDroneType {
 export const RCUnitTypes = [RCDroneType.Scout, RCDroneType.ToxinExtractor, RCDroneType.Ordinater, RCDroneType.Defender, RCDroneType.Processor]
 
 export enum RCAnimalType {
-    Rabbit='rabbit',Fox='fox',Bear='bear',Deer='deer',Wolf='wolf'
+    Rabbit='rabbit',Fox='fox',Bear='bear',Deer='deer',Wolf='wolf',Human='human'
 }
 
 export const RCAnimalTypes = [RCAnimalType.Bear,RCAnimalType.Deer,RCAnimalType.Fox,RCAnimalType.Rabbit,RCAnimalType.Wolf]

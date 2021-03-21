@@ -37,6 +37,8 @@ build a network of point to point charging stations to keep the bots moving
 2. Finish objective chains & triggers
 1. Final objective: disassemble all structures and drones, leaving only nature behind.
 
+11. Apply tech research to existing units not just new ones
+12. Generate human villages over time (If wake the all-makers is chosen)
 3. Design more region maps tied to objective chains
 1. Implement ord regeneration ability
 

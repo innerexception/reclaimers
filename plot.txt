@@ -188,14 +188,13 @@ Objectives are global
     -IF enough humans -> villages begin to be restored
         -> choose if you let humans develop, kill them, or limit their development
     -If hands off and enough humans, they attack. Kill or be killed.
-    -If you kill them early, the planet thrives and the drones rust away.
-    -If you limit development -> the planet thrives and the drones are repaired occasionally. (Synthesis)
-    -At some point you need the humans to repair drones. If they are dead this is a problem.
+    -If you kill them early, the planet thrives and you get the degrowth objective.
+    -If you limit development -> the planet thrives and the drones exist as guardians. (Synthesis)
 
 4. Toxin Discovery: You must find the chemical formulas of toxins in order to unlock them on your processors
     -Found in ruins
     -In inactive labs and factories
-    -Labs can be used to research toxins if captured
+    -Labs give toxins if captured
 
     
         

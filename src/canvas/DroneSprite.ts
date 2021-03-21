@@ -167,7 +167,9 @@ export default class DroneSprite extends GameObjects.Sprite {
                         let tox = tileDat.toxins.splice(tilei,1)
                         
                         const p = store.getState().onlineAccount
-                        p.cleanedTileCount+=1
+                        p.cleanedTileCount++
+                        const mapState = p.savedState.find(s=>s.map === store.getState().activeEncounter.map)
+                        mapState.cleanedTileCount++
                         if(p.cleanedTileCount >= 20) addObjective(Objectives.Purify20, p)
                         if(p.cleanedTileCount >= 1000) addObjective(Objectives.PurifyWorld, p)
                         onUpdatePlayer({...p})
@@ -181,6 +183,11 @@ export default class DroneSprite extends GameObjects.Sprite {
                                 if(Phaser.Math.Between(0, 25)===1){
                                     const type = RCAnimalTypes[Phaser.Math.Between(0,RCAnimalTypes.length-1)]
                                     this.scene.spawnAnimal(getAnimalFromData(tile.x, tile.y, CreatureData[type]))
+                                }
+                                if(mapState.cleanedTileCount > 50 && p.cleanedTileCount > 400){
+                                    //TODO: spawn a human
+                                    //TODO: spawn a hut for every 3 humans, max humans per zone = 6 for now
+                                    //TODO: after a certain number of turns, expand the village one square
                                 }
                             }
                         }
