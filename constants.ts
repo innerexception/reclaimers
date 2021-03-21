@@ -127,7 +127,7 @@ export enum Objectives {
     HumansAwaken
 }
 
-export const TileEvents:{[key:number]: { messages: Array<string>, objective:Objectives }} = {
+export const TileEvents:{[key:number]: { messages: Array<string>, objective:Objectives, enemy?: RCDroneType }} = {
     [TerrainType.Village3]: {
         messages: ['The drone discovered a backup shard in the ruins.'],
         objective: Objectives.BackupDisk
@@ -138,7 +138,8 @@ export const TileEvents:{[key:number]: { messages: Array<string>, objective:Obje
     },
     [RCObjectType.WarFactory]: {
         messages: ['This temple is corrupted, it must be cleansed by an Ordinater.'],
-        objective: Objectives.ForbiddenFactoryDiscovered
+        objective: Objectives.ForbiddenFactoryDiscovered,
+        enemy: RCDroneType.AncientSentry
     }
 }
 

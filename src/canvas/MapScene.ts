@@ -445,6 +445,9 @@ export default class MapScene extends Scene {
          //TODO: from starting hut, find next empty and adjacent cleansed tile
          //TODO: spawn a hut (of appropriate level) for every 3 fields, else spawn a field
          //TODO: spawn a human for every hut
+
+         //TODO: chance for enemy spawns
+         
     }
 
 }

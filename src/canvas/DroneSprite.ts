@@ -58,10 +58,13 @@ export default class DroneSprite extends GameObjects.Sprite {
                     if(tile){
                         const e = TileEvents[tile.index-1]
                         const player = store.getState().onlineAccount
-                        if(e && !player.completedObjectives.includes(e.objective)){
+                        if(e?.objective && !player.completedObjectives.includes(e.objective)){
                             onShowModal(Modal.Dialog, e.messages)
                             addObjective(e.objective, player)
                             return this.waitOne()
+                        }
+                        if(e?.enemy){
+                            this.scene.spawnUnit({...getUnitFromData(NPCData[e.enemy]), tileX: tile.x, tileY: tile.y})
                         }
                     }
                     //Head towards the fog
