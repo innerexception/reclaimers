@@ -184,12 +184,14 @@ Objectives are global
 3. Reclaiming set
     -Clean X tiles to Y purity in Z region(s)
     -Restore X fauna of Y type in Z region(s)
-    -With enough fauna -> humans emerge from caves
+    -If you wake the humans -> humans emerge from caves with enough cleaned tiles
     -IF enough humans -> villages begin to be restored
         -> choose if you let humans develop, kill them, or limit their development
-    -If hands off and enough humans, they attack. Kill or be killed.
-    -If you kill them early, the planet thrives and you get the degrowth objective.
-    -If you limit development -> the planet thrives and the drones exist as guardians. (Synthesis)
+    -If hands off and enough humans, they accidentally awaken the ancient drones. 
+        Kill or be killed. This will keep happening until you run out of resources, or put the humans back in stasis.
+    -If you do not wake them, the planet thrives and you get the degrowth objective.
+    -If you limit development -> the planet thrives and the drones exist as guardians. 
+        you get the 'cull those who attempt to research forbidden tech' Objective (Synthesis)
 
 4. Toxin Discovery: You must find the chemical formulas of toxins in order to unlock them on your processors
     -Found in ruins

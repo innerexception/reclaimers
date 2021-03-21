@@ -120,9 +120,9 @@ export enum TerrainType {
 }
 
 export enum Objectives {
-    BackupDisk,BuiltOrdinater,BaseDiscovered,BaseConverted,Purify20,
+    BackupDisk,BuiltOrdinater,BaseDiscovered,BaseConverted,Purify20,InactiveSleepFacilityDiscovered,
     BuildExtractor,BuildProcessor,PurifyWorld,ForbiddenFactoryDiscovered,BuildDefender,
-    ForbiddenFactoryConverted,UnderEarth1,UnderEarth2,Degrowth
+    ForbiddenFactoryConverted,UnderEarth1,UnderEarth2,Degrowth,SleepFacilityDiscovered
 }
 
 export const TileEvents:{[key:number]: { messages: Array<string>, objective:Objectives }} = {

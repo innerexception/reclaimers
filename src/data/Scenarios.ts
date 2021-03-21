@@ -65,14 +65,24 @@ export const ObjectiveList = [
     },
     //Tile Events
     {
+        id: Objectives.InactiveSleepFacilityDiscovered,
+        description: "This refuge has been damaged and all within it are long dead.",
+        requires: [Objectives.InactiveSleepFacilityDiscovered]
+    },
+    {
+        id: Objectives.SleepFacilityDiscovered,
+        description: "The resting place of the last of the All-Makers.",
+        requires: [Objectives.SleepFacilityDiscovered]
+    },
+    {
         id: Objectives.UnderEarth1,
-        description: "",
-        requires: [Objectives.UnderEarth1]
+        description: "Wake the All-Makers",
+        requires: [Objectives.SleepFacilityDiscovered]
     },
     {
         id: Objectives.UnderEarth2,
-        description: "",
-        requires: [Objectives.UnderEarth1]
+        description: "Do not disturb the All-Makers", //TODO: needs an active consequence
+        requires: [Objectives.SleepFacilityDiscovered]
     }
 ]
 

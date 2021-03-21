@@ -184,7 +184,9 @@ export default class DroneSprite extends GameObjects.Sprite {
                                     const type = RCAnimalTypes[Phaser.Math.Between(0,RCAnimalTypes.length-1)]
                                     this.scene.spawnAnimal(getAnimalFromData(tile.x, tile.y, CreatureData[type]))
                                 }
-                                if(mapState.cleanedTileCount > 50 && p.cleanedTileCount > 400){
+                                if(mapState.cleanedTileCount > 50 && 
+                                    p.cleanedTileCount > 400 && 
+                                    p.completedObjectives.includes(Objectives.UnderEarth1)){
                                     //TODO: spawn a human
                                     //TODO: spawn a hut for every 3 humans, max humans per zone = 6 for now
                                     //TODO: after a certain number of turns, expand the village one square
