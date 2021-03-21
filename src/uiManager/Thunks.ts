@@ -104,6 +104,13 @@ export const onUnGatherUnits = (unitId:string) => {
     })
 }
 
+export const onRecycleUnit = (unitId:string) => {
+    dispatch({
+        type: UIReducerActions.RECYCLE,
+        unitId
+    })
+}
+
 export const onSelectUnitDestination = () => {
     dispatch({
         type: UIReducerActions.SELECT_DESTINATION

@@ -1,4 +1,4 @@
-import { Modal, UIReducerActions } from '../../constants';
+import { ItemType, Modal, UIReducerActions } from '../../constants';
 import { Scenarios } from '../data/Scenarios';
 import { getUnitFromData } from '../util/Util';
 
@@ -55,6 +55,11 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, engineEvent: { action: UIReducerActions.GATHER, data: action.unitId }}
         case UIReducerActions.UNGATHER:
             return { ...state, engineEvent: { action: UIReducerActions.UNGATHER, data: action.unitId }}
+        case UIReducerActions.RECYCLE:
+            const unit = state.activeEncounter.entities.find(u=>u.id === action.unitId)
+            state.onlineAccount.resources[unit.requiredItems[0].type]++
+            state.activeEncounter.entities = state.activeEncounter.entities.filter(u=>u.id === action.data)
+            return { ...state, onlineAccount: state.onlineAccount, activeEncounter: state.activeEncounter, engineEvent: { action: UIReducerActions.RECYCLE, data: action.unitId } }
         case UIReducerActions.RESEARCH:
             state.onlineAccount.technologies.push(action.tech)
             return { ...state, modalState: { modal: Modal.Dialog, data: action.tech.messages }, onlineAccount: {...state.onlineAccount}}

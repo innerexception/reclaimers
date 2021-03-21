@@ -36,6 +36,13 @@ export const CreatureData:{[key in RCAnimalType]:RCAnimalData} = {
         speed: 0.8,
         sight: 3
     },
+    [RCAnimalType.Human]: {
+        name: 'Humon',
+        animalType: RCAnimalType.Human,
+        maxHp: 1,
+        speed: 0.5,
+        sight: 3
+    },
 }
 
 export const NPCData:{[key in RCDroneType]:RCUnitData} = {

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button, CssIcon } from '../util/SharedComponents';
 import { connect } from 'react-redux';
-import { onGatherUnits, onUnGatherUnits } from '../uiManager/Thunks';
+import { onGatherUnits, onRecycleUnit, onUnGatherUnits } from '../uiManager/Thunks';
 import { RCObjectType, RCDroneType, TechnologyType } from '../../constants';
 import FactoryInfo from './FactoryInfo';
 import AppStyles, { colors } from '../../AppStyles';
@@ -10,7 +10,7 @@ interface Props {
     selectedUnit?: RCUnit
     selectedBuilding?:RCBuildingState
     encounter?:MapData
-    player: RCPlayerState
+    player?: RCPlayerState
 }
 
 @(connect((state: RState) => ({

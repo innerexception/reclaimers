@@ -15,7 +15,7 @@ export default class BuildingSprite extends GameObjects.Sprite {
     timer: Time.TimerEvent
     updateTimer: Time.TimerEvent
     
-    constructor(scene:MapScene,x:number,y:number, building:RCObjectType,tileX:number,tileY:number, designs:Array<RCUnitData>){
+    constructor(scene:MapScene,x:number,y:number, building:RCObjectType,tileX:number,tileY:number, designs?:Array<RCUnitData>){
         super(scene, x,y, 'sprites', building)
         
         this.building = {

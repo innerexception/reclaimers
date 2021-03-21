@@ -1,6 +1,7 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import MapScene from "./MapScene";
 import AStar from "../util/AStar";
+import { RCAnimalType } from "../../constants";
 
 export default class AnimalSprite extends GameObjects.Sprite {
 
@@ -32,7 +33,10 @@ export default class AnimalSprite extends GameObjects.Sprite {
         }
         let dat = this.entity
         switch(dat.animalType){
-            //TODO: animal behaviors
+            case RCAnimalType.Human: 
+                //TODO: Stay within 2 tiles of a hut
+
+            break
             default: this.roam()
         }
     }

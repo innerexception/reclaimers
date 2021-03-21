@@ -186,10 +186,10 @@ export default class DroneSprite extends GameObjects.Sprite {
                                 }
                                 if(mapState.cleanedTileCount > 50 && 
                                     p.cleanedTileCount > 400 && 
-                                    p.completedObjectives.includes(Objectives.UnderEarth1)){
-                                    //TODO: spawn a human
-                                    //TODO: spawn a hut for every 3 humans, max humans per zone = 6 for now
-                                    //TODO: after a certain number of turns, expand the village one square
+                                    p.completedObjectives.includes(Objectives.UnderEarth1) && 
+                                    !p.completedObjectives.includes(Objectives.HumansAwaken)){
+                                        this.scene.placeStartingHut()
+                                        p.completedObjectives.push(Objectives.HumansAwaken)
                                 }
                             }
                         }

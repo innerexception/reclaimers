@@ -86,7 +86,8 @@ export const StatusEffectData = {
 }
 
 export enum RCObjectType {
-    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Fog=87,Pylon=68,WarFactory=91,InactiveFactory=92,LeaderBadge=86,Lab=93,InactiveLab=90
+    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Fog=87,Pylon=68,WarFactory=91,
+    InactiveFactory=92,LeaderBadge=86,Lab=93,InactiveLab=90,Hut
 }
 
 export enum RCDroneType {
@@ -122,7 +123,8 @@ export enum TerrainType {
 export enum Objectives {
     BackupDisk,BuiltOrdinater,BaseDiscovered,BaseConverted,Purify20,InactiveSleepFacilityDiscovered,
     BuildExtractor,BuildProcessor,PurifyWorld,ForbiddenFactoryDiscovered,BuildDefender,
-    ForbiddenFactoryConverted,UnderEarth1,UnderEarth2,Degrowth,SleepFacilityDiscovered
+    ForbiddenFactoryConverted,UnderEarth1,UnderEarth2,Degrowth,SleepFacilityDiscovered,
+    HumansAwaken
 }
 
 export const TileEvents:{[key:number]: { messages: Array<string>, objective:Objectives }} = {
@@ -187,6 +189,7 @@ export enum UIReducerActions {
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
     START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION,TILE_INFO,
     UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON,SELECT_BUILDING,UPDATE_SELECT_BUILDING,
-    CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER,UNGATHER,UNSELECT_UNIT,MAP_VIEW,RESEARCH
+    CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER,UNGATHER,UNSELECT_UNIT,MAP_VIEW,RESEARCH,
+    RECYCLE
 }
             

@@ -1,13 +1,13 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../../App";
 import { defaults } from '../../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes, TechnologyType } from "../../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes, TechnologyType, RCAnimalType } from "../../constants";
 import DroneSprite from "./DroneSprite";
-import { canAttractDrone, canPassTerrainType, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
+import { canAttractDrone, canPassTerrainType, getAnimalFromData, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
 import { onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
 import BuildingSprite from "./BuildingSprite";
-import { defaultDesigns, NPCData } from "../data/NPCData";
+import { CreatureData, defaultDesigns, NPCData } from "../data/NPCData";
 import { ObjectiveList, Scenarios } from "../data/Scenarios";
 import AnimalSprite from "./AnimalSprite";
 
@@ -53,6 +53,10 @@ export default class MapScene extends Scene {
         let engineEvent = uiState.engineEvent
         if(engineEvent)
             switch(engineEvent.action){
+                case UIReducerActions.RECYCLE:
+                    let unit = this.drones.find(d=>d.entity.id === engineEvent.data)
+                    unit.shouldDestroy = true
+                break
                 case UIReducerActions.JOIN_ENCOUNTER:
                     if(this.initCompleted) this.initMap(engineEvent.data)
                     else this.waitForRender()
@@ -224,6 +228,12 @@ export default class MapScene extends Scene {
             callback: this.updateFogOfWar
         })
 
+        this.time.addEvent({
+            delay:30000,
+            loop: true,
+            callback: this.growVillage
+        })
+
         transitionIn(this)
     }
 
@@ -367,7 +377,6 @@ export default class MapScene extends Scene {
     }
 
     updateFogOfWar = () => {
-        console.log('fog update')
         this.map.setLayer('fog').forEachTile(t=>{
             if(t.alpha === 0) t.alpha = 0.5
         })
@@ -422,4 +431,20 @@ export default class MapScene extends Scene {
         let tile = this.map.getTileAt(unit.tileX, unit.tileY, false, 'ground')
         this.animals.push(new AnimalSprite(this, tile.getCenterX(), tile.getCenterY(), unit))
     }
+
+    spawnHut = (tile:Tilemaps.Tile) => {
+        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), RCObjectType.Hut, tile.x, tile.y))
+        this.animals.push(new AnimalSprite(this, tile.getCenterX()+16, tile.getCenterY(), getAnimalFromData(tile.x+1, tile.y, CreatureData[RCAnimalType.Human])))
+    }
+
+    placeStartingHut = () => {
+        //TODO: find a cleansed tile and place a hut there, then place a human next to said hut
+    }
+
+    growVillage = () => {
+         //TODO: from starting hut, find next empty and adjacent cleansed tile
+         //TODO: spawn a hut (of appropriate level) for every 3 fields, else spawn a field
+         //TODO: spawn a human for every hut
+    }
+
 }

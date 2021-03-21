@@ -23,9 +23,9 @@ export const ObjectiveList = [
         requires: [Objectives.Purify20]
     },
     {
-        description: "Begin again...deconstruct all drones and facilities.",
+        description: "Leave no trace...deconstruct all drones and facilities.",
         id: Objectives.Degrowth,
-        requires: [Objectives.PurifyWorld]
+        requires: [Objectives.UnderEarth2]
     },
     {
         description: "Construct a scout drone and find backup data.",
@@ -81,7 +81,7 @@ export const ObjectiveList = [
     },
     {
         id: Objectives.UnderEarth2,
-        description: "Do not disturb the All-Makers", //TODO: needs an active consequence
+        description: "Do not disturb the All-Makers",
         requires: [Objectives.SleepFacilityDiscovered]
     }
 ]
@@ -100,6 +100,10 @@ export const Scenarios = [
     },
     {
         scenario: Scenario.zone3,
-        intro: ["Too late, the power is out."]
-    }
+        intro: ["The All-Maker has lived countless lives in the Aethernet. An aethernode is here, somewhere."]
+    },
+    {
+        scenario: Scenario.zone4,
+        intro: ["This was the most fertile place on earth before the time of the All-Maker."]
+    },
 ]
