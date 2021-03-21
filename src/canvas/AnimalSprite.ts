@@ -1,7 +1,7 @@
 import { GameObjects, Tweens, Tilemaps, Geom } from "phaser";
 import MapScene from "./MapScene";
 import AStar from "../util/AStar";
-import { RCAnimalType } from "../../constants";
+import { RCAnimalType, RCObjectType } from "../../constants";
 
 export default class AnimalSprite extends GameObjects.Sprite {
 
@@ -34,8 +34,12 @@ export default class AnimalSprite extends GameObjects.Sprite {
         let dat = this.entity
         switch(dat.animalType){
             case RCAnimalType.Human: 
-                //TODO: Stay within 2 tiles of a hut
-
+                //Stay within 3 tiles of a hut
+                const hut = this.scene.buildings.find(c=>c.building.type === RCObjectType.Hut)
+                const dist = Phaser.Math.Distance.Between(hut.building.tileX, hut.building.tileY, dat.tileX, dat.tileY)
+                if(dist > 3){
+                    this.executeMove(this.scene.map.getTileAt(hut.building.tileX, hut.building.tileY, false, 'ground'))
+                }
             break
             default: this.roam()
         }

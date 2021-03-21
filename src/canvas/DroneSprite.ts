@@ -248,7 +248,7 @@ export default class DroneSprite extends GameObjects.Sprite {
         let path = new AStar(targetTile.x, targetTile.y, (tileX,tileY)=>this.scene.passableTile(tileX, tileY, dat)).compute(dat.tileX, dat.tileY)
         
         if(dat.swarmLeaderId){
-            //TODO: if more than 3 tiles from leader, move towards leader
+            //if more than 3 tiles from leader, move towards leader
             const leader = this.scene.drones.find(c=>c.entity.id === dat.swarmLeaderId)
             const dist = Phaser.Math.Distance.Between(leader.entity.tileX, leader.entity.tileY, dat.tileX, dat.tileY)
             if(dist > 3){
