@@ -3,12 +3,11 @@ import { store } from "../../App";
 import { defaults } from '../../assets/Assets'
 import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes, TechnologyType, RCAnimalType } from "../../constants";
 import DroneSprite from "./DroneSprite";
-import { canAttractDrone, canPassTerrainType, getAnimalFromData, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut } from "../util/Util";
+import { canAttractDrone, canPassTerrainType, getAnimalFromData, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut, getCircle } from "../util/Util";
 import { onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
 import BuildingSprite from "./BuildingSprite";
 import { CreatureData, defaultDesigns, NPCData } from "../data/NPCData";
-import { ObjectiveList, Scenarios } from "../data/Scenarios";
 import AnimalSprite from "./AnimalSprite";
 
 enum MouseTarget {
@@ -448,15 +447,34 @@ export default class MapScene extends Scene {
         this.animals.push(new AnimalSprite(this, tile.getCenterX()+16, tile.getCenterY(), getAnimalFromData(tile.x+1, tile.y, CreatureData[RCAnimalType.Human])))
     }
 
+    spawnField = (tile:Tilemaps.Tile) => {
+        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), RCObjectType.Field, tile.x, tile.y))
+    }
+
     placeStartingHut = () => {
-        //TODO: find a cleansed tile and place a hut there, then place a human next to said hut
+        //Find a cleansed tile and place a hut there, then place a human next to said hut
+        let tile = this.map.findTile(t=>this.tiles[t.x][t.y].toxins.length <= 2)
+        if(tile){
+            this.spawnHut(tile)
+        }
     }
 
     growVillage = () => {
-         //TODO: from starting hut, find next empty and adjacent cleansed tile
-         //TODO: spawn a hut (of appropriate level) for every 3 fields, else spawn a field
-         //TODO: spawn a human for every hut
-
+         //From a hut, find next empty and adjacent cleansed tile
+         let hut = this.buildings.find(b=>b.building.type === RCObjectType.Hut)
+         let target 
+         getCircle(hut.building.tileX, hut.building.tileY, 2).forEach(tuple=>{
+            if(this.tiles[tuple[0]][tuple[1]].toxins.length <= 2 && 
+            !this.buildings.find(b=>b.building.tileX === tuple[0] && b.building.tileY === tuple[1]))
+                target = this.map.getTileAt(tuple[0], tuple[1], false, 'ground')
+         })
+         if(target){
+            //Spawn a hut (of appropriate level) for every 3 fields, else spawn a field
+            let huts = this.buildings.filter(b=>b.building.type === RCObjectType.Hut)
+            if(huts.length % 3 === 0) this.spawnHut(target)
+            else this.spawnField(target)
+         }
+         
          //TODO: chance for enemy spawns
 
     }
