@@ -117,7 +117,7 @@ export enum TerrainType {
     Woods2=8,FrozenWoods=9,MBushes=10,ThickGrass=11,DesertGrass=12,FrozenGrass=13,Mountain3=14,Mountain4=15,
     DryForest=16,Barren=17,LBushes=18,SparseGrass=19,Cactus=20,FrozenRocks=21,Hill=22,FrozenHill=23,Huts=24,
     Minerals1=27,Minerals2=28,MediumGrass=29,Rocks=30,FrozenHill2=31,Cave1=35,Cave2=36,Cave3=57,
-    Village1=88,Village2=90,Village3=63
+    Village1=88,Village2=90,Village3=63,Monolith=78
 }
 
 export enum Objectives {

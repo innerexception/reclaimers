@@ -1,7 +1,7 @@
 import { Scene, GameObjects, Tilemaps, Game } from "phaser";
 import { store } from "../../App";
 import { defaults } from '../../assets/Assets'
-import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes, TechnologyType, RCAnimalType } from "../../constants";
+import { Scenario, UIReducerActions, RCObjectType, RCUnitTypes, RCDroneType, Objectives, RCAnimalTypes, TechnologyType, RCAnimalType, TerrainType } from "../../constants";
 import DroneSprite from "./DroneSprite";
 import { canAttractDrone, canPassTerrainType, getAnimalFromData, getNearestDrone, getNewEncounter, getSightMap, getToxinsOfTerrain, setSelectIconPosition, transitionIn, transitionOut, getCircle } from "../util/Util";
 import { onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
@@ -453,26 +453,29 @@ export default class MapScene extends Scene {
 
     placeStartingHut = () => {
         //Find a cleansed tile and place a hut there, then place a human next to said hut
-        let tile = this.map.findTile(t=>this.tiles[t.x][t.y].toxins.length <= 2)
+        this.map.setLayer('objects')
+        let tile = this.map.findTile(t=>this.tiles[t.x][t.y].type === TerrainType.Monolith)
         if(tile){
-            this.spawnHut(tile)
+            this.spawnHut(this.map.getTileAt(tile.x, tile.y+1))
         }
     }
 
     growVillage = () => {
          //From a hut, find next empty and adjacent cleansed tile
          let hut = this.buildings.find(b=>b.building.type === RCObjectType.Hut)
-         let target 
-         getCircle(hut.building.tileX, hut.building.tileY, 2).forEach(tuple=>{
-            if(this.tiles[tuple[0]][tuple[1]].toxins.length <= 2 && 
-            !this.buildings.find(b=>b.building.tileX === tuple[0] && b.building.tileY === tuple[1]))
-                target = this.map.getTileAt(tuple[0], tuple[1], false, 'ground')
-         })
-         if(target){
-            //Spawn a hut (of appropriate level) for every 3 fields, else spawn a field
-            let huts = this.buildings.filter(b=>b.building.type === RCObjectType.Hut)
-            if(huts.length % 3 === 0) this.spawnHut(target)
-            else this.spawnField(target)
+         if(hut){
+            let target 
+            getCircle(hut.building.tileX, hut.building.tileY, 2).forEach(tuple=>{
+               if(this.tiles[tuple[0]][tuple[1]].toxins.length <= 2 && 
+               !this.buildings.find(b=>b.building.tileX === tuple[0] && b.building.tileY === tuple[1]))
+                   target = this.map.getTileAt(tuple[0], tuple[1], false, 'ground')
+            })
+            if(target){
+               //Spawn a hut (of appropriate level) for every 3 fields, else spawn a field
+               let huts = this.buildings.filter(b=>b.building.type === RCObjectType.Hut)
+               if(huts.length % 3 === 0) this.spawnHut(target)
+               else this.spawnField(target)
+            }
          }
          
          //TODO: chance for enemy spawns
