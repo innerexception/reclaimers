@@ -15,8 +15,8 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, onlineAccount: {...action.account}}
         case UIReducerActions.JOIN_ENCOUNTER:
             let onlineAccount = state.onlineAccount
-            let modalState = { modal: Modal.Menu }
-            if(!onlineAccount.savedState.find(s=>s.map)){
+            let modalState = null
+            if(!onlineAccount.savedState.find(s=>s.map === action.match.map)){
                 onlineAccount.savedState.push(action.match)
                 modalState = { modal: Modal.Dialog, data: Scenarios.find(s=>s.scenario === action.match.map).intro } as any
             }

@@ -29,6 +29,7 @@ export default class ViewscreenFrame extends React.Component<Props> {
     getModal = () => {
         switch(this.props.modalState.modal){
             case Modal.MainMenu: return <Intro/>
+            default: return <Dialog messages={this.props.modalState.data}/>
         }
     }
 
@@ -41,12 +42,9 @@ export default class ViewscreenFrame extends React.Component<Props> {
                         <div style={{width:'350px', height:'100%'}}/> :
                         <div style={{width:'350px', height:'100%', display:'flex', flexDirection:"column", justifyContent:"space-between", padding:'5px'}}>
                             <TilePortrait/>
-                            {this.props.modalState?.modal === Modal.Dialog ? 
-                                <Dialog messages={this.props.modalState.data}/> :
-                                <ObjectiveView 
-                                    player={this.props.me}
-                                    match={this.props.activeMap} />
-                            }
+                            <ObjectiveView 
+                                player={this.props.me}
+                                match={this.props.activeMap} />
                             <EntityInfo/>
                             <Actionbar player={this.props.me}/>
                             {Button(true, onLogoutUser, 'Return to Orbit')}

@@ -25,7 +25,7 @@ export default class EntityInfo extends React.Component<Props> {
         const unitData =  this.props.selectedUnit
         const buildDat = this.props.selectedBuilding
         return (
-            <div style={{...AppStyles.dialog, height:'200px'}}>
+            <div style={{...AppStyles.dialog, height:'225px'}}>
                 {unitData &&
                 <div>
                     <h2>{unitData.name}</h2>

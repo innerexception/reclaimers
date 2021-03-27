@@ -60,7 +60,7 @@ export const Select = (value:any, onValueChange:Function, values: Array<any>) =>
     </div>
 
 export const ProgressBar = (value:number, max:number, bg:string) => 
-    <div style={{width:'85%', height:'10px', border:'1px solid'}}>
+    <div style={{height:'20px', border:'1px solid '+colors.bronze, width:'100%'}}>
         <div style={{background:'url('+bg+')', width:Math.round((value/max)*100)+'%', height:'100%'}}/>
     </div>
 

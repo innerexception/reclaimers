@@ -1,9 +1,10 @@
 import * as React from 'react'
-import { Button, CssIcon } from '../util/SharedComponents';
+import { Button, CssIcon, ProgressBar } from '../util/SharedComponents';
 import { connect } from 'react-redux';
 import { onChangeProduction, onPauseProduction } from '../uiManager/Thunks';
 import { canAffordBot } from '../util/Util';
 import { RCObjectType } from '../../constants';
+const tiny2 = require('../../assets/ui_border.png')
 
 interface Props {
     encounter?: MapData
@@ -38,7 +39,11 @@ export default class FactoryInfo extends React.Component<Props, State> {
         return this.props.selectedBuilding.type === RCObjectType.Base ? (
                     <div style={{height:'100%', display:'flex', flexDirection:"column", justifyContent:"space-between"}}>
                         <div>
-                            {this.props.selectedBuilding.activeDroneDesign ? <h6 style={{textAlign:'center'}}>Producing: {this.props.selectedBuilding.activeDroneDesign.name} {Math.round(this.props.selectedBuilding.timer*100)}%</h6>:<h6>Producing nothing</h6>}
+                            {this.props.selectedBuilding.activeDroneDesign ? 
+                                <div style={{display:"flex", justifyContent:'space-between', alignItems:'center'}}>
+                                    <h5 style={{textAlign:'center'}}>{this.props.selectedBuilding.activeDroneDesign.name}:</h5>
+                                    {ProgressBar(this.props.selectedBuilding.timer*100, 100, tiny2)}
+                                </div>:<h5>Producing nothing</h5>}
                             <hr/>
                             <div style={{display:'flex', width:'100%', justifyContent:'space-between'}}>
                                 {Button(this.state.selectedIndex > 0, ()=>this.setState({selectedIndex: this.state.selectedIndex-1}), '<')}

@@ -26,7 +26,7 @@ export default class ObjectiveView extends React.Component<Props, State> {
         const player = this.props.player
         const validObjectives = ObjectiveList.filter(e=>e.requires.every(o=>player.completedObjectives.includes(o)) || e.requires.length === 0)
         const incomplete = validObjectives.filter(e=>!player.completedObjectives.includes(e.id))
-        return <div style={{...AppStyles.dialog, display:"flex", height:'250px'}}>
+        return <div style={{...AppStyles.dialog, display:"flex", height:'225px'}}>
                     <div ref={this.scroller} style={{overflow:"hidden"}}>
                         <div>
                             {incomplete.map(e=><h5 style={{color:colors.lGreen}}>- {e.description}</h5>)}
