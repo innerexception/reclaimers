@@ -121,7 +121,7 @@ export enum TerrainType {
 }
 
 export enum Objectives {
-    BackupDisk,BuiltOrdinater,BaseDiscovered,BaseConverted,Purify20,InactiveSleepFacilityDiscovered,
+    BackupDisk=1,BuiltOrdinater,BaseDiscovered,BaseConverted,Purify20,InactiveSleepFacilityDiscovered,
     BuildExtractor,BuildProcessor,PurifyWorld,ForbiddenFactoryDiscovered,BuildDefender,
     ForbiddenFactoryConverted,UnderEarth1,UnderEarth2,Degrowth,SleepFacilityDiscovered,
     HumansAwaken

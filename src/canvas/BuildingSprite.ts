@@ -61,8 +61,9 @@ export default class BuildingSprite extends GameObjects.Sprite {
                 if(design.unitType === RCDroneType.Ordinater){
                     addObjective(Objectives.BuiltOrdinater, p)
                 }
+                if(!this.building.maxProduction) this.pauseProduction()
             },
-            repeat: this.building.maxProduction ? this.building.maxProduction : -1
+            repeat: this.building.maxProduction ? this.building.maxProduction : 0
         })
     }
 
