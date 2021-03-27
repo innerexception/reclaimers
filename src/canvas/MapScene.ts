@@ -215,7 +215,7 @@ export default class MapScene extends Scene {
             this.spawnUnit(e)
         })
 
-        this.cameras.main.setZoom(3)
+        this.cameras.main.setZoom(2.5)
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
         let bases = this.getObjects(RCObjectType.Base)
         this.cameras.main.centerOn(bases[0].getCenterX(), bases[0].getCenterY())
@@ -320,6 +320,13 @@ export default class MapScene extends Scene {
                 this.originDragPoint = null;
             }
         })
+        this.input.on('pointerup', (e)=>{
+            //Try perform active action
+            if(this.mouseTarget === MouseTarget.MOVE && !this.originDragPoint){
+                let terrain = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'terrain')
+                if(!terrain) this.tryPerformMove()
+            }
+        })
         this.input.on('pointerdown', (event, GameObjects:Array<Phaser.GameObjects.GameObject>) => {
             const state = store.getState()
             if(!state.activeEncounter) return
@@ -347,11 +354,6 @@ export default class MapScene extends Scene {
             else if(object){
                 switch(object.index-1){
                 }
-            }
-            //Try perform active action
-            if(this.mouseTarget === MouseTarget.MOVE){
-                let terrain = this.map.getTileAtWorldXY(this.input.activePointer.worldX, this.input.activePointer.worldY, false, undefined, 'terrain')
-                if(!terrain) this.tryPerformMove()
             }
         })
         this.initCompleted = true

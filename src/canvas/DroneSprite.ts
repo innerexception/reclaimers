@@ -67,15 +67,15 @@ export default class DroneSprite extends GameObjects.Sprite {
                             this.scene.spawnUnit({...getUnitFromData(NPCData[e.enemy]), tileX: tile.x, tileY: tile.y})
                         }
                     }
-                    //Head towards the fog
-                    const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
-                    const nextVisible = fogTiles.find(t=>t.alpha === 1 && this.scene.passableTile(t.x, t.y, this.entity))
-                    if(nextVisible){
-                        this.executeMove(nextVisible)
-                    }
-                    else {
-                        this.roam()
-                    }
+                    // //Head towards the fog
+                    // const fogTiles = this.scene.getVisibleTiles(dat, 'fog')
+                    // const nextVisible = fogTiles.find(t=>t.alpha === 1 && this.scene.passableTile(t.x, t.y, this.entity))
+                    // if(nextVisible){
+                    //     this.executeMove(nextVisible)
+                    // }
+                    // else {
+                    //     this.roam()
+                    // }
                 break
                 case RCDroneType.Ordinater:
                     //1. Check if dormant factory in sight range
@@ -188,7 +188,6 @@ export default class DroneSprite extends GameObjects.Sprite {
                                     this.scene.spawnAnimal(getAnimalFromData(tile.x, tile.y, CreatureData[type]))
                                 }
                                 if(mapState.cleanedTileCount > 50 && 
-                                    p.cleanedTileCount > 400 && 
                                     p.completedObjectives.includes(Objectives.UnderEarth1) && 
                                     !p.completedObjectives.includes(Objectives.HumansAwaken)){
                                         this.scene.placeStartingHut()
