@@ -1,11 +1,13 @@
 import * as React from 'react'
 import AppStyles from '../AppStyles';
-import { Modal } from '../constants';
+import { Modal, Objectives } from '../constants';
+import { ObjectiveList } from './data/Scenarios';
 import { onHideModal, onShowModal } from './uiManager/Thunks';
 import { Button } from './util/SharedComponents';
 
 interface Props {
     messages:Array<string>
+    choices?: Array<Objectives>
 }
 
 export default class Dialog extends React.Component<Props> {
@@ -35,6 +37,16 @@ export default class Dialog extends React.Component<Props> {
 
     getButton = () => {
         if(this.state.currentStringIndex === this.props.messages.length-1){
+            if(this.props.choices){
+                return this.props.choices.map(c=>{
+                    const obj = ObjectiveList.find(o=>o.id === c)
+                    const e:TileEvent = {
+                        messages: [obj.description],
+                        objective: obj.id
+                    }
+                    return Button(true, ()=>onShowModal(Modal.Dialog, e), obj.choiceLabel)
+                })
+            }
             return Button(true, onHideModal, 'Next')
         }
             

@@ -127,10 +127,15 @@ export enum Objectives {
     HumansAwaken
 }
 
-export const TileEvents:{[key:number]: { messages: Array<string>, objective:Objectives, enemy?: RCDroneType }} = {
+export const TileEvents:{[key:number]: TileEvent} = {
     [TerrainType.Village3]: {
         messages: ['The drone discovered a backup shard in the ruins.'],
         objective: Objectives.BackupDisk
+    },
+    [TerrainType.Monolith]: {
+        messages: ['The All Maker sleeps here...'],
+        objective: Objectives.SleepFacilityDiscovered,
+        choices: [Objectives.UnderEarth1, Objectives.UnderEarth2]
     },
     [RCObjectType.InactiveFactory]: {
         messages: ['This temple is asleep, it must be awakened by an Ordinater.'],
@@ -189,7 +194,7 @@ export enum UIReducerActions {
     SHOW_MODAL, HIDE_MODAL, LOGIN_SUCCESS, LOGOUT, LOGIN_PENDING, LOGIN_FAILED,
     ENCOUNTER_UPDATED, JOIN_ENCOUNTER, UPDATE_ACCOUNT, ACTIVATE_ABILITY,
     START_MOVE,CLEAR_ABILITY,SPAWN_BOT,SELECT_UNIT,SELECT_DESTINATION,TILE_INFO,
-    UPDATE_SELECT_UNIT,UPDATE_PLAYER,BUILD_PYLON,SELECT_BUILDING,UPDATE_SELECT_BUILDING,
+    UPDATE_SELECT_UNIT,UPDATE_PLAYER,SELECT_BUILDING,UPDATE_SELECT_BUILDING,
     CHANGE_PRODUCTION,PAUSE_PRODUCTION,GATHER,UNGATHER,UNSELECT_UNIT,MAP_VIEW,RESEARCH,
     RECYCLE
 }

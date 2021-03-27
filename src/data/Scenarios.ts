@@ -1,6 +1,13 @@
 import { Objectives, Scenario } from "../../constants";
 
-export const ObjectiveList = [
+interface ObjectiveData {
+    id: Objectives
+    requires: Array<Objectives>
+    description: string
+    choiceLabel?:string
+}
+
+export const ObjectiveList:Array<ObjectiveData> = [
     //Tutorials
     {
         description: "Construct a processor drone.",
@@ -76,13 +83,15 @@ export const ObjectiveList = [
     },
     {
         id: Objectives.UnderEarth1,
-        description: "Wake the All-Makers",
-        requires: [Objectives.SleepFacilityDiscovered]
+        choiceLabel: "Wake the All-Makers",
+        requires: [Objectives.UnderEarth1],
+        description: 'You have chosen to wake the All Maker.'
     },
     {
         id: Objectives.UnderEarth2,
-        description: "Do not disturb the All-Makers",
-        requires: [Objectives.SleepFacilityDiscovered]
+        choiceLabel: "Do not disturb the All-Makers",
+        requires: [Objectives.UnderEarth2],
+        description: 'You chose to let the All Makers sleep.'
     }
 ]
 

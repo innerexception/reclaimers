@@ -18,7 +18,12 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             let modalState = null
             if(!onlineAccount.savedState.find(s=>s.map === action.match.map)){
                 onlineAccount.savedState.push(action.match)
-                modalState = { modal: Modal.Dialog, data: Scenarios.find(s=>s.scenario === action.match.map).intro } as any
+                modalState = { 
+                    modal: Modal.Dialog, 
+                    data: {
+                        messages: Scenarios.find(s=>s.scenario === action.match.map).intro 
+                    }
+                } as ModalState
             }
             return { ...state, activeEncounter: action.match, modalState, onlineAccount, engineEvent: { action: UIReducerActions.JOIN_ENCOUNTER, data: action.match }}
         case UIReducerActions.ENCOUNTER_UPDATED:
@@ -43,8 +48,6 @@ const appReducer = (state = getInitialState(), action:any):RState => {
             return { ...state, selectedTile: action.explored ? {...action.tile} : null}
         case UIReducerActions.UPDATE_PLAYER:
             return { ...state, onlineAccount: action.player}
-        case UIReducerActions.BUILD_PYLON:
-            return { ...state, engineEvent: { action: UIReducerActions.BUILD_PYLON, data: null }}
         case UIReducerActions.SELECT_BUILDING:
             return { ...state, selectedBuilding: action.unit, selectedUnit: null }
         case UIReducerActions.CHANGE_PRODUCTION:

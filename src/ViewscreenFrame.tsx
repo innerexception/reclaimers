@@ -27,9 +27,10 @@ interface Props {
 export default class ViewscreenFrame extends React.Component<Props> {
 
     getModal = () => {
+        const dat = this.props.modalState.data as TileEvent
         switch(this.props.modalState.modal){
             case Modal.MainMenu: return <Intro/>
-            default: return <Dialog messages={this.props.modalState.data}/>
+            default: return <Dialog messages={dat.messages} choices={dat.choices}/>
         }
     }
 

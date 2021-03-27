@@ -59,7 +59,7 @@ export default class DroneSprite extends GameObjects.Sprite {
                         const e = TileEvents[tile.index-1]
                         const player = store.getState().onlineAccount
                         if(e?.objective && !player.completedObjectives.includes(e.objective)){
-                            onShowModal(Modal.Dialog, e.messages)
+                            onShowModal(Modal.Dialog, e)
                             addObjective(e.objective, player)
                             return this.waitOne()
                         }

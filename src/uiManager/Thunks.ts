@@ -1,16 +1,18 @@
 import { dispatch, store } from '../../App';
 import { ItemType, Modal, Scenario, Technologies, UIReducerActions } from '../../constants';
 import BuildingSprite from '../canvas/BuildingSprite';
-import { canAffordBot } from '../util/Util';
+import { addObjective, canAffordBot } from '../util/Util';
 // const { ipcRenderer } = require('electron');
 
-export const onShowModal = (modal:Modal, data?:any) => {
+export const onShowModal = (modal:Modal, data?:TileEvent) => {
+    if(data) addObjective(data.objective, store.getState().onlineAccount)
     dispatch({
         type: UIReducerActions.SHOW_MODAL,
         modal,
         data
     })
 }
+
 export const onHideModal = () => {
     dispatch({
         type: UIReducerActions.HIDE_MODAL
@@ -70,12 +72,6 @@ export const onDiscoverPlayerTech = (tech:Technology) => {
 export const onPauseProduction = () => {
     dispatch({
         type: UIReducerActions.PAUSE_PRODUCTION,
-    })
-}
-
-export const onStartBuildPylon = () => {
-    dispatch({
-        type: UIReducerActions.BUILD_PYLON
     })
 }
 

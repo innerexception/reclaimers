@@ -100,16 +100,10 @@ interface RCBuildingState {
     maxProduction?:number
 }
 
-interface Objective {
-    id:import('./constants').Objectives
-    requires:Array<import('./constants').Objectives>
-    description:string
-    tileCount?:number
-    purityLevel?:number
-}
+interface TileEvent { messages: Array<string>, objective:import('./constants').Objectives, enemy?: import('./constants').RCDroneType, choices?:Array<import('./constants').Objectives> }
 
 interface ModalState {
-    data?: any
+    data?: TileEvent
     modal: import('./constants').Modal
 }
 
