@@ -456,13 +456,21 @@ export default class MapScene extends Scene {
     placeStartingHut = () => {
         //Find a cleansed tile and place a hut there, then place a human next to said hut
         this.map.setLayer('objects')
-        let tile = this.map.findTile(t=>this.tiles[t.x][t.y].type === TerrainType.Monolith)
+        let tile = this.map.findTile(t=>t.index-1 === TerrainType.Monolith)
         if(tile){
             this.spawnHut(this.map.getTileAt(tile.x, tile.y+1))
         }
     }
 
     growVillage = () => {
+        const p = store.getState().onlineAccount
+        const mapState = p.savedState.find(s=>s.map === store.getState().activeEncounter.map)
+        if(mapState.cleanedTileCount > 50 && 
+            p.completedObjectives.includes(Objectives.UnderEarth1) && 
+            !p.completedObjectives.includes(Objectives.HumansAwaken)){
+                this.placeStartingHut()
+                p.completedObjectives.push(Objectives.HumansAwaken)
+        }
          //From a hut, find next empty and adjacent cleansed tile
          let hut = this.buildings.find(b=>b.building.type === RCObjectType.Hut)
          if(hut){

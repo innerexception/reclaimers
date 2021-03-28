@@ -34,8 +34,6 @@ build a network of point to point charging stations to keep the bots moving
     -Defense drones: rallies other defense drones
     -Scout drones: not available
 
-2. Add sleep facility object and objective trigger
-3. Add wake the humans dialog objective trigger
 4. Check human village spawning
 
 2. Finish objective chains & triggers

@@ -187,12 +187,6 @@ export default class DroneSprite extends GameObjects.Sprite {
                                     const type = RCAnimalTypes[Phaser.Math.Between(0,RCAnimalTypes.length-1)]
                                     this.scene.spawnAnimal(getAnimalFromData(tile.x, tile.y, CreatureData[type]))
                                 }
-                                if(mapState.cleanedTileCount > 50 && 
-                                    p.completedObjectives.includes(Objectives.UnderEarth1) && 
-                                    !p.completedObjectives.includes(Objectives.HumansAwaken)){
-                                        this.scene.placeStartingHut()
-                                        p.completedObjectives.push(Objectives.HumansAwaken)
-                                }
                             }
                         }
                         this.floatResourceAndContinue(tox[0], this.runUnitTick)
