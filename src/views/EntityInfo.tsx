@@ -37,7 +37,7 @@ export default class EntityInfo extends React.Component<Props> {
                         </div>)}
                     </h5>
                     <div>
-                        {(unitData.unitType == RCDroneType.Defender || unitData.processesItems)
+                        {unitData.unitType == RCDroneType.Defender
                             && Button(true, ()=>onGatherUnits(unitData.id), 'Swarm')}
                         {unitData.isSwarmLeader && Button(true, ()=>onUnGatherUnits(unitData.id), 'Release')}
                         {this.props.player.technologies.find(t=>t.type === TechnologyType.Recycling && Button(true, ()=>onRecycleUnit(unitData.id), 'Reclaim'))}

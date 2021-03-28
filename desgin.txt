@@ -27,35 +27,32 @@ build a network of point to point charging stations to keep the bots moving
 2. 2 basic designs are avilable. send out the scouts and wallE compactors
 3. more components are unlocked when certain resources are discovered, or data caches are found
 4. baddies show up when disturbed
-5. mission is complete when the map has been cleaned
 15. Selected bot can be used to 'rally' other bots to it and create a swarm
 16. Rally depends on bot type:
-    -Processing drones: rallies drones with extractor abilities
     -Defense drones: rallies other defense drones
-    -Scout drones: not available
 
 7. 7 regions with 7 drone types (each region has a signature type plus 1 or more other types of drone). 
    Convert the factories to stop the drone/monster waves.
    The solution to each Type of drone is found in a Lab somewhere in the world.
    Each type has a different effect on the humans the region, described in the intro text of the region.
-    -Type 1: Requires blue (pacifier) laser to defeat (Wrath)
+    -Type 1: Requires blue (pacifier) laser to defeat (Wrath) fixed number in region
     -Type 2: Requires red (burning) laser to defeat, invincible sitting around (Sloth)
-    -Type 3: Invincible, no weapons, removes humans, requires remote deactivation (monolith behind terrain) (Envy)
+    -Type 3: Invincible, no weapons, removes human buildings, requires remote deactivation (monolith behind terrain) (Envy)
     -Type 4: Constructs pylons (useless blocking structures), requires extractor upgrade to remove pylons (Gluttony)
     -Type 5: Pollutes tiles with loads from factory (emptying out waste stockpile) (Greed)
     -Type 6: (Lust)
-    -Type 7: Causes humans to summon the Mammon Machine which will offer them eternal life. If they accept, you are deleted. They will reject it if you have made proper choices. (Pride)
-6. Village growth activates ruins: Labs increase civ level, factories create drone attack waves (can make them red again)
+    -Type 7: Causes humans to summon the Mammon Machine which will offer them eternal life. If they accept, you are deleted. 
+             They will reject it if you have made proper choices. (Pride)
 
-2. Finish objective chains & triggers
+2. Finish objective chains & triggers ^
+    Technologies:
+        -Jets, Pylon Demolition (Processor Upgrade), Red Laser, Blue Laser 
+6. Village growth activates ruins: Labs increase civ level, factories create drone attack waves (can make them red again)
 1. Final objective: disassemble all structures and drones in all regions, leaving only nature behind.
 
 
 11. Apply tech research to existing units not just new ones
-12. Generate human villages over time (If wake the all-makers is chosen)
-3. Design more region maps tied to objective chains
 1. Implement ord regeneration ability
-
 16. inactive factories are guarded by fixed groups of creatures
 15. villages and caves sometimes produce enemy creatures (creature probability table is tile based)
 11. If swarm leader is selected, draw lines to swarm members?
