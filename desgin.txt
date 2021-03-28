@@ -34,8 +34,6 @@ build a network of point to point charging stations to keep the bots moving
     -Defense drones: rallies other defense drones
     -Scout drones: not available
 
-4. Check human village spawning
-
 2. Finish objective chains & triggers
 1. Final objective: disassemble all structures and drones, leaving only nature behind.
 

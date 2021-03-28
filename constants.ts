@@ -55,7 +55,7 @@ export const Technologies:Array<Technology> = [
     },
 ]
 
-export const defaultProcessing = [ItemType.Titanium, ItemType.Plastics, ItemType.Pesticides, ItemType.Petroleum]
+export const defaultProcessing = [ItemType.Lithium, ItemType.Titanium, ItemType.Plastics, ItemType.Pesticides, ItemType.Petroleum]
 
 export enum StatusEffect {
     Invulnerable=3544,ColdBlooded=3522,Fear=3595,Poison=3658,Stun=3654,Chains,Charm,Steelskin,Mulch
