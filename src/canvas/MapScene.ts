@@ -458,7 +458,7 @@ export default class MapScene extends Scene {
         this.map.setLayer('objects')
         let tile = this.map.findTile(t=>t.index-1 === TerrainType.Monolith)
         if(tile){
-            this.spawnHut(this.map.getTileAt(tile.x, tile.y+1))
+            this.spawnHut(this.map.getTileAt(tile.x, tile.y+1, false, 'ground'))
         }
     }
 
@@ -472,21 +472,24 @@ export default class MapScene extends Scene {
                 p.completedObjectives.push(Objectives.HumansAwaken)
         }
          //From a hut, find next empty and adjacent cleansed tile
-         let hut = this.buildings.find(b=>b.building.type === RCObjectType.Hut)
-         if(hut){
+         let huts = this.buildings.filter(b=>b.building.type === RCObjectType.Hut)
+         let built = false
+         huts.forEach(hut=>{
             let target 
             getCircle(hut.building.tileX, hut.building.tileY, 2).forEach(tuple=>{
                if(this.tiles[tuple[0]][tuple[1]].toxins.length <= 2 && 
                !this.buildings.find(b=>b.building.tileX === tuple[0] && b.building.tileY === tuple[1]))
                    target = this.map.getTileAt(tuple[0], tuple[1], false, 'ground')
             })
-            if(target){
+            if(target && !built){
+                built = true
                //Spawn a hut (of appropriate level) for every 3 fields, else spawn a field
+               let fields = this.buildings.filter(b=>b.building.type === RCObjectType.Field)
                let huts = this.buildings.filter(b=>b.building.type === RCObjectType.Hut)
-               if(huts.length % 3 === 0) this.spawnHut(target)
+               if(fields.length/3 > huts.length) this.spawnHut(target)
                else this.spawnField(target)
             }
-         }
+         })
          
          //TODO: chance for enemy spawns
 

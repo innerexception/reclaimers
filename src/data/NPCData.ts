@@ -5,21 +5,21 @@ export const CreatureData:{[key in RCAnimalType]:RCAnimalData} = {
         name: 'Anchient Sentry',
         animalType: RCAnimalType.Bear,
         maxHp: 2,
-        speed: 0.5,
+        speed: 0.25,
         sight: 3
     },
     [RCAnimalType.Deer]: {
         name: 'Anchient Sentry',
         animalType: RCAnimalType.Deer,
         maxHp: 2,
-        speed: 0.75,
+        speed: 0.5,
         sight: 3
     },
     [RCAnimalType.Fox]: {
         name: 'Anchient Sentry',
         animalType: RCAnimalType.Fox,
         maxHp: 2,
-        speed: 1,
+        speed: 0.75,
         sight: 3
     },
     [RCAnimalType.Rabbit]: {
@@ -33,14 +33,14 @@ export const CreatureData:{[key in RCAnimalType]:RCAnimalData} = {
         name: 'Anchient Sentry',
         animalType: RCAnimalType.Wolf,
         maxHp: 2,
-        speed: 0.8,
+        speed: 0.7,
         sight: 3
     },
     [RCAnimalType.Human]: {
         name: 'Humon',
         animalType: RCAnimalType.Human,
         maxHp: 1,
-        speed: 0.5,
+        speed: 0.3,
         sight: 3
     },
 }
