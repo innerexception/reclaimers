@@ -34,10 +34,18 @@ build a network of point to point charging stations to keep the bots moving
     -Defense drones: rallies other defense drones
     -Scout drones: not available
 
-6. Village growth activates ruins: Labs increase civ level, factories create drone attack waves
+7. 7 regions with 7 drone types (each region has a signature type plus 1 or more other types of drone). 
+   Convert the factories to stop the drone/monster waves.
+    -Type 1: requires red laser to defeat
+    -Type 2: Fast spawning low health
+    -Type 3: Invincible, no weapons, removes humans, requires remote deactivation (monolith behind terrain)
+    -Type 4: Constructs pylons (useless blocking structures), requires key from another region to deactivate and extractor upgrade to remove pylons
+    -Type 5: Pollutes tiles with loads from factory (emptying out waste stockpile)
+    -Type 6: 
+6. Village growth activates ruins: Labs increase civ level, factories create drone attack waves (can make them red again)
 
 2. Finish objective chains & triggers
-1. Final objective: disassemble all structures and drones, leaving only nature behind.
+1. Final objective: disassemble all structures and drones in all regions, leaving only nature behind.
 
 
 11. Apply tech research to existing units not just new ones
