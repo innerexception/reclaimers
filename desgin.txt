@@ -44,7 +44,7 @@ build a network of point to point charging stations to keep the bots moving
     -Type 4: Constructs pylons (useless blocking structures), requires extractor upgrade to remove pylons (Gluttony)
     -Type 5: Pollutes tiles with loads from factory (emptying out waste stockpile) (Greed)
     -Type 6: (Lust)
-    -Type 7: Causes humans to summon the Mammon Machine which will offer them eternal life. If they accept, you are deleted. They will reject it if you have made proper choices. (Pride)
+    -Type 7: (Zone containing the City and the Tower) Causes humans to summon the Mammon Machine which will offer them eternal life. If they accept, you are deleted. They will reject it if you have made proper choices. (Pride)
 6. Village growth activates ruins: Labs increase civ level, factories create drone attack waves (can make them red again)
 
 2. Finish objective chains & triggers
