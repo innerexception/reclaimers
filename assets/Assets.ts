@@ -4,6 +4,7 @@ export const defaults = [
     { key: 'selected', resource: require('./selected.png'), type: 'image' },
     { key: 'overlay', resource: require('./ui_border.png'), type: 'image' },
     { key: 'tiles', resource: require('./OverworldTileset_v03.png'), type: 'image' },
+    { key: 'fog', resource: require('./FogOfWar.png'), type: 'image' },
     { key: 'sprites', resource: require('./OverworldTileset_v03.png'), type: 'spritesheet', data: { frameWidth: 16, frameHeight: 16 } },
     { key: 'resources', resource: require('./OresandRocks.png'), type: 'spritesheet', data: { frameWidth: 16, frameHeight: 16 }},
     { key: RCAnimalType.Bear, resource: require('./animals/Bear/Bear_Walk.png'), type: 'spritesheet', data: { frameWidth: 64, frameHeight: 32 }},

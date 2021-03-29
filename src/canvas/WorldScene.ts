@@ -38,8 +38,9 @@ export default class WorldScene extends Scene {
         this.scene.bringToTop('map')
         let regionMap = this.make.tilemap({ key: 'map'})
         let town1Tileset = regionMap.addTilesetImage('OverworldTileset_v03', 'tiles', 16,16)
-        regionMap.createStaticLayer('ocean', town1Tileset)
+        let fog = regionMap.addTilesetImage('FogOfWar', 'fog', 16,16)
         regionMap.createStaticLayer('ground', town1Tileset)
+        regionMap.createStaticLayer('fog', fog).setDepth(1)
         
         let regionSprites = regionMap.createFromObjects('regions', 'region', { key: 'overlay', visible:true })
         this.regionSprites = regionSprites.map(r=>new RegionSprite(this, r.x,r.y,'overlay',r.displayWidth, r.displayHeight, r.data))

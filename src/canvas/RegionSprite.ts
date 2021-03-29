@@ -13,11 +13,11 @@ export default class RegionSprite extends GameObjects.TileSprite {
         this.setTileScale(0.5)
         this.setPosition(x, y+height)
         this.mapName = data && data.list[0].value
+        this.setAlpha(0.1)
+        this.setDepth(0)
         if(this.mapName){
-            this.setAlpha(0.1)
             this.setInteractive()
         }
-        else this.setAlpha(1)
         // this.label = scene.add.text(this.getBottomLeft().x+2, this.getBottomLeft().y-10, this.mapName, {
         //     fontFamily: 'Body', 
         //     fontSize: '10px',
