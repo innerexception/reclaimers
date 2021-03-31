@@ -4,7 +4,7 @@ import { FONT_DEFAULT, Modal, RCObjectType, RCDroneType, TerrainLevels, TileEven
 import MapScene from "./MapScene";
 import { onUpdateSelectedUnit, onUpdatePlayer, unSelectedUnit, onShowModal, onDiscoverPlayerTech } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
-import { addObjective, getAnimalFromData, getNearestDropoffForResource, getNextTechnology, getSightMap, getUnitFromData, shuffle } from "../util/Util";
+import { addObjective, getAnimalFromData, getNearestDropoffForResource, getNextTechnology, getSightMap, getUnitFromData, shuffle, getCircle } from "../util/Util";
 import { CreatureData, NPCData } from "../data/NPCData";
 
 export default class DroneSprite extends GameObjects.Sprite {
@@ -135,6 +135,19 @@ export default class DroneSprite extends GameObjects.Sprite {
                     if(target2) this.damageToTarget(target2)
                     this.roam()
                     //Sometimes drops lore when killed
+                break
+                case RCDroneType.MonumentBuilder:
+                    //As long as a valid tile exists,
+                    //Drops a monument tile at least 1 away from any other monument tile
+                    let t = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'ground')
+                    if(t.index-1 !== RCObjectType.Monument) this.scene.spawnBuilding(t, RCObjectType.Monument)
+
+                    let monumentTarget
+                    getCircle(dat.tileX, dat.tileY, 2, 4).forEach(tuple=>{
+                        let t = this.scene.map.getTileAt(tuple[0], tuple[1], false, 'ground')
+                        if(t.index-1 !== RCObjectType.Monument) monumentTarget = t
+                    })
+                    if(monumentTarget) this.executeMove(monumentTarget)
                 break
                 case RCDroneType.ToxinExtractor:
                     if(dat.inventory.length === dat.maxInventory){

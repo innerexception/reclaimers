@@ -427,7 +427,7 @@ export default class MapScene extends Scene {
                         const t = this.map.getTileAt(i,j,false,layer)
                         if(t && t.alpha === 1)
                             tiles.push(t)
-                    } 
+                    }
                 }
             }
         }
@@ -449,8 +449,8 @@ export default class MapScene extends Scene {
         this.animals.push(new AnimalSprite(this, tile.getCenterX()+16, tile.getCenterY(), getAnimalFromData(tile.x+1, tile.y, CreatureData[RCAnimalType.Human])))
     }
 
-    spawnField = (tile:Tilemaps.Tile) => {
-        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), RCObjectType.Field, tile.x, tile.y))
+    spawnBuilding = (tile:Tilemaps.Tile, type:RCObjectType) => {
+        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), type, tile.x, tile.y))
     }
 
     placeStartingHut = () => {
@@ -487,7 +487,7 @@ export default class MapScene extends Scene {
                let fields = this.buildings.filter(b=>b.building.type === RCObjectType.Field)
                let huts = this.buildings.filter(b=>b.building.type === RCObjectType.Hut)
                if(fields.length/3 > huts.length) this.spawnHut(target)
-               else this.spawnField(target)
+               else this.spawnBuilding(target, RCObjectType.Field)
             }
          })
          

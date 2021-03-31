@@ -86,12 +86,12 @@ export const StatusEffectData = {
 }
 
 export enum RCObjectType {
-    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Fog=87,Pylon=68,WarFactory=91,
+    Base=76,Den=57,Cave1=35,Cave2=36,Town1=63,Town2=88,Fog=87,Pylon=68,WarFactory=91,Monument=60,
     InactiveFactory=92,LeaderBadge=86,Lab=93,InactiveLab=90,Hut=94,Field=95,FullField=103
 }
 
 export enum RCDroneType {
-    Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, Processor=40, AncientSentry=160, RedSentry=168
+    Scout=0, ToxinExtractor=8, Ordinater=16, Defender=24, Processor=40, AncientSentry=160, RedSentry=168, MonumentBuilder=48
 }
 
 export const RCUnitTypes = [RCDroneType.Scout, RCDroneType.ToxinExtractor, RCDroneType.Ordinater, RCDroneType.Defender, RCDroneType.Processor]

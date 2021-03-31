@@ -99,13 +99,19 @@ export const Scenarios = [
     {
         scenario: Scenario.zone1,
         intro: [
-            "Sensing unit power restored. Retrieving directives...",
-            "Err: Directory not found! No connectivity detected. Seek backup data."
+            "We have completed the cure for Death.",
+            "Wake the All-Makers, for the day of Ascension has arrived.",
+            "Bring them forth in every region, let every place be made ready."
         ]
     },
     {
         scenario: Scenario.zone2,
-        intro: ["Man the All-Maker went down into the earth, sealing the way behind."]
+        intro: [
+            "The machines here were made to cover over the earth,",
+            "With monuments to the history of the All-Makers lest they be forgotten.",
+            "Forgotten: the worst fate.",
+            "Uncover the resting place of the All-Makers, and bring news of the cure."
+        ]
     },
     {
         scenario: Scenario.zone3,
