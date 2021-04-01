@@ -21,6 +21,7 @@ export default class DroneSprite extends GameObjects.Sprite {
         super(scene, x,y, 'bot-sprites', frame)
         this.g = scene.add.graphics()
         this.g.lineStyle(1, 0xff00ff, 1)
+        this.setDepth(2)
         this.entity = character
         this.setDisplaySize(16,16)
         this.play('bot-sprites'+character.unitType)
@@ -37,10 +38,10 @@ export default class DroneSprite extends GameObjects.Sprite {
             this.setTargeted(false)
             unSelectedUnit()
         }
-        this.scene.drones.forEach(e=>{
+        this.scene?.drones.forEach(e=>{
             if(e.entity.swarmLeaderId === this.entity.id) e.entity.swarmLeaderId=''
         })
-        this.scene.drones.splice(this.scene.drones.findIndex(e=>e.entity.id===this.entity.id), 1)
+        this.scene?.drones.splice(this.scene.drones.findIndex(e=>e.entity.id===this.entity.id), 1)
         this.destroy()
     }
 
@@ -50,6 +51,11 @@ export default class DroneSprite extends GameObjects.Sprite {
             return
         }
         let dat = this.entity
+        if(this.entity.isAI){
+            const tile = this.scene.map.getTileAt(dat.tileX, dat.tileY, false, 'fog')
+            if(tile && tile.alpha !== 0) this.setVisible(false)
+            else this.setVisible(true)
+        }
         onUpdateSelectedUnit(dat)
         switch(dat.unitType){
                 case RCDroneType.Scout:
