@@ -36,15 +36,21 @@ build a network of point to point charging stations to keep the bots moving
    The solution to each Type of drone is found in a Lab somewhere in the world.
    Each type has a different effect on the humans the region, described in the intro text of the region.
     -Type 1: Requires blue (pacifier) laser to defeat (Wrath) fixed number in region
+        -TODO
     -Type 2: Requires red (burning) laser to defeat, invincible sitting around (Sloth)
+        -TODO
     -Type 3: Invincible, no weapons, removes human buildings, requires remote deactivation (monolith behind terrain) (Envy)
+        -TODO
     -Type 4: Constructs pylons (useless blocking structures), requires extractor upgrade to remove pylons (Gluttony)
         -Prevent monument placer from getting stuck
     -Type 5: Pollutes tiles with loads from factory (emptying out waste stockpile) (Greed)
+        -TODO
     -Type 6: (Lust)
+        -TODO
     -Type 7: (Zone containing the City and the Tower, activated when all other zones are complete) 
              Causes humans to summon the Mammon Machine which will offer them eternal life, eternal sleep. If they accept, you are deleted. 
              They will reject it if you have made proper choices. (Pride)
+        -TODO
 
 2. Finish objective chains & triggers ^
     Technologies:
