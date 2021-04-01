@@ -39,6 +39,7 @@ build a network of point to point charging stations to keep the bots moving
     -Type 2: Requires red (burning) laser to defeat, invincible sitting around (Sloth)
     -Type 3: Invincible, no weapons, removes human buildings, requires remote deactivation (monolith behind terrain) (Envy)
     -Type 4: Constructs pylons (useless blocking structures), requires extractor upgrade to remove pylons (Gluttony)
+        -Prevent monument placer from getting stuck
     -Type 5: Pollutes tiles with loads from factory (emptying out waste stockpile) (Greed)
     -Type 6: (Lust)
     -Type 7: (Zone containing the City and the Tower, activated when all other zones are complete) 
