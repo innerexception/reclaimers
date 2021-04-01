@@ -61,6 +61,15 @@ export default class DroneSprite extends GameObjects.Sprite {
                         if(e?.objective && !player.completedObjectives.includes(e.objective)){
                             onShowModal(Modal.Dialog, e)
                             addObjective(e.objective, player)
+                            if(e.rewards){
+                                this.scene.buildings.forEach(b=>{
+                                    if(b.building.type === RCObjectType.Base){
+                                        e.rewards.forEach(d=>{
+                                            b.building.availableDroneDesigns.push(NPCData[d])
+                                        })
+                                    }
+                                })
+                            }
                             return this.waitOne()
                         }
                         if(e?.enemy){

@@ -61,7 +61,7 @@ export default class WorldScene extends Scene {
         this.input.on('pointerout', (event, gameObjects) => {
             this.selectIcon && this.selectIcon.setVisible(false)
         });
-        this.input.on('pointerdown', (pointer, gameObjects)=> {
+        this.input.on('pointerup', (pointer, gameObjects)=> {
             if(gameObjects[0] && !this.originDragPoint){
                 this.focusedItem = gameObjects[0]
                 let scenario = (this.focusedItem as any).mapName as Scenario

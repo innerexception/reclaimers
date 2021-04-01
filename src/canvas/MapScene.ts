@@ -7,8 +7,9 @@ import { canAttractDrone, canPassTerrainType, getAnimalFromData, getNearestDrone
 import { onShowTileInfo, onSelectedUnit, onSelectedBuilding, onUpdatePlayer } from "../uiManager/Thunks";
 import AStar from "../util/AStar";
 import BuildingSprite from "./BuildingSprite";
-import { CreatureData, defaultDesigns, NPCData } from "../data/NPCData";
+import { CreatureData, NPCData } from "../data/NPCData";
 import AnimalSprite from "./AnimalSprite";
+import { Scenarios } from "../data/Scenarios";
 
 enum MouseTarget {
     NONE,MOVE
@@ -180,15 +181,17 @@ export default class MapScene extends Scene {
             })
             this.tiles = tileData
 
-            let otherDesigns = [NPCData[RCDroneType.Defender], NPCData[RCDroneType.Processor]]
+            const config = Scenarios.find(s=>s.scenario === encounter.map)
+
             let bases = this.getObjects(RCObjectType.Base)
             bases.forEach(b=>{
-                this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.Base, b.x, b.y, defaultDesigns))
+                this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), b.x, b.y, {type: RCObjectType.Base, availableDroneDesigns: config.defaultDesigns}))
                 this.carveFogOfWar(4, b.x, b.y)
             })
-            this.getObjects(RCObjectType.InactiveFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveFactory, b.x, b.y, [otherDesigns.pop()])))
-            this.getObjects(RCObjectType.WarFactory).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.WarFactory, b.x, b.y, [otherDesigns.pop()])))
-            this.getObjects(RCObjectType.InactiveLab).forEach(b=>this.buildings.push(new BuildingSprite(this, b.getCenterX(), b.getCenterY(), RCObjectType.InactiveLab, b.x, b.y, [])))
+            config.buildings.forEach(b=>{
+                this.getObjects(b.type).forEach(bl=>
+                    this.buildings.push(new BuildingSprite(this, bl.getCenterX(), bl.getCenterY(), bl.x, bl.y, b)))
+            })
             
             console.log('new data init...')
         }
@@ -200,7 +203,7 @@ export default class MapScene extends Scene {
 
             this.buildings = encounter.buildings.map(b=>{
                 let tile = this.map.getTileAt(b.tileX, b.tileY,false, 'ground')
-                return new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), b.type, b.tileX, b.tileY, b.availableDroneDesigns)
+                return new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), b.tileX, b.tileY, b)
             })
 
             console.log('restored saved state...')
@@ -344,10 +347,12 @@ export default class MapScene extends Scene {
                 } 
                 else if((GameObjects[0] as BuildingSprite).building){
                     const building = (GameObjects[0] as BuildingSprite).building
-                    if(state.selectedUnit) this.drones.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
-                    if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
-                    this.buildings.find(e=>e.building.id === building.id).setTargeted(true)
-                    onSelectedBuilding(building)
+                    if(building.type === RCObjectType.Base){
+                        if(state.selectedUnit) this.drones.find(e=>e.entity.id === state.selectedUnit.id).setTargeted(false)
+                        if(state.selectedBuilding) this.buildings.find(e=>e.building.id === state.selectedBuilding.id).setTargeted(false)
+                        this.buildings.find(e=>e.building.id === building.id).setTargeted(true)
+                        onSelectedBuilding(building)
+                    }
                     return
                 } 
             }
@@ -445,12 +450,12 @@ export default class MapScene extends Scene {
     }
 
     spawnHut = (tile:Tilemaps.Tile) => {
-        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), RCObjectType.Hut, tile.x, tile.y))
+        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), tile.x, tile.y, { type: RCObjectType.Hut }))
         this.animals.push(new AnimalSprite(this, tile.getCenterX()+16, tile.getCenterY(), getAnimalFromData(tile.x+1, tile.y, CreatureData[RCAnimalType.Human])))
     }
 
     spawnBuilding = (tile:Tilemaps.Tile, type:RCObjectType) => {
-        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), type, tile.x, tile.y))
+        this.buildings.push(new BuildingSprite(this, tile.getCenterX(), tile.getCenterY(), tile.x, tile.y, { type }))
     }
 
     placeStartingHut = () => {

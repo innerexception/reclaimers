@@ -15,27 +15,26 @@ export default class BuildingSprite extends GameObjects.Sprite {
     timer: Time.TimerEvent
     updateTimer: Time.TimerEvent
     
-    constructor(scene:MapScene,x:number,y:number, building:RCObjectType,tileX:number,tileY:number, designs?:Array<RCUnitData>){
-        super(scene, x,y, 'sprites', building)
+    constructor(scene:MapScene,x:number,y:number, tileX:number,tileY:number, config:RCBuildingConfig){
+        super(scene, x,y, 'sprites', config.type)
         
         this.building = {
             id:v4(),
-            type: building,
+            type: config.type,
             tileX,
             tileY,
             timer: 0,
             activeDroneDesign: null,
-            availableDroneDesigns: designs
+            availableDroneDesigns: config.availableDroneDesigns,
+            maxProduction: config.maxProduction
         }
-        if(building === RCObjectType.WarFactory){
-            this.building.maxProduction = 3
-        }
+        
         this.setDisplaySize(16,16)
         this.setInteractive()
         scene.add.existing(this)
 
-        if(building === RCObjectType.WarFactory){
-            this.resetProduction(NPCData[RCDroneType.AncientSentry])
+        if(config.type === RCObjectType.WarFactory){
+            this.resetProduction(config.activeDroneDesign)
         }
     }
         

@@ -71,6 +71,13 @@ interface StatusEffectState {
     casterId?: string
 }
 
+interface ScenarioConfig {
+    scenario:import('./constants').Scenario
+    intro: Array<string>
+    defaultDesigns: Array<RCUnitData>
+    buildings: Array<RCBuildingConfig>
+}
+
 interface MapData {
     map: import('./constants').Scenario
     tileData: Array<Array<TileInfo>>
@@ -89,18 +96,27 @@ interface RCPlayerState {
     savedState: Array<MapData>
 }
 
-interface RCBuildingState {
-    id:string
+interface RCBuildingConfig {
     type: import('./constants').RCObjectType
-    tileX:number
-    tileY:number
-    timer: number
     activeDroneDesign?: RCUnitData
     availableDroneDesigns?: Array<RCUnitData>
     maxProduction?:number
 }
 
-interface TileEvent { messages: Array<string>, objective:import('./constants').Objectives, enemy?: import('./constants').RCDroneType, choices?:Array<import('./constants').Objectives> }
+interface RCBuildingState extends RCBuildingConfig {
+    id:string
+    tileX:number
+    tileY:number
+    timer: number
+}
+
+interface TileEvent { 
+    messages: Array<string>, 
+    objective:import('./constants').Objectives, 
+    enemy?: import('./constants').RCDroneType, 
+    choices?:Array<import('./constants').Objectives>,
+    rewards?: Array<import('./constants').RCDroneType>
+}
 
 interface ModalState {
     data?: TileEvent

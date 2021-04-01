@@ -1,4 +1,5 @@
-import { Objectives, Scenario } from "../../constants";
+import { Objectives, RCDroneType, RCObjectType, Scenario } from "../../constants";
+import { NPCData } from "./NPCData";
 
 interface ObjectiveData {
     id: Objectives
@@ -95,13 +96,23 @@ export const ObjectiveList:Array<ObjectiveData> = [
     }
 ]
 
-export const Scenarios = [
+export const Scenarios:Array<ScenarioConfig> = [
     {
         scenario: Scenario.zone1,
         intro: [
             "We have completed the cure for Death.",
             "Wake the All-Makers, for the day of Ascension has arrived.",
             "Bring them forth in every region, let every place be made ready."
+        ],
+        defaultDesigns: [NPCData[RCDroneType.Scout]],
+        buildings: [
+            {
+                type: RCObjectType.InactiveFactory,
+                availableDroneDesigns: [NPCData[RCDroneType.ToxinExtractor], NPCData[RCDroneType.Processor]]
+            },
+            {
+                type: RCObjectType.InactiveLab
+            }
         ]
     },
     {
@@ -111,14 +122,33 @@ export const Scenarios = [
             "With monuments to the history of the All-Makers lest they be forgotten.",
             "Forgotten: the worst fate.",
             "Uncover the resting place of the All-Makers, and bring news of the cure."
+        ],
+        defaultDesigns: [NPCData[RCDroneType.Scout], NPCData[RCDroneType.Defender]],
+        buildings: [
+            {
+                type: RCObjectType.WarFactory,
+                activeDroneDesign: NPCData[RCDroneType.MonumentBuilder],
+                maxProduction: 3
+            },
+            {
+                type: RCObjectType.InactiveFactory,
+                availableDroneDesigns: [NPCData[RCDroneType.ToxinExtractor], NPCData[RCDroneType.Processor]]
+            },
+            {
+                type: RCObjectType.InactiveLab
+            }
         ]
     },
     {
         scenario: Scenario.zone3,
-        intro: ["The All-Maker has lived countless lives in the Aethernet. An aethernode is here, somewhere."]
+        intro: ["The All-Maker has lived countless lives in the Aethernet. An aethernode is here, somewhere."],
+        defaultDesigns: [NPCData[RCDroneType.Scout], NPCData[RCDroneType.Defender]],
+        buildings:[]
     },
     {
         scenario: Scenario.zone4,
-        intro: ["This was the most fertile place on earth before the time of the All-Maker."]
+        intro: ["This was the most fertile place on earth before the time of the All-Maker."],
+        defaultDesigns: [NPCData[RCDroneType.Scout], NPCData[RCDroneType.Defender]],
+        buildings:[]
     },
 ]

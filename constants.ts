@@ -124,13 +124,14 @@ export enum Objectives {
     BackupDisk=1,BuiltOrdinater,BaseDiscovered,BaseConverted,Purify20,InactiveSleepFacilityDiscovered,
     BuildExtractor,BuildProcessor,PurifyWorld,ForbiddenFactoryDiscovered,BuildDefender,
     ForbiddenFactoryConverted,UnderEarth1,UnderEarth2,Degrowth,SleepFacilityDiscovered,
-    HumansAwaken
+    HumansAwaken,LabDiscovered
 }
 
 export const TileEvents:{[key:number]: TileEvent} = {
     [TerrainType.Village3]: {
         messages: ['The drone discovered a backup shard in the ruins.'],
-        objective: Objectives.BackupDisk
+        objective: Objectives.BackupDisk,
+        rewards: [RCDroneType.Processor, RCDroneType.ToxinExtractor]
     },
     [TerrainType.Monolith]: {
         messages: ['The All Maker sleeps here...'],
@@ -139,7 +140,8 @@ export const TileEvents:{[key:number]: TileEvent} = {
     },
     [RCObjectType.InactiveFactory]: {
         messages: ['This temple is asleep, it must be awakened by an Ordinater.'],
-        objective: Objectives.BaseDiscovered
+        objective: Objectives.BaseDiscovered,
+        rewards: [RCDroneType.Ordinater]
     },
     [RCObjectType.WarFactory]: {
         messages: ['This temple is corrupted, it must be cleansed by an Ordinater.'],

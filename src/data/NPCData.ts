@@ -46,6 +46,17 @@ export const CreatureData:{[key in RCAnimalType]:RCAnimalData} = {
 }
 
 export const NPCData:{[key in RCDroneType]:RCUnitData} = {
+    [RCDroneType.MonumentBuilder]: {
+        name: 'Monument Builder',
+        unitType: RCDroneType.MonumentBuilder,
+        maxHp: 2,
+        speed: 1,
+        sight: 3,
+        maxInventory: 1,
+        buildTime: 10000,
+        requiredItems: [],
+        isAI: true
+    },
     [RCDroneType.AncientSentry]: {
         name: 'Anchient Sentry',
         unitType: RCDroneType.AncientSentry,
@@ -120,7 +131,3 @@ export const NPCData:{[key in RCDroneType]:RCUnitData} = {
         requiredItems: [{ type: ItemType.Lithium, amount: 2}, { type: ItemType.Titanium, amount: 1}]
     }
 }
-
-
-
-export const defaultDesigns = [NPCData[RCDroneType.Scout], NPCData[RCDroneType.ToxinExtractor], NPCData[RCDroneType.Processor], NPCData[RCDroneType.Ordinater]]

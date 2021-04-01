@@ -67,7 +67,7 @@ export default class FactoryInfo extends React.Component<Props, State> {
                         </div>
                         <div style={{display:'flex', justifyContent:'space-between'}}>
                             {Button(canAffordBot(me.resources, d.requiredItems), ()=>onChangeProduction(d), 'Build')}
-                            {Button(true, onPauseProduction, 'Cancel')}
+                            {Button(this.props.selectedBuilding.activeDroneDesign ? true:false, onPauseProduction, 'Cancel')}
                         </div>
                     </div>
         ) : <h5 style={{textAlign:'center'}}>Unknown</h5>
