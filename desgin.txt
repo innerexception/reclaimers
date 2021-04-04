@@ -41,8 +41,11 @@ build a network of point to point charging stations to keep the bots moving
         -TODO
     -Type 3: Invincible, no weapons, removes human buildings, requires remote deactivation (monolith behind terrain) (Envy)
         -TODO
-    -Type 4: Constructs pylons (useless blocking structures), requires extractor upgrade to remove pylons (Gluttony)
-        -Prevent monument placer from getting stuck
+    -Type 4: Constructs billboards as they are destroyed (useless blocking structures).
+        -Requires extractor upgrade to remove them (Gluttony)
+        -Red laser to destroy the drone.
+        -Builder should replace any destroyed billboard.
+        -The entrance to the sleep facility is under one of them, but you can't enter while the drone is active or you will be trapped.
     -Type 5: Pollutes tiles with loads from factory (emptying out waste stockpile) (Greed)
         -TODO
     -Type 6: (Lust)
@@ -52,10 +55,13 @@ build a network of point to point charging stations to keep the bots moving
              They will reject it if you have made proper choices. (Pride)
         -TODO
 
+1. Anytime an Ordinater enters a structure, top-down combat/hacking sequence is triggered.
+    -Master blaster? Soulblazer? What do these levels look like
+    -On completion, mark region monolith with a star on world map & release the  humons
 2. Finish objective chains & triggers ^
     Technologies:
         -Jets, Pylon Demolition (Processor Upgrade), Red Laser, Blue Laser 
-6. Village growth activates ruins: Labs increase civ level, factories create drone attack waves (can make them red again)
+6. Village growth activates ruins: Labs increase civ level globally, factories create drone attack waves (can make them red again)
 1. Final objective: disassemble all structures and drones in all regions, leaving only nature behind.
 
 
